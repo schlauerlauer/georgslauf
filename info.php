@@ -1,6 +1,6 @@
 <br>
-<h1>GEORG2LAUF 2018</h1>
-<h2>in Pullach am 21. April</h2>
+<h1>GEORGSLAUF 2019</h1>
+<h2>bei FC am 5. Mai</h2>
 <h1 id="clock"></h1>
 <h3>Hallo und herzlich Willkommen, München-Isar!</h3>
 <p>Wir freuen uns mit Euch auf den 39. Georgslauf 2018!<br>
