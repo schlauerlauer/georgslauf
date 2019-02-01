@@ -1,0 +1,35 @@
+{
+  "short_name": "Georgslauf",
+  "name": "GEORG2LAUF",
+  "icons": [
+    {
+      "src": "res/app/logo48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "res/app/logo96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "res/app/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+	{
+      "src": "res/app/logo256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+	{
+      "src": "res/app/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.php",
+  "display": "standalone",
+  "background_color": "#3388cc",
+  "theme_color": "#3388cc"
+}
