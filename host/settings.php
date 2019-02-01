@@ -1,6 +1,6 @@
 <?php
 //Einstellungsdatei für den Georgslauf
-$Host = "Maxkolbe"; //Stamm der den Georgslauf austrägt! - Nur dieser Name hat Zugriff auf die Host & Einstellungsseite
+$Host = "FC"; //Stamm der den Georgslauf austrägt! - Nur dieser Name hat Zugriff auf die Host & Einstellungsseite
 
 $Kat = array('Kreativ','Pfadiwissen','Wissen','Action','erste Hilfe'); //Die Kategorien für die Posten, beliebig erweiterbar / veränderbar!
 $Stufe = array('Wölflinge','Jupfis','Pfadis','Rover'); // Stufen namen, wie sie angezeigt werden (auf anmeldeseite aber hardcoded!) (in SQL sind nur nummern) eher nicht verändern
