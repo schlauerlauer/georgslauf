@@ -3,10 +3,10 @@
 <head>
 <title>Georgslauf 2018</title>
 
-<meta name="description" content="GEORG2LAUF 2018 in Pullach am 21. April. Pfadfinder München Georgslauf MXKO Maximilian Kolbe maxkolbe.de"/>
-<meta property="og:title" content="GEORG2LAUF 2018" />
+<meta name="description" content="GEORG2LAUF 2019 im Olympischen Dorf am 04. Mai. Pfadfinder München Georgslauf Frieden Christi FC pfadi-fc.de"/>
+<meta property="og:title" content="GEORG2LAUF 2019" />
 <meta property="og:url" content="https://georgslauf.de" />
-<meta property="og:description" content="Georgslauf 2018 bei MaxKo in Pullach am 21. April">
+<meta property="og:description" content="Georgslauf 2019 bei FC im Olympischen Dorf am 04. Mai">
 <meta property="og:image" content="/res/logo.png">
 <meta property="og:type" content="article" />
 <meta property="og:locale" content="de_DE" />
