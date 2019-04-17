@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include_once '../host/settings.php';
 include_once 'pGet.php';
 include_once '../session/session.php';
@@ -10,9 +10,9 @@ include_once '../session/session.php';
 <?php if($_SESSION['rolle'] >= 2) : ?>
 <h1>Anmeldung Stamm <?php echo $login_session; ?></h1>
 Dokumente
-<a target="_blank" class="ui-btn ui-btn-b ui-icon-alert ui-btn-icon-left" href="/res/Informationen.pdf">Informationen anzeigen (.pdf)</a>
+<!--<a target="_blank" class="ui-btn ui-btn-b ui-icon-alert ui-btn-icon-left" href="/res/Informationen.pdf">Informationen anzeigen (.pdf)</a>-->
 <a target="_blank" class="ui-btn ui-icon-edit ui-btn-icon-left" href="/res/Interne_Anmeldung.docx">Vorlage für eure interne Anmeldung (.docx)</a>
-bei Fragen: <a href="mailto:info@georgslauf.de">info@georgslauf.de</a> oder <a href="tel:015121622448">anrufen (015121622448)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915121622448&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015121622448)</a>
+bei Fragen: <a href="mailto:georgslauf@pfadi-fc.de">info@georgslauf.de</a> oder <a href="tel:01709462008">anrufen (01709462008)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=491709462008&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (01709462008)</a>
 <br>
 <br>
 <br>
