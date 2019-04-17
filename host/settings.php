@@ -19,7 +19,7 @@ $Posten = array(true, "Die Posten sind noch nicht öffentlich"); // Posten auf H
 $PostenStufe = 'O'; //Trennung RoPo / WöPo großes o, -> siehe Posten -> update.php
 $Punkte = array(false, "Die Posten dürfen noch keine Punkte vergeben!"); //true = Posten dürfen Punkte verteilen, false -> Fehlermeldung;
 
-$Ende = true; //Host kann keine Punkte mehr eintragen wenn true;
+$Ende = false; //Host kann keine Punkte mehr eintragen wenn true;
 $Backup = true; //Erstelle automatische Backups der Datenbank;
 
 $Farben = array('LimeGreen','MediumVioletRed','yellow','SkyBlue'); //Postenfarben in HTML Color Names
