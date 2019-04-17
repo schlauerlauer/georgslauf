@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Georgslauf 2018</title>
+<title>Georgslauf 2019</title>
 
 <meta name="description" content="GEORG2LAUF 2019 im Olympischen Dorf am 04. Mai. Pfadfinder München Georgslauf Frieden Christi FC pfadi-fc.de"/>
 <meta property="og:title" content="GEORG2LAUF 2019" />
