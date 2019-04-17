@@ -97,4 +97,4 @@ bei Fragen: <a href="mailto:georgslauf@pfadi-fc.de">info@georgslauf.de</a> oder 
 <?php endif; ?>
 <br>
 <br>
-<div align="center"><a target="_blank" href="https://maxkolbe.de"><img src="../res/mxko.png"/></a></div>
+<div align="center"><a target="_blank" href="http://pfadi-fc.de"><img src="../res/fc.png"/></a></div>
