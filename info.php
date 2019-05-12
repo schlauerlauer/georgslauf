@@ -16,7 +16,7 @@ Unser Zeitplan für den 04.05.2019 sieht dann folgendermaßen aus:<br>
   <li>11:00 Uhr: Georgslauf um den isarnen Thron Startschuss</li>
   <li>Ab 16:30 Uhr: Abendessen</li>
   <li>18:30 Uhr: Siegerehrung</li>
-  <li>circa 19:30 Uhr: Ende</li>
+  <li>circa 19:30 Uhr: Ende</li> test
 </ul>
 <br>
 Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
