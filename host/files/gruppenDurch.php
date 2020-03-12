@@ -3,7 +3,7 @@ include_once '../../../includes/connect_gl.php';
 require('../../session/session.php');
 include_once '../settings.php';
 
-if(isset($login_session) && $_SESSION['rolle'] >= 4) {
+if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   $file = fopen("../../../test/gl_gruppen.html","w") or die("Einlesen der HTML Datei fehlgeschlagen.");
   $txt = "";
   $position = null;

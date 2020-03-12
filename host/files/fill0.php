@@ -2,7 +2,7 @@
 include_once '../../../includes/connect_gl.php';
 require('../../session/session.php');
 
-if(isset($login_session) && $_SESSION['rolle'] >= 4) {
+if(isset($login_session) && $_SESSION['rolle'] >= 3) {
 
   if ($stmt = $mysqli->prepare("INSERT IGNORE INTO punkte (von, an, points)
 SELECT DISTINCT posten.id, gruppen.id, 0
