@@ -16,7 +16,7 @@ Unser Zeitplan für den 09.05.2020 sieht dann folgendermaßen aus:<br>
   <li>09:00 Uhr: Postenbriefing im Pfarrsaal (1 P. p. P.)</li>
   <li>10:30 Uhr: Startschuss</li>
   <li>13:00 bis 13:30 Uhr: Mittagspause</li>
-  <li>17:30 Uhr: Ende des <strong> Laufs</strong></li>
+  <li>17:30 Uhr: Ende des Laufs</li>
   <li>ab 17:30 Uhr: Abendessen</li>
   <li>19:00 Uhr: Siegerehrung</li>
   <li>circa 20:30 Uhr: Ende</li> 
