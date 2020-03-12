@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Georgslauf 2019</title>
+<title>Georgslauf 2020</title>
 
-<meta name="description" content="GEORG2LAUF 2019 im Olympischen Dorf am 04. Mai. Pfadfinder München Georgslauf Frieden Christi FC pfadi-fc.de"/>
-<meta property="og:title" content="GEORG2LAUF 2019" />
+<meta name="description" content="Georgslauf 2020 in Schwabing am 9. Mai. Pfadfinder München Georgslauf PRM Pater Rupert Mayer stamm-prm.de"/>
+<meta property="og:title" content="GEORG2LAUF 2020" />
 <meta property="og:url" content="https://georgslauf.de" />
-<meta property="og:description" content="Georgslauf 2019 bei FC im Olympischen Dorf am 04. Mai">
+<meta property="og:description" content="Georgslauf 2020 in Schwabing am 9. Mai">
+
 <meta property="og:image" content="/res/logo.png">
 <meta property="og:type" content="article" />
 <meta property="og:locale" content="de_DE" />
