@@ -1,7 +1,7 @@
 ErrorDocument 404 /404.php
 ErrorDocument 401 /401.php
 Options -Indexes
-<Files "^(README.md|Makefile)*$">
+<FilesMatch "^(README.md|Makefile)*$">
   Order Allow,Deny
   Deny from all
 </Files>
