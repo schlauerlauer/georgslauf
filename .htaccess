@@ -4,4 +4,4 @@ Options -Indexes
 <FilesMatch "^(README.md|Makefile)*$">
   Order Allow,Deny
   Deny from all
-</Files>
+</FilesMatch>
