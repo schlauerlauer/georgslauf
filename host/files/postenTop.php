@@ -23,3 +23,5 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
 else {
     echo "Keine Berechtigung.";
 }
+
+echo 'test';
