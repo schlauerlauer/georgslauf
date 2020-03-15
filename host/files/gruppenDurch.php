@@ -38,11 +38,11 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
       $txt .="
-## ".$position.". Platz
+## $position. Platz
 
-".$stufenwertung[$stufe].". Platz der ".$Stufe[$stufe].
-"Mit $punkte Punkten im Durchschnitt
-".$name." vom Stamm ".$stamm." (".$kurz.")
+$stufenwertung[$stufe]. Platz der $Stufe[$stufe]
+Mit $punkte Punkten im Durchschnitt
+$name vom Stamm $stamm ($kurz)
 
 ---
 ";
