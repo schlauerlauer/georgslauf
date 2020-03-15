@@ -16,7 +16,6 @@ slideOptions:
 Siegerehrung
 
 ---
-
   ";
   $position = null;
   $stufenwertung = array(0,0,0,0);
@@ -42,7 +41,7 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
 ## ".$position.". Platz
 
 ".$stufenwertung[$stufe].". Platz der ".$Stufe[$stufe].
-"Mit '.$punkte.' Punkten im Durchschnitt
+"Mit $punkte Punkten im Durchschnitt
 ".$name." vom Stamm ".$stamm." (".$kurz.")
 
 ---
