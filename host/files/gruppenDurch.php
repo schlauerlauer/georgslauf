@@ -16,7 +16,7 @@ slideOptions:
 Siegerehrung
 
 ---
-  ";
+";
   $position = null;
   $stufenwertung = array(0,0,0,0);
   echo '<ol data-role="listview" data-count-theme="b" data-inset="true">';
@@ -40,9 +40,10 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
       $txt .="
 ## $position. Platz
 
-$stufenwertung[$stufe]. Platz der $Stufe[$stufe]
-Mit $punkte Punkten im Durchschnitt
-$name vom Stamm $stamm ($kurz)
+### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
+Mit **".round($punkte,2)."** Punkten im Durchschnitt
+
+### *$name* vom Stamm *$stamm*
 
 ---
 ";
