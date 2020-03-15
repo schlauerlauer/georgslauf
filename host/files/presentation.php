@@ -5,7 +5,7 @@ include_once '../settings.php';
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   $file = fopen("../../../siegerehrung/siegerehrung.md","w") or die("Einlesen der MD Datei fehlgeschlagen.");
-  $txt = "---
+  $md = "---
 type: slide
 slideOptions:
   transition: slide
@@ -21,23 +21,9 @@ Siegerehrung
 
 ----
 ";
-
-
-  if ($stmt = $mysqli -> prepare("SELECT count(name) FROM gruppen")) {
-      $stmt->execute();
-      $stmt->store_result();
-      $stmt->bind_result($position);
-      while ($stmt->fetch()) {}
-      echo $position;
-  }
-
   $position = 0;
   $stufenwertung = array(0,0,0,0);
-  if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) durchschnitt
-FROM gruppen, punkte
-WHERE gruppen.id = an
-GROUP BY an
-ORDER BY durchschnitt DESC, kurz ASC")) {
+  if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe FROM gruppen, punkte WHERE gruppen.id = an GROUP BY an ORDER BY summe DESC, kurz ASC")) {
     $stmt->execute();
     $stmt->store_result();
     $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
@@ -49,7 +35,7 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
       $stufenwertung[$stufe]++;
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
-      $txt .="
+      $txt ="
 ## $position. Platz
 
 ### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
@@ -59,7 +45,7 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
 ### *$name* - *$stamm*
 
 ----
-";
+".$txt;
     }
     $txt .='
 
