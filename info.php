@@ -1,7 +1,6 @@
 <br>
 <h1> GEORGSLAUF 2020 Isar Kunterbunt</h1>
 <h2>im schönen Schwabing bei PRM am 09.05.2020</h2>
-<h1 id="clock"></h1>
 <h3>Hallo und herzlich Willkommen, München-Isar!</h3>
 <p>Wir freuen uns mit Euch auf den 41. Georgslauf 2020!<br>
 Am <strong>Samstag, 09.05.2020</strong> begrüßt Euch PRM im schönen Schwabing!<br>
@@ -24,6 +23,8 @@ Unser Zeitplan für den 09.05.2020 sieht dann folgendermaßen aus:<br>
 <br>
 Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
 Euer Stamm PRM<br>
+<h1 id="clock"></h1>
+<br>
 <br>
 <div align="center"><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></div>
 
