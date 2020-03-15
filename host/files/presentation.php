@@ -35,7 +35,7 @@ Siegerehrung
       $stufenwertung[$stufe]++;
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
-      $txt ="
+      $md_g ="
 ## $position. Platz
 
 ### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
@@ -45,17 +45,27 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
 ### *$name* - *$stamm*
 
 ----
-".$txt;
+".$md_g;
     }
-    $txt .="
+    $md_g .="
 <!-- .slide: data-background=\"https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif\" -->
 
 ## Herzlichen Glückwunsch 
 
 # Stamm $stamm
 ";
+
+  $md2 = "---
+
+## Postenbewertung
+
+----
+";
+
+
+
   }
-  fwrite($file, $md.$txt);
+  fwrite($file, $md.$md_g.$md2);
   fclose($file);
   echo "Ok.";
 }
