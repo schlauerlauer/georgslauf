@@ -97,4 +97,4 @@ bei Fragen: <a href="mailto:gl20@stamm-prm.de">gl20@stamm-prm.de</a> oder <a hre
 <?php endif; ?>
 <br>
 <br>
-<div align="center"><a target="_blank" href="http://pfadi-fc.de"><img src="../res/fc.png"/></a></div>
+<div align="center"><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></div>
