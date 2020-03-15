@@ -3,11 +3,11 @@ include_once '../../includes/connect_gl.php';
 require('../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 ?>
+<h1>Hostseite <?php echo $login_session; ?></h1>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a"><input data-icon="back" value="Anmeldeseite" onclick="window.location.href='/stamm'" type="button"></div>
   <div class="ui-block-b"><input data-icon="home" value="Startseite" onclick="window.location.href='/'" type="button"></div>
 </div>
-<h1>Hostseite <?php echo $login_session; ?></h1>
 <h3>Posten & Gruppen</h3>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="gruppen"><input data-icon="carat-r" data-theme="a" value="Alle Gruppen" type="button"></div>
