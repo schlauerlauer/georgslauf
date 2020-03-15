@@ -48,14 +48,11 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
 ".$txt;
     }
     $txt .="
-
 <!-- .slide: data-background='https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif' -->
 
 ## Herzlichen Glückwunsch 
 
 # Stamm $stamm
-
----
 ";
   }
   fwrite($file, $md.$txt);
