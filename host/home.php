@@ -11,9 +11,11 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <h1>Hostseite <?php echo $login_session; ?></h1>
 <h2>Posten & Gruppen</h2>
 <div class="ui-grid-b ui-responsive">
-  <div class="ui-block-a host" host="gruppenKurz"><input data-icon="bullets" data-theme="a" value="Gruppenkürzel" type="button"></div>
-  <div class="ui-block-b host" host="setPLocation"><input data-icon="location" data-theme="a" value="Posten Positionen" type="button"></div>
-  <div class="ui-block-c host" host="startGruppen"><input data-icon="edit" data-theme="a" value="Posten Startgruppen" type="button"></div>
+  <div class="ui-block-a host" host="gruppen"><input data-icon="carat-r" data-theme="a" value="Alle Gruppen" type="button"></div>
+  <div class="ui-block-b host" host="posten"><input data-icon="carat-r" data-theme="a" value="Alle Posten" type="button"></div>
+  <div class="ui-block-c host" host="gruppenKurz"><input data-icon="bullets" data-theme="a" value="Gruppenkürzel" type="button"></div>
+  <div class="ui-block-a host" host="setPLocation"><input data-icon="location" data-theme="a" value="Posten Positionen" type="button"></div>
+  <div class="ui-block-b host" host="startGruppen"><input data-icon="edit" data-theme="a" value="Posten Startgruppen" type="button"></div>
 </div>
 <h2>Punkte</h2>
 <div class="ui-grid-b ui-responsive">
@@ -29,15 +31,15 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <h2>Kommunikation</h2>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="writeToPosten"><input data-icon="comment" data-theme="a" value="Posten Whatsapp" type="button"></div>
-  <div class="ui-block-b host" host="generatePosten" ><input data-icon="mail" data-theme="a" value="Alle Posten (Mail)" type="button"></div>
-  <div class="ui-block-c host" host="generateGruppen"><input data-icon="mail" data-theme="a" value="Alle Gruppen (Mail)" type="button"></div>
   <div class="ui-block-a host" host="writeLoginToPosten"><input data-icon="action" data-theme="a" value="Posten Whatsapp Zugangsdaten" type="button"></div>
   <div class="ui-block-b host" host="editLogins"><input data-icon="check" data-theme="a" value="Login Passwörter" type="button"></div>
+  <div class="ui-block-b host" host="generatePosten" ><input data-icon="mail" data-theme="a" value="Alle Posten (Mail)" type="button"></div>
+  <div class="ui-block-c host" host="generateGruppen"><input data-icon="mail" data-theme="a" value="Alle Gruppen (Mail)" type="button"></div>
 </div>
 <h2>Siegerehrung</h2>
 <div class="ui-grid-b ui-responsive">
-  <div class="ui-block-a host" host="postenTop"><input data-icon="star" data-theme="b" value="Postentabelle" type="button"></div>
-  <div class="ui-block-b host" host="gruppenTop"><input data-icon="star" data-theme="b" value="Gruppentabelle" type="button"></div>
+  <div class="ui-block-a host" host="postenTop"><input data-icon="star" data-theme="b" value="Posten Sieger" type="button"></div>
+  <div class="ui-block-b host" host="gruppenTop"><input data-icon="star" data-theme="b" value="Gruppen Sieger" type="button"></div>
   <div class="ui-block-c host" host="postenDurch"><input data-icon="plus" data-theme="b" value="Postendurchschnitt" type="button"></div>
   <div class="ui-block-a host" host="gruppenDurch"><input data-icon="plus" data-theme="b" value="Gruppendurchschnitt" type="button"></div>
   <div class="ui-block-b host" host="presentation"><input data-icon="arrow-d" data-theme="b" value="Erstelle Präsentation" type="button"></div>
