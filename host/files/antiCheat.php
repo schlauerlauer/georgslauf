@@ -52,13 +52,13 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 			$durchschnitt[$current] = $durchschnitt[$current] - $avg;
 			if($durchschnitt[$current] > 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte über seinem Durchschnitt</h2></li>';
-				$current++;
+				$anzahl++;
 			} else if ($durchschnitt[$current] < 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte unter seinem Durchschnitt</h2></li>';
-				$current++;
+				$anzahl++;
 			}
 		}
-		if ($current == 0) 
+		if ($anzahl == 0) 
 			echo "Keine Auffälligkeiten."
 	}
 	?>
