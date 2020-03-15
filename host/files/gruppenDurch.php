@@ -4,8 +4,14 @@ require('../../session/session.php');
 include_once '../settings.php';
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
-  $file = fopen("../../../siegerehrung/gruppensieger.html","w") or die("Einlesen der HTML Datei fehlgeschlagen.");
-  $txt = "";
+  $file = fopen("../../../siegerehrung/gruppen_durchschnitt.md","w") or die("Einlesen der HTML Datei fehlgeschlagen.");
+  $txt = "---
+  type: slide
+  slideOptions:
+    transition: slide
+  ---
+  
+  ";
   $position = null;
   $stufenwertung = array(0,0,0,0);
   echo '<ol data-role="listview" data-count-theme="b" data-inset="true">';
