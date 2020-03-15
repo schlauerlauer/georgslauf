@@ -28,3 +28,6 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
   }
   echo '</ol>';
 }
+else {
+  echo "Keine Berechtigung.";
+}
