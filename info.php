@@ -26,7 +26,6 @@ Euer Stamm PRM<br>
 <h1 id="clock"></h1>
 <br>
 <br>
-<div align="center"><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></div>
 <div data-role="footer" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
-		<h2><img src="/res/logo.png"/></h2>
+		<h2><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></h2>
 </div>
