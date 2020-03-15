@@ -4,7 +4,7 @@ require('../../session/session.php');
 include_once '../settings.php';
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
-  $file = fopen("../../../siegerehrung/postensieger.html","w") or die("Einlesen der HTML Datei fehlgeschlagen.");
+  $file = fopen("../../../siegerehrung/gruppensieger.html","w") or die("Einlesen der HTML Datei fehlgeschlagen.");
   $txt = "";
   $position = null;
   echo '<ol data-role="listview" data-count-theme="b" data-inset="true">';
