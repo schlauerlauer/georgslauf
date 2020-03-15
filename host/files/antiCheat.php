@@ -65,4 +65,5 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 	}
 	?>
 </ul>
+<p align="center"><img src="wanze.png" style="max-width: 100%; max-height: 300px;"/></p>
 <?php endif; ?>
