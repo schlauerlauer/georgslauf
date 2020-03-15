@@ -53,8 +53,10 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 			if($durchschnitt[$current] > 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte über seinem Durchschnitt</h2></li>';
 				$anzahl++;
-			} else if ($durchschnitt[$current] < 0)
+			} else if ($durchschnitt[$current] < 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte unter seinem Durchschnitt</h2></li>';
+				$anzahl++;
+			}
 			$current++;
 		}
 		if ($anzahl == 0) {
