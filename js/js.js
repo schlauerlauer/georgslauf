@@ -30,7 +30,7 @@ function login() {
 	}
 
 function countdown() {
-	var countDownDate = new Date("Apr 21, 2018 08:00:00").getTime();
+	var countDownDate = new Date("May 05, 2010 08:00:00").getTime();
 	var x = setInterval(function() {
   	var now = new Date().getTime();
 		var distance = countDownDate - now;

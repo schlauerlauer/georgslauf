@@ -1,7 +1,7 @@
 <br>
 <h1> GEORGSLAUF 2020 Isar Kunterbunt</h1>
 <h2>im schönen Schwabing bei PRM am 09.05.2020</h2>
-<h1 id="clock">Test</h1>
+<h1 id="clock"></h1>
 <h3>Hallo und herzlich Willkommen, München-Isar!</h3>
 <p>Wir freuen uns mit Euch auf den 41. Georgslauf 2020!<br>
 Am <strong>Samstag, 09.05.2020</strong> begrüßt Euch PRM im schönen Schwabing!<br>
