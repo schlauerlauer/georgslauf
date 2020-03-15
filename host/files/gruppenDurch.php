@@ -6,11 +6,17 @@ include_once '../settings.php';
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   $file = fopen("../../../siegerehrung/gruppen_durchschnitt.md","w") or die("Einlesen der HTML Datei fehlgeschlagen.");
   $txt = "---
-  type: slide
-  slideOptions:
-    transition: slide
-  ---
-  
+type: slide
+slideOptions:
+  transition: slide
+---
+
+# Georgslauf 2020
+
+Siegerehrung
+
+---
+
   ";
   $position = null;
   $stufenwertung = array(0,0,0,0);
@@ -32,8 +38,15 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
       echo '<li><a href="#">'.$position.'. Platz ('.$stufenwertung[$stufe].'. der '.$Stufe[$stufe].') "'.$name.'" - '.$stamm.' ('.$kurz.')<span class="ui-li-count">'.$punkte.'</span></a></li>';
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
-      $txt .= '<h1>'.$position.'. Platz Gesamtwertung</h1><h2>'.$stufenwertung[$stufe].'. Platz der '.$Stufe[$stufe].'</h2><h3>Mit '.$punkte.' Punkten im Durchschnitt</h3><h3>"'.$name.'" vom Stamm '.$stamm.' ('.$kurz.')</h3>
-      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
+      $txt .="
+## ".$position.". Platz
+
+".$stufenwertung[$stufe].". Platz der ".$Stufe[$stufe].
+"Mit '.$punkte.' Punkten im Durchschnitt
+".$name." vom Stamm ".$stamm." (".$kurz.")
+
+---
+";
     }
   }
   echo '</ol>';
