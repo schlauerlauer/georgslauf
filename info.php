@@ -25,5 +25,5 @@ Unser Zeitplan für den 09.05.2020 sieht dann folgendermaßen aus:<br>
 Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
 Euer Stamm PRM<br>
 <br>
-
+<div align="center"><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></div>
 
