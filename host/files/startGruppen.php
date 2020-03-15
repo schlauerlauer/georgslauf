@@ -2,6 +2,7 @@
 include_once '../../../includes/connect_gl.php';
 require('../../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
+  echo "<h2>Startgruppen</h2>";
   if ($stmt = $mysqli->prepare("SELECT id, kurz, startGruppen FROM posten ORDER BY kurz")) {
     $stmt->execute();
     $stmt->store_result();

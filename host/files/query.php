@@ -3,6 +3,7 @@ include_once '../../../includes/connect_gl.php';
 include_once '../settings.php';
 require('../../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
+  echo "<h2>Eigene Query ausführen</h2>";
 
   $val = 0;
   $anzahl = 2;
