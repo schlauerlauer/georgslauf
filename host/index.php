@@ -22,6 +22,9 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 		<div data-role="content" id="home" style="max-width:1200px; margin-left:auto; margin-right:auto;">
 		</div>
 	</div>
+	<div data-role="footer" data-theme="b">
+	<img src="/res/logo.png" style="max-height:80px;"/>
+	</div>
 </body>
 </html>
 <?php else : ?>
