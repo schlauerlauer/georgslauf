@@ -58,7 +58,8 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 				$current++;
 			}
 		}
-		if ($current == 0) echo "Keine Auffälligkeiten."
+		if ($current == 0) 
+			echo "Keine Auffälligkeiten."
 	}
 	?>
 </ul>
