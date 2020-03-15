@@ -1,6 +1,5 @@
 <?php
 //Einstellungsdatei für den Georgslauf
-$Host = "PRM"; //Stamm der den Georgslauf austrägt! - Nur dieser Name hat Zugriff auf die Host & Einstellungsseite
 
 $Email = "gl20@stamm-prm.de";
 
