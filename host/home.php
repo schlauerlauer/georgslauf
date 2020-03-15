@@ -31,10 +31,11 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <h3>Kommunikation</h3>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="writeToPosten"><input data-icon="comment" data-theme="a" value="Posten Whatsapp" type="button"></div>
-  <div class="ui-block-a host" host="writeLoginToPosten"><input data-icon="action" data-theme="a" value="Posten Whatsapp Zugangsdaten" type="button"></div>
-  <div class="ui-block-b host" host="editLogins"><input data-icon="check" data-theme="a" value="Login Passwörter" type="button"></div>
-  <div class="ui-block-b host" host="generatePosten" ><input data-icon="mail" data-theme="a" value="Alle Posten (Mail)" type="button"></div>
-  <div class="ui-block-c host" host="generateGruppen"><input data-icon="mail" data-theme="a" value="Alle Gruppen (Mail)" type="button"></div>
+  <div class="ui-block-b host" host="posten"><input data-icon="phone" data-theme="a" value="Posten anrufen" type="button"></div>
+  <div class="ui-block-c host" host="writeLoginToPosten"><input data-icon="action" data-theme="a" value="Posten Whatsapp Zugangsdaten" type="button"></div>
+  <div class="ui-block-a host" host="editLogins"><input data-icon="check" data-theme="a" value="Login Passwörter" type="button"></div>
+  <div class="ui-block-b host" host="generatePosten" ><input data-icon="mail" data-theme="a" value="Alle Posten (Mailformat)" type="button"></div>
+  <div class="ui-block-c host" host="generateGruppen"><input data-icon="mail" data-theme="a" value="Alle Gruppen (Mailformat)" type="button"></div>
 </div>
 <h3>Siegerehrung</h3>
 <div class="ui-grid-b ui-responsive">
