@@ -30,7 +30,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
   <div class="ui-block-b host" host="generatePosten" ><input data-icon="mail" data-theme="a" value="Alle Posten (Mail)" type="button"></div>
   <div class="ui-block-c host" host="generateGruppen"><input data-icon="mail" data-theme="a" value="Alle Gruppen (Mail)" type="button"></div>
   <div class="ui-block-a host" host="writeLoginToPosten"><input data-icon="action" data-theme="a" value="Posten Whatsapp Zugangsdaten" type="button"></div>
-<div>
+</div>
 <h2>Siegerehrung</h2>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="postenTop"><input data-icon="star" data-theme="b" value="Postentabelle" type="button"></div>
