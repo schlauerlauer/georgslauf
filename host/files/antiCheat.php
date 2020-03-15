@@ -43,11 +43,11 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 		}
 	}
 	$current = 0;
+	$anzahl = 0;
 	if ($stmt = $mysqli->prepare("SELECT posten.kurz, AVG(points) FROM posten, punkte, gruppen WHERE posten.id = von AND gruppen.id = an AND gruppen.stamm != posten.stamm GROUP BY von ORDER BY posten.kurz ASC")) {
 		$stmt->execute();
 		$stmt->store_result();
 		$stmt->bind_result($kurz, $avg);
-		$anzahl = 0;
 		while ($stmt->fetch()) {
 			$durchschnitt[$current] = $durchschnitt[$current] - $avg;
 			if($durchschnitt[$current] > 0) {
@@ -56,11 +56,12 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 			} else if ($durchschnitt[$current] < 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte unter seinem Durchschnitt</h2></li>';
 				$anzahl++;
-      }
-      $current++;
+			}
+			$current++;
 		}
-		if ($anzahl == 0) 
+		if ($anzahl == 0) {
 			echo "Keine Auffälligkeiten."
+		}
 	}
 	?>
 </ul>
