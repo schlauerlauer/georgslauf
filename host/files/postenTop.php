@@ -4,7 +4,7 @@ require('../../session/session.php');
 include_once '../settings.php';
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
-  $position = null;
+  $position = 1;
   echo '<ol data-role="listview" data-count-theme="b" data-inset="true">';
   if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) as punkte FROM posten, punkte WHERE posten.id = an GROUP BY an ORDER BY durchschnitt DESC")) {
     $stmt->execute();
@@ -19,4 +19,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
     }
   }
   echo '</ol>';
+}
+else {
+    echo "Keine Berechtigung.";
 }
