@@ -21,6 +21,15 @@ Siegerehrung
 
 ----
 ";
+
+
+if ($stmt = $mysqli -> prepare("SELECT count(name) FROM gruppen")) {
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($position);
+    echo $position;
+}
+
   $position = 0;
   $stufenwertung = array(0,0,0,0);
   if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) durchschnitt
@@ -51,11 +60,16 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
 ----
 ";
     }
-    $txt .="
-## Herzlichen Glückwunsch Stamm $stamm!
+    $txt .='
+
+<!-- .slide: data-background="https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif" -->
+
+## Herzlichen Glückwunsch 
+
+# Stamm $stamm
 
 ---
-";
+';
   }
   fwrite($file, $txt);
   fclose($file);
