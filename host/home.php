@@ -12,17 +12,17 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <h2>Posten & Gruppen</h2>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="gruppenKurz"><input data-icon="bullets" data-theme="a" value="Gruppenkürzel" type="button"></div>
-  <div class="ui-block-a host" host="setPLocation"><input data-icon="location" data-theme="a" value="Posten Positionen" type="button"></div>
-  <div class="ui-block-a host" host="startGruppen"><input data-icon="edit" data-theme="a" value="Posten Startgruppen" type="button"></div>
+  <div class="ui-block-b host" host="setPLocation"><input data-icon="location" data-theme="a" value="Posten Positionen" type="button"></div>
+  <div class="ui-block-c host" host="startGruppen"><input data-icon="edit" data-theme="a" value="Posten Startgruppen" type="button"></div>
 </div>
 <h2>Punkte</h2>
 <div class="ui-grid-b ui-responsive">
-  <div class="ui-block-b host" host="gruppenPunkte"><input data-icon="arrow-l" data-theme="a" value="Gruppen Punkte eintragen" type="button"></div>
-  <div class="ui-block-c host" host="postenPunkte"><input data-icon="arrow-r" data-theme="a" value="Posten Punkte eintragen" type="button"></div>
+  <div class="ui-block-a host" host="gruppenPunkte"><input data-icon="arrow-l" data-theme="a" value="Gruppen Punkte eintragen" type="button"></div>
+  <div class="ui-block-b host" host="postenPunkte"><input data-icon="arrow-r" data-theme="a" value="Posten Punkte eintragen" type="button"></div>
   <div class="ui-block-c host" host="antiCheat"><input data-icon="eye" data-theme="a" value="Wächterwanze" type="button"></div>
-  <div class="ui-block-b host" host="fill0"><input data-icon="edit" data-theme="b" value="Fülle Punkte" type="button"></div>
-  <div class="ui-block-c host" host="deletePoints"><input data-icon="forbidden" data-theme="b" value="Lösche ALLE Punkte" type="button"></div>
-  <div class="ui-block-b host" host="query"><input data-icon="grid" data-theme="b" value="Query" type="button"></div>
+  <div class="ui-block-a host" host="fill0"><input data-icon="edit" data-theme="b" value="Punkte zurücksetzen" type="button"></div>
+  <div class="ui-block-b host" host="deletePoints"><input data-icon="forbidden" data-theme="b" value="Lösche ALLE Punkte" type="button"></div>
+  <div class="ui-block-c host" host="query"><input data-icon="grid" data-theme="b" value="Query" type="button"></div>
   <!--<div class="ui-block-a host" host="backupPunkte"><input data-icon="arrow-d" disabled data-theme="b" value="Punkte Backup erstellen" type="button"></div>-->
   <!--<div class="ui-block-c host" host="gruppenGröße"><input data-icon="plus" disabled data-theme="a" value="Gruppengröße" type="button"></div>-->
 </div>
@@ -40,7 +40,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
   <div class="ui-block-b host" host="gruppenTop"><input data-icon="star" data-theme="b" value="Gruppentabelle" type="button"></div>
   <div class="ui-block-c host" host="postenDurch"><input data-icon="plus" data-theme="b" value="Postendurchschnitt" type="button"></div>
   <div class="ui-block-a host" host="gruppenDurch"><input data-icon="plus" data-theme="b" value="Gruppendurchschnitt" type="button"></div>
-  <div class="ui-block-b host" host="presentation"><input data-icon="arrow-d" data-theme="b" color="red" value="Erstelle Präsentation" type="button"></div>
+  <div class="ui-block-b host" host="presentation"><input data-icon="arrow-d" data-theme="b" background="red" value="Erstelle Präsentation" type="button"></div>
 </div>
 <br>
 <br>
