@@ -23,12 +23,13 @@ Siegerehrung
 ";
 
 
-if ($stmt = $mysqli -> prepare("SELECT count(name) FROM gruppen")) {
-    $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($position);
-    echo $position;
-}
+  if ($stmt = $mysqli -> prepare("SELECT count(name) FROM gruppen")) {
+      $stmt->execute();
+      $stmt->store_result();
+      $stmt->bind_result($position);
+      while ($stmt->fetch()) {}
+      echo $position;
+  }
 
   $position = 0;
   $stufenwertung = array(0,0,0,0);
