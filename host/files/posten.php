@@ -1,7 +1,7 @@
 <?php
-include_once '../../includes/connect_gl.php';
-include_once 'settings.php';
-require('../session/session.php');
+include_once '../../../includes/connect_gl.php';
+include_once '../settings.php';
+require('../../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 ?>
 <h2>Alle Posten</h2>

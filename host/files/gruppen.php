@@ -1,7 +1,7 @@
 <?php
-include_once '../../includes/connect_gl.php';
-include_once 'settings.php';
-require('../session/session.php');
+include_once '../../../includes/connect_gl.php';
+include_once '../settings.php';
+require('../../session/session.php');
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 ?>
@@ -12,7 +12,6 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 		$totalS = 0;
 		$totalV = 0;
 		if ($stmt = $mysqli->prepare("SELECT id, name, stufe, stamm, size, veggies FROM gruppen ORDER BY stamm, stufe, name asc")) {
-			//$stmt->bind_param('s', $user);
 			$stmt->execute();
 			$stmt->store_result();
 			$stmt->bind_result($id, $name, $stufe, $stamm, $size, $veggies);
@@ -29,7 +28,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 	?>
 </ul>
 <br>
-<h3>Insgesamt <?php echo $gruppen; ?> Laufgruppen mit <?php echo $totalS; ?> Teilnehmern, davon <?php echo $totalV; ?> Vegetarier</h3>
+<h4>Insgesamt <?php echo $gruppen; ?> Laufgruppen mit <?php echo $totalS; ?> Teilnehmern, davon <?php echo $totalV; ?> Vegetarier</h4>
 <?php endif;
 //SELECT an, name, size, stufe, stamm, sum(points) FROM gruppen, punkte WHERE an = name_varchar GROUP BY an ORDER BY points DESC
 ?>
