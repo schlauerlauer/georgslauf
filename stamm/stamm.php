@@ -4,7 +4,7 @@ include_once 'pGet.php';
 include_once '../session/session.php';
 ?>
 <button class="ui-btn ui-btn-inline ui-icon-home ui-btn-icon-left" onclick="window.location.href='/'">Zurück zur Startseite</button>
-<?php if ($login_session == $Host) : ?>
+<?php if(isset($login_session) && $_SESSION['rolle'] >= 3) : ?>
 <button class="ui-btn ui-btn-b ui-btn-inline ui-icon-gear ui-btn-icon-left" onclick="window.location.href='/host'">Hostseite</button>
 <?php endif; ?>
 <?php if($_SESSION['rolle'] >= 2) : ?>
