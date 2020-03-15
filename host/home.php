@@ -49,4 +49,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <br>
 <div id="content">
 </div>
+<div data-role="footer" data-position="fixed" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
+		<h2><img src="/res/logo.png" style="max-height:30px;"/></h2>
+	</div>
 <?php endif; ?>
