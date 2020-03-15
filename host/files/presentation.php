@@ -59,8 +59,8 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
   }
   fwrite($file, $txt);
   fclose($file);
+  echo "Ok.";
 }
-echo "Ok.";
 else {
     echo "Keine Berechtigung.";
-  }
+}
