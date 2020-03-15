@@ -47,14 +47,18 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 		$stmt->execute();
 		$stmt->store_result();
 		$stmt->bind_result($kurz, $avg);
+		$anzahl = 0;
 		while ($stmt->fetch()) {
 			$durchschnitt[$current] = $durchschnitt[$current] - $avg;
 			if($durchschnitt[$current] > 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte über seinem Durchschnitt</h2></li>';
-			} else if ($durchschnitt[$current] < 0)
+				$current++;
+			} else if ($durchschnitt[$current] < 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte unter seinem Durchschnitt</h2></li>';
-			$current++;
+				$current++;
+			}
 		}
+		if ($current == 0) echo "Keine Auffälligkeiten."
 	}
 	?>
 </ul>
