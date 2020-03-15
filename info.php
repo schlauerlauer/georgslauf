@@ -27,4 +27,6 @@ Euer Stamm PRM<br>
 <br>
 <br>
 <div align="center"><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></div>
-
+<div data-role="footer" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
+		<h2><img src="/res/logo.png" style="max-height:150px;"/></h2>
+</div>
