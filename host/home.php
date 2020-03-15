@@ -24,12 +24,12 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
     <div class="ui-block-a host" host="startGruppen"><input data-icon="edit" data-theme="a" value="Posten Startgruppen" type="button"></div>
     <div class="ui-block-b host" host="postenDurch"><input data-icon="plus" data-theme="b" value="Postendurchschnitt" type="button"></div>
     <div class="ui-block-c host" host="gruppenDurch"><input data-icon="plus" data-theme="b" value="Gruppendurchschnitt" type="button"></div>
-    <div class="ui-block-b host" host="postenTop"><input data-icon="star" data-theme="b" value="Postentabelle" type="button"></div>
-    <div class="ui-block-c host" host="gruppenTop"><input data-icon="star" data-theme="b" value="Gruppentabelle" type="button"></div>
-    <div class="ui-block-a host" host="fill0"><input data-icon="edit" data-theme="b" value="Fülle Punkte" type="button"></div>
-    <div class="ui-block-b host" host="deletePoints"><input data-icon="forbidden" data-theme="b" value="Lösche ALLE Punkte" type="button"></div>
-    <div class="ui-block-c host" host="backupPunkte"><input data-icon="arrow-d" data-theme="b" value="Punkte Backup erstellen" type="button"></div>
-    <div class="ui-block-a host" host="query"><input data-icon="grid" data-theme="b" value="Query" type="button"></div>
+    <div class="ui-block-a host" host="postenTop"><input data-icon="star" data-theme="b" value="Postentabelle" type="button"></div>
+    <div class="ui-block-b host" host="gruppenTop"><input data-icon="star" data-theme="b" value="Gruppentabelle" type="button"></div>
+    <div class="ui-block-c host" host="fill0"><input data-icon="edit" data-theme="b" value="Fülle Punkte" type="button"></div>
+    <div class="ui-block-a host" host="deletePoints"><input data-icon="forbidden" data-theme="b" value="Lösche ALLE Punkte" type="button"></div>
+    <div class="ui-block-b host" host="backupPunkte"><input data-icon="arrow-d" data-theme="b" value="Punkte Backup erstellen" type="button"></div>
+    <div class="ui-block-c host" host="query"><input data-icon="grid" data-theme="b" value="Query" type="button"></div>
 </div>
 <br>
 <br>
