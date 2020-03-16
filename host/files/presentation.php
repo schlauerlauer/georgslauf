@@ -34,48 +34,7 @@ function startSlide() {
 
 ";
 }
-function gruppenSlide() {
-    $position = 0;
-    $md_g = "";
-    $stufenwertung = array(0,0,0,0);
-    if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe FROM gruppen, punkte WHERE gruppen.id = an GROUP BY an ORDER BY summe DESC, kurz ASC")) {
-      $stmt->execute();
-      $stmt->store_result();
-      $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
-      while ($stmt->fetch()) {
-        if($prev_punkte != $punkte) {
-          $position++;
-          if($prev_stufe == $stufe)  $stufenwertung[$stufe]--;
-        }
-        $stufenwertung[$stufe]++;
-        $prev_punkte = $punkte;
-        $prev_stufe = $stufe;
-        $md_g ="
-  ## $position. Platz
-  
-  ### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
-  
-  Mit **".round($punkte,2)."** Punkten
-  
-  ### *$name* - *$stamm*
-  
-  ----
-  ".$md_g;
-      }
-      $md_g .="
-  <!-- .slide: data-background=\"https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif\" -->
-  
-  ## Herzlichen Glückwunsch 
-  
-  # Stamm $stamm
-  
-  ";
-  $md_g = "## Gruppenwertung
-  
-  ----".$md_g;
-    }
-  return $md_g;
-}
+
 function postenSlide() {
   return "---
 
