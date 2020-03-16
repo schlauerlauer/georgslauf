@@ -7,7 +7,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   echo '<h2>Erstelle Siegertabelle Präsentation</h2>
 <button id="copy">Kopieren</button>
 <textarea id="input">';
-  echo startSlide().gruppenSlide();
+  echo startSlide();//.gruppenSlide();
   echo "</textarea>";
 }
 else {
@@ -55,7 +55,7 @@ function gruppenSlide() {
   
   ### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
   
-  Mit **".round($punkte,2)."** Punkten im Durchschnitt
+  Mit **".round($punkte,2)."** Punkten
   
   ### *$name* - *$stamm*
   
