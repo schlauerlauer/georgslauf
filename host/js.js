@@ -74,7 +74,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.copy', function() {
 		$.post("files/presentation.php", { }, function(data) {
-			var dummy = $('<textarea>').val(data).appendTo('body').select();
+			var dummy = $('<textarea>').val("test").appendTo('body').select();
 			document.execCommand('copy');
 			alertify.success(data);
 			alertify.success(dummy);
