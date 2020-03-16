@@ -79,7 +79,7 @@ $(document).ready(function() {
 			$('#content').focus();
 			$('#content').select();
 			document.execCommand('copy');
-			alertify.success("In Zwischenablage kopiert.")
+			alertify.success($('#content').html());
     	});
 	});
 
