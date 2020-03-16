@@ -74,11 +74,13 @@ $(document).ready(function() {
 
 	$(document).on('click', '.copy', function() {
 		$.post("files/presentation.php", { }, function(data) {
-			var dummy = $('<textarea>').val("test").appendTo('body').select();
-			document.execCommand('copy');
-			alertify.success(data);
-			alertify.success(dummy);
-			$(dummy).remove();
+			var dummy = document.createElement("textarea");
+			document.body.appendChild(dummy);
+			dummy.value = data;
+			dummy.select();
+			document.execCommand("copy");
+			document.body.removeChild(dummy);
+			alertify.success("Präsentation in Zwischenablage kopiert.");
     	});
 	});
 
