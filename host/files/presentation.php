@@ -26,6 +26,7 @@ slideOptions:
 ----
 ";
   $position = 0;
+  $prev_stufe = null;
   $stufenwertung = array(0,0,0,0);
   if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe FROM gruppen, punkte WHERE gruppen.id = an GROUP BY an ORDER BY summe DESC, kurz ASC")) {
     $stmt->execute();
