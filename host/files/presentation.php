@@ -56,6 +56,7 @@ Mit **".round($punkte,2)."** Punkten
 
 # Stamm $stamm
 
+## Zum Geogslaufsieg
 ";
   }
   $md2 = "---
@@ -84,13 +85,14 @@ Mit **".round($punkte,2)."** Punkten
 ".$md_p;
     }
     $md_p .="
-    <!-- .slide: data-background=\"gold\" -->
-    
-    ## Herzlichen Glückwunsch 
-    
-    # Stamm $stamm
-    
-    ";
+<!-- .slide: data-background=\"gold\" -->
+
+## Herzlichen Glückwunsch 
+
+# Stamm $stamm
+
+## Zum Postensieg
+";
   }
 
   //writeToFile($md.$md_g.$md2.$md_p);
