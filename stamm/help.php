@@ -33,7 +33,8 @@ if (isset($_POST['help'])) {
 			break;
 		case "Nummer":
 			echo "Bei jüngeren Laufgruppen mit Leiter,<br>
-			bitte die Handynummer des Leiters eintragen (Für die Whatsappgruppe).<br>
+			bitte die Handynummer des Leiters eintragen<br>
+			(Für die Whatsappgruppe).<br>
 			Hilfreich wäre mit Vorwahl (+49151...).";
 			break;
 		default:
