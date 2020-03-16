@@ -4,9 +4,9 @@ require('../../session/session.php');
 include_once '../settings.php';
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
-  echo "<h2>Erstelle Siegertabelle Präsentation</h2>";
-  echo '<button id="copy">Copy</button>';
-  echo '<textarea id="input">';
+  echo '<h2>Erstelle Siegertabelle Präsentation</h2>
+<button id="copy">Kopieren</button>
+<textarea id="input">';
   $file = fopen("../../../siegerehrung/siegerehrung.md","w") or die("Einlesen der MD Datei fehlgeschlagen.");
   $md = "---
 type: slide
@@ -70,7 +70,7 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
   }
   fwrite($file, $md.$md_g.$md2);
   fclose($file);
-  echo "Ok.";
+  echo $md.$md_g.$md2;
 }
 else {
     echo "Keine Berechtigung.";
