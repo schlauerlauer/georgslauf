@@ -11,7 +11,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <h3>Posten & Gruppen</h3>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="gruppen"><input data-icon="carat-r" data-theme="a" value="Alle Gruppen" type="button"></div>
-  <div class="ui-block-b host" host="posten"><input data-icon="carat-r" data-theme="a" value="Alle Posten" type="button"></div>
+  <div class="ui-block-b host" host="posten"><input data-icon="carat-r" data-theme="a" onclick="window.location='#content'" value="Alle Posten" type="button"></div>
   <div class="ui-block-c host" host="gruppenKurz"><input data-icon="bullets" data-theme="a" value="Gruppenkürzel" type="button"></div>
   <div class="ui-block-a host" host="setPLocation"><input data-icon="location" data-theme="a" value="Posten Positionen" type="button"></div>
   <div class="ui-block-b host" host="startGruppen"><input data-icon="edit" data-theme="a" value="Posten Startgruppen" type="button"></div>
