@@ -83,6 +83,14 @@ Mit **".round($punkte,2)."** Punkten
 ----
 ".$md_p;
     }
+    $md_p .="
+    <!-- .slide: data-background=\"gold\" -->
+    
+    ## Herzlichen Glückwunsch 
+    
+    # Stamm $stamm
+    
+    ";
   }
 
   //writeToFile($md.$md_g.$md2.$md_p);
