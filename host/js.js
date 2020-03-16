@@ -69,8 +69,8 @@ $(document).ready(function() {
 		$.post(site, { }, function(data) {
 			$('#content').html(data);
 			$('#content').enhanceWithin();
+			window.location="#content";
 		});
-		window.location="#content";
 	});
 
 	$(document).on('click', '#copy', function() {
