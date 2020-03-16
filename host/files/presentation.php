@@ -7,7 +7,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   echo '<h2>Erstelle Siegertabelle Präsentation</h2>
 <button id="copy">Kopieren</button>
 <textarea id="input">';
-  echo startSlide().gruppenSlide($mysqli);
+  echo startSlide().gruppenSlide();
   echo "</textarea>";
 }
 else {
@@ -43,7 +43,8 @@ function postenSlide() {
 ";
 }
 
-function gruppenSlide($mysqli) {
+function gruppenSlide() {
+  include_once '../../../includes/connect_gl.php';
   $position = 0;
   $md_g = "";
   $stufenwertung = array(0,0,0,0);
