@@ -31,7 +31,7 @@ if (isset($_POST['help'])) {
 			<br>
 			Wenn ihr nur einen Posten stellen könnt dann eher einen WöPo.";
 			break;
-		case: "Nummer":
+		case "Nummer":
 			echo "Bei jüngeren Laufgruppen mit Leiter,<br>
 			bitte die Handynummer des Leiters eintragen (Für die Whatsappgruppe).<br>
 			Hilfreich wäre mit Vorwahl (+49151...).";
