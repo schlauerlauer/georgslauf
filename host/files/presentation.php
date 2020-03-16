@@ -13,7 +13,7 @@ slideOptions:
   transition: slide
 ---
 
-<!-- .slide: data-background=\"https://dev.georgslauf.de/res/logo.png\" -->
+<!-- .slide: data-background-position=\"bottom\" data-background-size=\"283px\" data-background=\"https://dev.georgslauf.de/res/logo.png\" -->
 
 # Georgslauf 2020
 
