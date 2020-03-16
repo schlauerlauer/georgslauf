@@ -42,7 +42,7 @@ bei Fragen: <a href="mailto:gl20@stamm-prm.de">gl20@stamm-prm.de</a> oder <a hre
     <label for="g_veggie">Davon Vegetarier</label>
       <input data-clear-btn="false" id="g_veggie" value="0" type="number" min="0" max="15">
 	<label for="g_kontakt">Gruppenleiter Nummer&nbsp;&nbsp;
-	<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Nummer"></a>
+	<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Nummern"></a>
 	</label>
     <input id="g_kontakt" value="" type="text" maxlength="50">
 	<br>
