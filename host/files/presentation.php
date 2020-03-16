@@ -78,7 +78,6 @@ slideOptions:
     while ($stmt->fetch()) {
       if($prev_punkte != $punkte) $position++;
       $prev_punkte = $punkte;
-      if ($position == 1 ) $md_p = "<!-- .slide: data-background=\"gold\" -->".$md_p;
       $md_p = "
 # $position. Platz Postenwertung
 
@@ -88,6 +87,7 @@ slideOptions:
 
 ----
 ".$md_p;
+    if ($position == 2 ) $md_p = "<!-- .slide: data-background=\"silver\" -->".$md_p;
     }
     $md_p .="
 <!-- .slide: data-background=\"gold\" -->
