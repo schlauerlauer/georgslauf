@@ -42,7 +42,7 @@ Siegerehrung
 
 ### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
 
-Mit **".round($punkte,2)."** Punkten im Durchschnitt
+Mit **".round($punkte,2)."** Punkten
 
 ### *$name* - *$stamm*
 
@@ -57,19 +57,36 @@ Mit **".round($punkte,2)."** Punkten im Durchschnitt
 # Stamm $stamm
 
 ";
-
+  }
   $md2 = "---
 
 ## Postenbewertung
 
 ----
 ";
+  $md_p = "";
+  $position = 0;
+  if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) as summe FROM posten, punkte WHERE posten.id = an GROUP BY an ORDER BY summe DESC")) {
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
+    while ($stmt->fetch()) {
+      if($prev_punkte != $punkte) $position++;
+      $prev_punkte = $punkte;
+      $md_p = "
+## $position. Platz Postenwertung
 
+Mit **".round($punkte,2)."** Punkten
 
+### *$name* - *$stamm*
 
+----
+".$md_p;
+    }
   }
-  //writeToFile($md.$md_g.$md2);
-  echo $md.$md_g.$md2;
+
+  //writeToFile($md.$md_g.$md2.$md_p);
+  echo $md.$md_g.$md2.$md_p;
 }
 else {
     echo "Keine Berechtigung.";

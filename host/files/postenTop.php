@@ -15,8 +15,6 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
       if($prev_punkte != $punkte) $position++;
       echo '<li><a href="#">'.$position.'. Platz - '.$stufe.' '.$kurz.' - "'.$name.'" - '.$stamm.'<span class="ui-li-count">'.$punkte.'</span></a></li>';
       $prev_punkte = $punkte;
-      $txt .= '<h1>'.$position.'. Platz Postenwertung</h1><h3>Mit '.$punkte.' Punkten </h3><h3>"'.$name.'" vom Stamm '.$stamm.' ('.$stufe.' '.$kurz.')</h3>
-      <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>';
     }
   }
   echo '</ol>';
