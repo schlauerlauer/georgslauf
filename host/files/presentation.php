@@ -57,6 +57,7 @@ Mit **".round($punkte,2)."** Punkten
 # Stamm $stamm
 
 ## Zum Geogslaufsieg
+
 ";
   }
   $md2 = "---
