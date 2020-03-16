@@ -74,12 +74,11 @@ $(document).ready(function() {
 
 	$(document).on('click', '.copy', function() {
 		$.post("files/presentation.php", { }, function(data) {
-			var cb = document.getElementById("cb");
-			cb.value = data;
-			cb.style.display='block';
-			cb.select();
+			$('#content').html(data);
+			$('#content').enhanceWithin();
+			$('#content').select();
 			document.execCommand('copy');
-			cb.style.display='none';
+			alertify.success("In Zwischenablage kopiert.")
     	});
 	});
 
