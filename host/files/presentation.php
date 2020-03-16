@@ -32,10 +32,11 @@ function startSlide() {
   
   ---
 
-  ";
+";
 }
 function gruppenSlide() {
     $position = 0;
+    $md_g = "";
     $stufenwertung = array(0,0,0,0);
     if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe FROM gruppen, punkte WHERE gruppen.id = an GROUP BY an ORDER BY summe DESC, kurz ASC")) {
       $stmt->execute();
@@ -72,14 +73,14 @@ function gruppenSlide() {
   $md_g = "## Gruppenwertung
   
   ----".$md_g;
+    }
   return $md_g;
 }
 function postenSlide() {
-  $md2 = "---
+  return "---
 
 ## Postenbewertung
 
 ----
 ";
-  return $md2;
 }
