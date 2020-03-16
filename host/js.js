@@ -76,12 +76,17 @@ $(document).ready(function() {
 		$.post("files/presentation.php", { }, function(data) {
 			$('#content').html(data);
 			$('#content').enhanceWithin();
-			$('#content').focus();
-			$('#content').select();
-			document.execCommand('copy');
-			alertify.success($('#content').html());
+			copy();
     	});
 	});
+
+	function copy() {
+		$('#content').focus();
+		$('#content').select();
+		document.execCommand('copy');
+		alertify.success($('#content').html());
+	}
+
 
 	$(document).on('change', '.coor', function() {
 		var xy = $(this).attr('id');
