@@ -7,72 +7,82 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   echo '<h2>Erstelle Siegertabelle Präsentation</h2>
 <button id="copy">Kopieren</button>
 <textarea id="input">';
+  $md = startSlide();
+
+  writeToFile($md.$md_g.$md2);
+  echo $md.$md_g.$md2;
+  echo "</textarea>";
+}
+else {
+  echo "Keine Berechtigung.";
+}
+
+function writeToFile($write) {
   $file = fopen("../../../siegerehrung/siegerehrung.md","w") or die("Einlesen der MD Datei fehlgeschlagen.");
-  $md = "---
-type: slide
-slideOptions:
-  transition: slide
----
+  fwrite($file, $write);
+  fclose($file);
+}
+function startSlide() {
+  return "---
+  type: slide
+  slideOptions:
+    transition: slide
+  ---
+  
+  # Georgslauf 2020
+  
+  Siegerehrung
+  
+  ---
 
-# Georgslauf 2020
-
-Siegerehrung
-
----
-
-## Gruppenwertung
-
-----
-";
-  $position = 0;
-  $stufenwertung = array(0,0,0,0);
-  if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe FROM gruppen, punkte WHERE gruppen.id = an GROUP BY an ORDER BY summe DESC, kurz ASC")) {
-    $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
-    while ($stmt->fetch()) {
-      if($prev_punkte != $punkte) {
-        $position++;
-        if($prev_stufe == $stufe)  $stufenwertung[$stufe]--;
+  ";
+}
+function gruppenSlide() {
+    $position = 0;
+    $stufenwertung = array(0,0,0,0);
+    if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe FROM gruppen, punkte WHERE gruppen.id = an GROUP BY an ORDER BY summe DESC, kurz ASC")) {
+      $stmt->execute();
+      $stmt->store_result();
+      $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
+      while ($stmt->fetch()) {
+        if($prev_punkte != $punkte) {
+          $position++;
+          if($prev_stufe == $stufe)  $stufenwertung[$stufe]--;
+        }
+        $stufenwertung[$stufe]++;
+        $prev_punkte = $punkte;
+        $prev_stufe = $stufe;
+        $md_g ="
+  ## $position. Platz
+  
+  ### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
+  
+  Mit **".round($punkte,2)."** Punkten im Durchschnitt
+  
+  ### *$name* - *$stamm*
+  
+  ----
+  ".$md_g;
       }
-      $stufenwertung[$stufe]++;
-      $prev_punkte = $punkte;
-      $prev_stufe = $stufe;
-      $md_g ="
-## $position. Platz
-
-### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
-
-Mit **".round($punkte,2)."** Punkten im Durchschnitt
-
-### *$name* - *$stamm*
-
-----
-".$md_g;
-    }
-    $md_g .="
-<!-- .slide: data-background=\"https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif\" -->
-
-## Herzlichen Glückwunsch 
-
-# Stamm $stamm
-";
-
+      $md_g .="
+  <!-- .slide: data-background=\"https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif\" -->
+  
+  ## Herzlichen Glückwunsch 
+  
+  # Stamm $stamm
+  
+  ";
+  $md_g = "## Gruppenwertung
+  
+  ----".$md_g;
+  return $md_g;
+}
+function postenSlide() {
   $md2 = "---
 
 ## Postenbewertung
 
 ----
 ";
-
-
-
-  }
-  fwrite($file, $md.$md_g.$md2);
-  fclose($file);
-  echo $md.$md_g.$md2;
+  return $md2;
 }
-else {
-    echo "Keine Berechtigung.";
-}
-echo "</textarea>";
