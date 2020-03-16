@@ -4,7 +4,7 @@ require('../../session/session.php');
 include_once '../settings.php';
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
-  echo "<h2>Erstelle Siegertabelle Präsentation</h2>";
+  //echo "<h2>Erstelle Siegertabelle Präsentation</h2>";
   $file = fopen("../../../siegerehrung/siegerehrung.md","w") or die("Einlesen der MD Datei fehlgeschlagen.");
   $md = "---
 type: slide
