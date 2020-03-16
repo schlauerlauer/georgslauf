@@ -81,12 +81,10 @@ $(document).ready(function() {
 	});
 
 	function copy() {
-		$('#content').focus();
-		$('#content').select();
-		document.execCommand('copy');
+		$('#content').text().select();
+		document.execCommand("copy");
 		alertify.success($('#content').html());
 	}
-
 
 	$(document).on('change', '.coor', function() {
 		var xy = $(this).attr('id');
