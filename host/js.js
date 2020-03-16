@@ -76,8 +76,9 @@ $(document).ready(function() {
 		$.post("files/presentation.php", { }, function(data) {
 			var dummy = $('<textarea>').val(data).appendTo('body').select();
 			document.execCommand('copy');
+			alertify.success(data);
+			alertify.success(dummy);
 			$(dummy).remove();
-			alertify.success("Präsentation in Zwischenablage kopiert!");
     	});
 	});
 
