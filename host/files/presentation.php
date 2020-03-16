@@ -51,6 +51,15 @@ slideOptions:
 
 ----
 ".$md_g;
+    if ($position == 3) $md_g = "
+<!-- .slide: data-background=\"#DF7401\" -->
+".$md_g;
+    if ($position == 2) $md_g = "
+<!-- .slide: data-background=\"silver\" -->
+".$md_g;
+    if ($position == 1) $md_g = "
+<!-- .slide: data-background=\"gold\" -->
+".$md_g;
     }
     $md_g .="
 <!-- .slide: data-background=\"https://media.giphy.com/media/hqIaXesRGpP44/giphy.gif\" -->
