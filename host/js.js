@@ -72,19 +72,11 @@ $(document).ready(function() {
     	});
 	});
 
-	$(document).on('click', '.copy', function() {
-		$.post("files/presentation.php", { }, function(data) {
-			$('#content').html(data);
-			$('#content').enhanceWithin();
-			copy();
-    	});
-	});
-
-	function copy() {
-		$('#content').text().select();
+	$(document).on('click', '#copy', function() {
+		var copyText = document.querySelector("#input");
+		copyText.select();
 		document.execCommand("copy");
-		alertify.success($('#content').html());
-	}
+	});
 
 	$(document).on('change', '.coor', function() {
 		var xy = $(this).attr('id');

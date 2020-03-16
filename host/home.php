@@ -40,7 +40,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a host" host="postenTop"><input data-icon="star" data-theme="b" value="Posten Sieger" type="button"></div>
   <div class="ui-block-b host" host="gruppenTop"><input data-icon="star" data-theme="b" value="Gruppen Sieger" type="button"></div>
-  <div class="ui-block-c copy" host="presentation"><input data-icon="arrow-d" data-theme="b" value="Erstelle Präsentation" type="button"></div>
+  <div class="ui-block-c host" host="presentation"><input data-icon="arrow-d" data-theme="b" value="Erstelle Präsentation" type="button"></div>
   <div class="ui-block-a host" host="postenDurch"><input data-icon="plus" data-theme="b" value="Postendurchschnitt" type="button"></div>
   <div class="ui-block-b host" host="gruppenDurch"><input data-icon="plus" data-theme="b" value="Gruppendurchschnitt" type="button"></div>
 </div>
