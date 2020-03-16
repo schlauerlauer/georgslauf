@@ -72,6 +72,10 @@ $(document).ready(function() {
     });
 	});
 
+	$(document).on('click', '.copy', function() {
+		alert("jo");
+	});
+
 	$(document).on('change', '.coor', function() {
 		var xy = $(this).attr('id');
 		var posten = $(this).attr('kurz')
