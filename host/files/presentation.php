@@ -38,11 +38,11 @@ slideOptions:
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
       $md_g ="
-## $position. Platz
+# $position. Platz
 
-### $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
+## $stufenwertung[$stufe]. Platz der $Stufe[$stufe]
 
-Mit **".round($punkte,2)."** Punkten
+## Mit **".round($punkte,2)."** Punkten
 
 ### *$name* - *$stamm*
 
@@ -76,9 +76,9 @@ Mit **".round($punkte,2)."** Punkten
       if($prev_punkte != $punkte) $position++;
       $prev_punkte = $punkte;
       $md_p = "
-## $position. Platz Postenwertung
+# $position. Platz Postenwertung
 
-Mit **".round($punkte,2)."** Punkten
+## Mit **".round($punkte,2)."** Punkten
 
 ### *$name* - *$stamm*
 
