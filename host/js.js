@@ -69,18 +69,15 @@ $(document).ready(function() {
 		$.post(site, { }, function(data) {
 			$('#content').html(data);
 			$('#content').enhanceWithin();
-    });
+    	});
 	});
 
 	$(document).on('click', '.copy', function() {
 		$.post("files/presentation.php", { }, function(data) {
 			var dummy = $('<input>').val(data).appendTo('body').select();
-			if (document.execCommand('copy')) {
-				alertify.success("Präsentation in Zwischenablage kopiert!");
-			} else {
-				alertify.error("Etwas ist schiefgelaufen.");
-			}
-    });
+			document.execCommand('copy')
+			alertify.success("Präsentation in Zwischenablage kopiert!");
+    	});
 	});
 
 	$(document).on('change', '.coor', function() {
