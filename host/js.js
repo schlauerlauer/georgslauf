@@ -73,7 +73,14 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.copy', function() {
-		alert("jo");
+		$.post("files/presentation.php", { }, function(data) {
+			var dummy = $('<input>').val(data).appendTo('body').select();
+			if (document.execCommand('copy')) {
+				alertify.success("Präsentation in Zwischenablage kopiert!");
+			} else {
+				alertify.error("Etwas ist schiefgelaufen.");
+			}
+    });
 	});
 
 	$(document).on('change', '.coor', function() {
