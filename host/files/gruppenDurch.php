@@ -22,7 +22,7 @@ ORDER BY durchschnitt DESC, kurz ASC")) {
         if($prev_stufe == $stufe)  $stufenwertung[$stufe]--;
       }
       $stufenwertung[$stufe]++;
-      echo '<li><a href="#">'.$position.'. Platz ('.$stufenwertung[$stufe].'. der '.$Stufe[$stufe].') "'.$name.'" - '.$stamm.' ('.$kurz.')<span class="ui-li-count">'.$punkte.'</span></a></li>';
+      echo '<li><a href="#">'.$position.'. Platz ('.$stufenwertung[$stufe].'. der '.$Stufe[$stufe].') "'.$name.'" - '.$stamm.' ('.$kurz.')<span class="ui-li-count">'.round($punkte,3).'</span></a></li>';
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
     }
