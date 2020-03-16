@@ -43,9 +43,10 @@
 			var gname = $("#g_name").val();
 			var gval = $("#g_anzahl").val();
 			var gveg = $("#g_veggie").val();
+			var gnum = $("#g_kontakt").val();
 			var stid = $("#g_form input[type='radio']:checked").val();
 			if (gname != "" && gval != "" && stid != null) {
-				$.post('insert.php', { gorp: gorp, gname: gname, gval: gval, stid: stid, gveg: gveg }, function(data) {
+				$.post('insert.php', { gorp: gorp, gname: gname, gval: gval, stid: stid, gveg: gveg, gnum: gnum }, function(data) {
 					if(data == 1) alertify.success("Gruppe " + gname + " angemeldet");
 					else alertify.error("Etwas ist schiefgelaufen");
 				});

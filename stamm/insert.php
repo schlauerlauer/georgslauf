@@ -8,8 +8,8 @@ require './pGet.php';
 if($Anmeldung == true) {
 if (isset ($_POST['gorp'])) {
 	if ($_POST['gorp'] == "g_save") {
-		if ($stmt = $mysqli->prepare("INSERT INTO `gruppen` (`name`, `size`, `stufe`, `stamm`, `veggies`) VALUES (?,?,?,?,?)")) {
-			$stmt->bind_param('sssss', $_POST['gname'], $_POST['gval'], $_POST['stid'], $login_session, $_POST['gveg']);
+		if ($stmt = $mysqli->prepare("INSERT INTO `gruppen` (`name`, `size`, `stufe`, `stamm`, `veggies`, `kontakt`) VALUES (?,?,?,?,?,?)")) {
+			$stmt->bind_param('ssssss', $_POST['gname'], $_POST['gval'], $_POST['stid'], $login_session, $_POST['gveg'], $_POST['gnum']);
 			$stmt->execute();
 			echo 1;
 			sendmail('Gruppenanmeldung von '.$login_session.' ('.$Stufe[$_POST['stid']].')','Neue Gruppe angemeldet von Stamm '.$login_session.' mit '.$_POST['gval'].' Kindern');
