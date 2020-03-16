@@ -15,11 +15,11 @@ slideOptions:
 
 # Georgslauf 2020
 
-Siegerehrung
+## Siegerehrung
 
 ---
 
-## Gruppenwertung
+# Gruppenwertung
 
 ----
 ";
@@ -62,7 +62,7 @@ Mit **".round($punkte,2)."** Punkten
   }
   $md2 = "---
 
-## Postenbewertung
+# Postenbewertung
 
 ----
 ";
