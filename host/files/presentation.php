@@ -13,6 +13,8 @@ slideOptions:
   transition: slide
 ---
 
+<!-- .slide: data-background=\"https://dev.georgslauf.de/res/logo.png\" -->
+
 # Georgslauf 2020
 
 ## Siegerehrung
