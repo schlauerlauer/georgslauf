@@ -7,10 +7,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   echo '<h2>Erstelle Siegertabelle Präsentation</h2>
 <button id="copy">Kopieren</button>
 <textarea id="input">';
-  $md = startSlide();
-
-  writeToFile($md.$md_g.$md2);
-  echo $md.$md_g.$md2;
+  echo startSlide().gruppenSlide();
   echo "</textarea>";
 }
 else {
