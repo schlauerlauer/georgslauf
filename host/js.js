@@ -94,6 +94,7 @@ $(document).ready(function() {
 			alertify.warning("AAAaahAAMFGAAaOMGah!!");
 			alertify.error("AAAaaahAah!!");
 			alertify.warning("AAAaaah1AaOHNOah!!");
+			alertify.error("<404>");
 			alertify.error("AAAahAAADAFUQAah!!");
 			alertify.warning("AAAaa1ahAaah!!");
 			alertify.success("Ok, es ist nichts passiert. ;)");
