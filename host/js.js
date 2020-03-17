@@ -110,6 +110,10 @@ $(document).ready(function() {
 				function() {
 					alertify.success("Ok, es ist nichts passiert. ;)")
 				}, 4000);
+				setTimeout(
+					function() {
+						alertify.success("lol.")
+					}, 8000);
 		});
 	});
 
