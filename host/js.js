@@ -79,6 +79,13 @@ $(document).ready(function() {
 		document.execCommand("copy");
 	});
 
+	$(document).on('click', '.confirm', function() {
+		var site = "files/" + $(this).attr('host') + ".php";
+		alertify.confirm("sichi? " + site, function() {
+			alertify.success("ok");
+		});
+	});
+
 	$(document).on('change', '.coor', function() {
 		var xy = $(this).attr('id');
 		var posten = $(this).attr('kurz')
