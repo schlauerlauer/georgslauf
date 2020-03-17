@@ -108,12 +108,8 @@ $(document).ready(function() {
 				}, 1500);
 			setTimeout(
 				function() {
-					alertify.success("Ok, es ist nichts passiert. ;)")
+					alertify.success("nichts passiert.");
 				}, 4000);
-			setTimeout(
-				function() {
-					alertify.success("lol.")
-				}, 2000);
 		});
 	});
 
