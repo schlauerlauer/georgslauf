@@ -96,11 +96,7 @@ $(document).ready(function() {
 			alertify.warning("AAAaaah1Aaah!!");
 			alertify.error("AAAahAAAAah!!");
 			alertify.warning("AAAaa1ahAaah!!");
-			alertify.success(".");
-			alertify.success("..");
-			alertify.success("...");
-			alertify.success("Nichts passiert.");
-			alertify.success(";)");
+			alertify.success("Ok, es ist nichts passiert. ;)");
 		});
 	});
 
