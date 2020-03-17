@@ -113,7 +113,7 @@ $(document).ready(function() {
 			setTimeout(
 				function() {
 					alertify.success("lol.")
-				}, 4000);
+				}, 2000);
 		});
 	});
 
