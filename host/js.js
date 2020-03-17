@@ -86,7 +86,7 @@ $(document).ready(function() {
 				alertify.error(data)
 			});
 		}, function() {
-			alertify.success("Abgrebrochen");
+			alertify.success("Puh! Nichts passiert.");
 		});
 	});
 
