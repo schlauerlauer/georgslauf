@@ -81,7 +81,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.confirm', function() {
 		var site = "files/" + $(this).attr('host') + ".php";
-		alertify.confirm("Wirklich " + this.html(), function() {
+		alertify.confirm("Wirklich " + $(this).html(), function() {
 			$.post(site, { }, function(data) {
 				$('#content').html(data);
 				$('#content').enhanceWithin();
