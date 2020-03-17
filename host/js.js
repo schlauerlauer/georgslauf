@@ -83,9 +83,7 @@ $(document).ready(function() {
 		var site = "files/" + $(this).attr('host') + ".php";
 		alertify.confirm("Bitte bestätigen", "Wirklich " + $(this).text(), function() {
 			$.post(site, { }, function(data) {
-				$('#content').html(data);
-				$('#content').enhanceWithin();
-				window.location="#content";
+				alertify.error(data)
 			});
 		}, function() {
 			alertify.success("Abgrebrochen");
