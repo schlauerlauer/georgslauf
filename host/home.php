@@ -23,7 +23,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
   <div class="ui-block-b host" host="postenPunkte"><input data-icon="arrow-r" data-theme="a" value="Posten Punkte eintragen" type="button"></div>
   <div class="ui-block-c host" host="antiCheat"><input data-icon="eye" data-theme="a" value="Wächterwanze" type="button"></div>
   <div class="ui-block-a host" host="query"><input data-icon="grid" data-theme="b" value="Query" type="button"></div>
-  <div class="ui-block-b confirm" host="fill0"><input data-icon="edit" data-theme="b" style="background:red;" value="Alle Punkte zurücksetzen" type="button"></div>
+  <div class="ui-block-b confirm" host="fill0"><input data-icon="edit" data-theme="b" style="background:red;" value="Punktetabelle mit Nullen füllen" type="button"></div>
   <div class="ui-block-c confirm" host="deletePoints"><input data-icon="forbidden" style="background:red;" data-theme="b" value="Alle Punkte löschen" type="button"></div>
   <!--<div class="ui-block-a host" host="backupPunkte"><input data-icon="arrow-d" disabled data-theme="b" value="Punkte Backup erstellen" type="button"></div>-->
   <!--<div class="ui-block-c host" host="gruppenGröße"><input data-icon="plus" disabled data-theme="a" value="Gruppengröße" type="button"></div>-->
