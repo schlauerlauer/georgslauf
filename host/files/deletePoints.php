@@ -6,7 +6,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
 
   if ($stmt = $mysqli->prepare("DELETE FROM punkte")) {
     $stmt->execute();
-    echo "Alle Bewertungen gelöscht.";
+    echo "Alle Bewertungen gelöscht";
   }
   else echo "Etwas ist schiefgelaufen";
 
