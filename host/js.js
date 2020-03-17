@@ -87,14 +87,14 @@ $(document).ready(function() {
 			});
 		}, function() {
 			alertify.error("AAAaaahA!aah!!");
-			alertify.error("AAAaaahAAAAaah!!");
-			alertify.warning("AAAAA1!1!Aah!!");
-			alertify.error("AAAaahAAAah!!");
+			alertify.error("AAAaaFU*KahWHATAAAAaah!!");
+			alertify.warning("AAOHNOOOAAA1!1!Aah!!");
+			alertify.error("AAAaahSH*TAAAah!!");
 			alertify.error("AAAaaa!h!AAAAAaah!!");
-			alertify.warning("AAAaahAAAAaah!!");
+			alertify.warning("AAAaahAAMFGAAaOMGah!!");
 			alertify.error("AAAaaahAah!!");
-			alertify.warning("AAAaaah1Aaah!!");
-			alertify.error("AAAahAAAAah!!");
+			alertify.warning("AAAaaah1AaOHNOah!!");
+			alertify.error("AAAahAAADAFUQAah!!");
 			alertify.warning("AAAaa1ahAaah!!");
 			alertify.success("Ok, es ist nichts passiert. ;)");
 		});
