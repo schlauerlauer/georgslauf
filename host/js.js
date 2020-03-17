@@ -86,7 +86,21 @@ $(document).ready(function() {
 				alertify.error(data)
 			});
 		}, function() {
-			alertify.success("Puh! Nichts passiert.");
+			alertify.error("AAAaaahA!aah!!");
+			alertify.error("AAAaaahAAAAaah!!");
+			alertify.warning("AAAAA1!1!Aah!!");
+			alertify.error("AAAaahAAAah!!");
+			alertify.error("AAAaaa!h!AAAAAaah!!");
+			alertify.warning("AAAaahAAAAaah!!");
+			alertify.error("AAAaaahAah!!");
+			alertify.warning("AAAaaah1Aaah!!");
+			alertify.error("AAAahAAAAah!!");
+			alertify.warning("AAAaa1ahAaah!!");
+			alertify.success(".");
+			alertify.success("..");
+			alertify.success("...");
+			alertify.success("Nichts passiert.");
+			alertify.success(";)");
 		});
 	});
 
