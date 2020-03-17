@@ -98,8 +98,9 @@ $(document).ready(function() {
 			alertify.error("AAAahAAADAFUQAah!!");
 			alertify.warning("AAAaa1ahAaah!!");
 			setTimeout(
-				alertify.success("Ok, es ist nichts passiert. ;)")
-			, 2000);
+				function() {
+					alertify.success("Ok, es ist nichts passiert. ;)")
+				}, 2000);
 		});
 	});
 
