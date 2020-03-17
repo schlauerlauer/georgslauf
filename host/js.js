@@ -87,6 +87,8 @@ $(document).ready(function() {
 				$('#content').enhanceWithin();
 				window.location="#content";
 			});
+		}, function() {
+			alertify.success("Abgrebrochen");
 		});
 	});
 
