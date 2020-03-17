@@ -81,8 +81,12 @@ $(document).ready(function() {
 
 	$(document).on('click', '.confirm', function() {
 		var site = "files/" + $(this).attr('host') + ".php";
-		alertify.confirm("sichi? " + site, function() {
-			alertify.success("ok");
+		alertify.confirm("Wirklich " + this.html(), function() {
+			$.post(site, { }, function(data) {
+				$('#content').html(data);
+				$('#content').enhanceWithin();
+				window.location="#content";
+			});
 		});
 	});
 
