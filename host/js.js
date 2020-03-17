@@ -97,7 +97,9 @@ $(document).ready(function() {
 			alertify.error("<404>");
 			alertify.error("AAAahAAADAFUQAah!!");
 			alertify.warning("AAAaa1ahAaah!!");
-			alertify.success("Ok, es ist nichts passiert. ;)");
+			setTimeout(
+				alertify.success("Ok, es ist nichts passiert. ;)")
+			, 2000);
 		});
 	});
 
