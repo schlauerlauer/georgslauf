@@ -1,6 +1,6 @@
 <?php
 require('../session/session.php');
-include_once '../../includes/connect_gl.php';
+include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/includes/connect_gl.php';
 include_once '../host/settings.php';
 if(isset($login_session) && $_SESSION['rolle'] == 1) {
 if($Punkte[0] == true) {

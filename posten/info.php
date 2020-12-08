@@ -1,6 +1,6 @@
 <?php
 require('../session/session.php');
-include_once '../../includes/connect_gl.php';
+include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/includes/connect_gl.php';
 include_once '../host/settings.php';
 ?>
 <h3 class="ui-bar ui-bar-a ui-corner-all" align="center">Posteninfo</h3>
