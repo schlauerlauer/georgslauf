@@ -1,14 +1,13 @@
 <br>
-<h1> GEORGSLAUF 2020 Isar Kunterbunt</h1>
-<h2>im schönen Schwabing bei PRM am 09.05.2020</h2>
+<h1> GEORGSLAUF 2020+1 Isar Kunterbunt</h1>
+<h2>Organisiert von PRM im schönen München am 11. Juli 2021</h2>
 <h3>Hallo und herzlich Willkommen, München-Isar!</h3>
-<p>Wir freuen uns mit Euch auf den 41. Georgslauf 2020!<br>
-Am <strong>Samstag, 09.05.2020</strong> begrüßt Euch PRM im schönen Schwabing!<br>
-Los geht es <strong>pünktlich um 08 Uhr</strong> am Kaiserplatz 1.<br>
+<p>Wir freuen uns mit Euch auf den 41. Georgslauf 2020+1!<br>
+Am <strong>Sonntag, 11.07.2021</strong> begrüßt Euch PRM bei euch zuhause!<br>
+Los geht es <strong>pünktlich um 08 Uhr</strong> bei gutem Indieze bei euch im Pfaarsaal.<br>
+
 <br>
-Gruppenanmeldung findet im Pfarrsaal statt<br>
-<br>
-Unser Zeitplan für den 09.05.2020 sieht dann folgendermaßen aus:<br>
+Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
 <ul>
   <li>08:00 Uhr: Treffpunkt & Check-In im Pfarrsaal</li>
   <li>09:00 Uhr: Gottesdienst in St. Ursula</li>
@@ -21,7 +20,7 @@ Unser Zeitplan für den 09.05.2020 sieht dann folgendermaßen aus:<br>
   <li>circa 20:30 Uhr: Ende</li> 
 </ul>
 <br>
-Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
+Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter und gutes Infektionsgeschehen!  <br>
 Euer Stamm PRM<br>
 <h1 id="clock"></h1>
 <br>
