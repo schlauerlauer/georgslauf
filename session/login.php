@@ -1,10 +1,7 @@
 ﻿<?php
 include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/includes/connect_gl.php';
-include_once '../settings.php';
-require('../../session/session.php');
 
 
-session_start();
 $row = '';
 if (isset($_POST['un'])) {
 	if (empty($_POST['un']) || empty($_POST['pw'])) {
