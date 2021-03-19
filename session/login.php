@@ -1,5 +1,5 @@
 ﻿<?php
-include_once '../../includes/connect_gl.php';
+include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/includes/connect_gl.php';
 
 session_start();
 $row = '';
