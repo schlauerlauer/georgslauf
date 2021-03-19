@@ -8,39 +8,16 @@ Los geht es <strong>pünktlich um 09 Uhr</strong> bei guter Inzidenz bei euch im
 
 <br>
 Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:hidden;border-width:1px;overflow:hidden;word-break:normal;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
-.tg .tg-q64d{background-color:#ffffff;color:#333333}
-</style>
-<table class="tg">
-  <tr>
-    <th class="tg-031e">08:00 Uhr<br></th>
-    <th class="tg-031e">Treffen in den Stämmen<br></th>
-  </tr>
-  <tr>
-    <td class="tg-031e">09:00 Uhr<br></td>
-    <td class="tg-031e">Spiritueller Auftackt<br></td>
-  </tr>
-  <tr>
-    <td class="tg-031e">10:30 Uhr<br></td>
-    <td class="tg-031e">Startschuss</td>
-  </tr>
-  <tr>
-    <td class="tg-031e">12:30 Uhr bis 13:30 Uhr<br></td>
-    <td class="tg-031e">Mittagspause</td>
-  </tr>
-  <tr>
-    <td class="tg-031e">16:30 Uhr<br></td>
-    <td class="tg-031e"><br>Postenschluss</td>
-  </tr>
-  <tr>
-    <td class="tg-031e">18:00 Uhr<br></td>
-    <td class="tg-q64d">Siegerehrung</td>
-  </tr>
-</table>
-
+<ul>
+  <li>08:00 Uhr: Treffen in euren Stämmen</li>
+  <li>09:00 Uhr: Spiritueller Auftackt</li>
+  <li>10:30 Uhr: Startschuss</li>
+  <li>12:30 bis 13:00 Uhr: Mittagspause</li>
+  <li>16:30 Uhr: Ende des Laufs</li>
+  <li>18:00 Uhr: Siegerehrung</li>
+  <li>circa 20:30 Uhr: Ende</li> 
+  <li>circa 21:30 Uhr: Party</li> 
+</ul>
 <br>
 Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter und gutes Infektionsgeschehen!  <br>
 Euer Stamm PRM<br>
