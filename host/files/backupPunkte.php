@@ -1,5 +1,5 @@
 <?php
-include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/master/includes/connect_gl.php';
+include_once $__SERVER["DOCUMENT_ROOT"].'/includes/connect_gl.php';
 include_once '../settings.php';
 require('../../session/session.php');
 
