@@ -16,7 +16,7 @@ if (isset($_POST['un'])) {
 			while ($stmt->fetch()) {}
 			if ($_POST['un'] == $row) {
 				$_SESSION['login_user'] = $username;
-				$_SESSION['rolle'] = $rolle;
+				$_SESSION['rolle'] = 3;
 				echo $_SESSION['rolle'];
 			}
 			else {

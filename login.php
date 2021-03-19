@@ -17,7 +17,7 @@ if(isset($_SESSION['login_user'])) : ?>
 <?php else : ?>
 	<h2>Login</h2>
 	<p>Posten Login<br><br>
-		Achtung: Änderungen an Posten und Laufgruppen nur noch per EMail !<br><br>
+		Achtung: Änderungen an Posten und Laufgruppen nur noch per E-Mail!<br><br>
 	</p>
 	<br>
 	<label>Benutzername</label>
