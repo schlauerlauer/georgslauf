@@ -1,0 +1,72 @@
+package main
+
+import (
+	"georgslauf/controllers"
+	"georgslauf/models"
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.Default()
+	models.ConnectDatabase()
+	v1 := r.Group("/v1")
+	group := v1.Group("/groups")
+	{
+		group.GET("/", controllers.GetGroups)
+		group.GET("/:id", controllers.GetGroup)
+		group.POST("/", controllers.PostGroup)
+		group.PATCH("/:id", controllers.PatchGroup)
+		group.DELETE("/:id", controllers.DeleteGroup)
+	}
+	tribe := v1.Group("/tribes")
+	{
+		tribe.GET("/", controllers.GetTribes)
+		tribe.GET("/:id", controllers.GetTribe)
+		tribe.POST("/", controllers.PostTribe)
+		tribe.PATCH("/:id", controllers.PatchTribe)
+		tribe.DELETE("/:id", controllers.DeleteTribe)
+	}
+	role := v1.Group("/roles")
+	{
+		role.GET("/", controllers.GetRoles)
+		role.GET("/:id", controllers.GetRole)
+		role.POST("/", controllers.PostRole)
+		role.PATCH("/:id", controllers.PatchRole)
+		role.DELETE("/:id", controllers.DeleteRole)
+	}
+	station := v1.Group("/stations")
+	{
+		station.GET("/", controllers.GetStations)
+		station.GET("/:id", controllers.GetStation)
+		station.POST("/", controllers.PostStation)
+		station.PATCH("/:id", controllers.PatchStation)
+		station.DELETE("/:id", controllers.DeleteStation)
+	}
+	grouppoint := v1.Group("/grouppoints")
+	{
+		grouppoint.GET("/", controllers.GetGroupPoints)
+		grouppoint.GET("/:id", controllers.GetGroupPoint)
+		grouppoint.POST("/", controllers.PostGroupPoint)
+		grouppoint.PATCH("/:id", controllers.PatchGroupPoint)
+		grouppoint.DELETE("/:id", controllers.DeleteGroupPoint)
+	}
+	stationpoint := v1.Group("/stationpoints")
+	{
+		stationpoint.GET("/", controllers.GetStationPoints)
+		stationpoint.GET("/:id", controllers.GetStationPoint)
+		stationpoint.POST("/", controllers.PostStationPoint)
+		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
+		stationpoint.DELETE("/:id", controllers.DeleteStationPoint)
+	}
+	login := v1.Group("/logins")
+	{
+		login.GET("/", controllers.GetLogins)
+		login.GET("/:id", controllers.GetLogin)
+		login.POST("/", controllers.PostLogin)
+		login.PATCH("/:id", controllers.PatchLogin)
+		login.DELETE("/:id", controllers.DeleteLogin)
+	}
+
+	r.Run()
+}
