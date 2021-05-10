@@ -20,7 +20,7 @@ type UpdateLoginInput struct {
 func GetLogins(c *gin.Context) {
 	var logins []models.Login
 	models.DB.Find(&logins)
-	c.JSON(http.StatusOK, gin.H{"data": logins})
+	c.JSON(http.StatusOK, logins)
 }
 
 func GetLogin(c *gin.Context) {
@@ -30,7 +30,7 @@ func GetLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": login})
+	c.JSON(http.StatusOK, login)
 }
 
 func PostLogin(c *gin.Context) {
@@ -43,7 +43,7 @@ func PostLogin(c *gin.Context) {
 	// Create login
 	login := models.Login{Name: input.Name, Password: input.Password}
 	models.DB.Create(&login)
-	c.JSON(http.StatusOK, gin.H{"data": login})
+	c.JSON(http.StatusOK, login)
 }
 
 func PatchLogin(c *gin.Context) {
@@ -60,7 +60,7 @@ func PatchLogin(c *gin.Context) {
 		return
 	}
 	models.DB.Model(&login).Updates(input)
-	c.JSON(http.StatusOK, gin.H{"data": login})
+	c.JSON(http.StatusOK, login)
 }
 
 func DeleteLogin(c *gin.Context) {
@@ -71,5 +71,5 @@ func DeleteLogin(c *gin.Context) {
 		return
 	}
 	models.DB.Delete(&login)
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, true)
 }

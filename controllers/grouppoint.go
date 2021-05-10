@@ -19,7 +19,7 @@ type UpdateGroupPointInput struct {
 func GetGroupPoints(c *gin.Context) {
 	var grouppoints []models.GroupPoint
 	models.DB.Find(&grouppoints)
-	c.JSON(http.StatusOK, gin.H{"data": grouppoints})
+	c.JSON(http.StatusOK, grouppoints)
 }
 
 func GetGroupPoint(c *gin.Context) {
@@ -29,7 +29,7 @@ func GetGroupPoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": grouppoint})
+	c.JSON(http.StatusOK, grouppoint)
 }
 
 func PostGroupPoint(c *gin.Context) {
@@ -42,7 +42,7 @@ func PostGroupPoint(c *gin.Context) {
 	// Create grouppoint
 	grouppoint := models.GroupPoint{FromID: input.FromID, ToID: input.ToID, Value: input.Value}
 	models.DB.Create(&grouppoint)
-	c.JSON(http.StatusOK, gin.H{"data": grouppoint})
+	c.JSON(http.StatusOK, grouppoint)
 }
 
 func PatchGroupPoint(c *gin.Context) {
@@ -59,7 +59,7 @@ func PatchGroupPoint(c *gin.Context) {
 		return
 	}
 	models.DB.Model(&grouppoint).Updates(input)
-	c.JSON(http.StatusOK, gin.H{"data": grouppoint})
+	c.JSON(http.StatusOK, grouppoint)
 }
 
 func DeleteGroupPoint(c *gin.Context) {
@@ -70,5 +70,5 @@ func DeleteGroupPoint(c *gin.Context) {
 		return
 	}
 	models.DB.Delete(&grouppoint)
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, true)
 }

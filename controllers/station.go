@@ -19,7 +19,7 @@ type UpdateStationInput struct {
 func GetStations(c *gin.Context) {
 	var stations []models.Station
 	models.DB.Find(&stations)
-	c.JSON(http.StatusOK, gin.H{"data": stations})
+	c.JSON(http.StatusOK, stations)
 }
 
 func GetStation(c *gin.Context) {
@@ -29,7 +29,7 @@ func GetStation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": station})
+	c.JSON(http.StatusOK, station)
 }
 
 func PostStation(c *gin.Context) {
@@ -42,7 +42,7 @@ func PostStation(c *gin.Context) {
 	// Create station
 	station := models.Station{Name: input.Name, Short: input.Short}
 	models.DB.Create(&station)
-	c.JSON(http.StatusOK, gin.H{"data": station})
+	c.JSON(http.StatusOK, station)
 }
 
 func PatchStation(c *gin.Context) {
@@ -59,7 +59,7 @@ func PatchStation(c *gin.Context) {
 		return
 	}
 	models.DB.Model(&station).Updates(input)
-	c.JSON(http.StatusOK, gin.H{"data": station})
+	c.JSON(http.StatusOK, station)
 }
 
 func DeleteStation(c *gin.Context) {
@@ -70,5 +70,5 @@ func DeleteStation(c *gin.Context) {
 		return
 	}
 	models.DB.Delete(&station)
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, true)
 }

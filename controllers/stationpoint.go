@@ -19,7 +19,7 @@ type UpdateStationPointInput struct {
 func GetStationPoints(c *gin.Context) {
 	var stationpoints []models.StationPoint
 	models.DB.Find(&stationpoints)
-	c.JSON(http.StatusOK, gin.H{"data": stationpoints})
+	c.JSON(http.StatusOK, stationpoints)
 }
 
 func GetStationPoint(c *gin.Context) {
@@ -29,7 +29,7 @@ func GetStationPoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": stationpoint})
+	c.JSON(http.StatusOK, stationpoint)
 }
 
 func PostStationPoint(c *gin.Context) {
@@ -42,7 +42,7 @@ func PostStationPoint(c *gin.Context) {
 	// Create stationpoint
 	stationpoint := models.StationPoint{FromID: input.FromID, ToID: input.ToID, Value: input.Value}
 	models.DB.Create(&stationpoint)
-	c.JSON(http.StatusOK, gin.H{"data": stationpoint})
+	c.JSON(http.StatusOK, stationpoint)
 }
 
 func PatchStationPoint(c *gin.Context) {
@@ -59,7 +59,7 @@ func PatchStationPoint(c *gin.Context) {
 		return
 	}
 	models.DB.Model(&stationpoint).Updates(input)
-	c.JSON(http.StatusOK, gin.H{"data": stationpoint})
+	c.JSON(http.StatusOK, stationpoint)
 }
 
 func DeleteStationPoint(c *gin.Context) {
@@ -70,5 +70,5 @@ func DeleteStationPoint(c *gin.Context) {
 		return
 	}
 	models.DB.Delete(&stationpoint)
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, true)
 }

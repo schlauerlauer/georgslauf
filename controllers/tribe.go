@@ -17,7 +17,9 @@ type UpdateTribeInput struct {
 func GetTribes(c *gin.Context) {
 	var tribes []models.Tribe
 	models.DB.Find(&tribes)
-	c.JSON(http.StatusOK, gin.H{"data": tribes})
+	c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+	c.Header("X-Total-Count", "10") //FIXME
+	c.JSON(http.StatusOK, tribes)
 }
 
 func GetTribe(c *gin.Context) {
@@ -27,7 +29,7 @@ func GetTribe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": tribe})
+	c.JSON(http.StatusOK, tribe)
 }
 
 func PostTribe(c *gin.Context) {
@@ -40,7 +42,7 @@ func PostTribe(c *gin.Context) {
 	// Create tribe
 	tribe := models.Tribe{Name: input.Name}
 	models.DB.Create(&tribe)
-	c.JSON(http.StatusOK, gin.H{"data": tribe})
+	c.JSON(http.StatusOK, tribe)
 }
 
 func PatchTribe(c *gin.Context) {
@@ -57,7 +59,7 @@ func PatchTribe(c *gin.Context) {
 		return
 	}
 	models.DB.Model(&tribe).Updates(input)
-	c.JSON(http.StatusOK, gin.H{"data": tribe})
+	c.JSON(http.StatusOK, tribe)
 }
 
 func DeleteTribe(c *gin.Context) {
@@ -68,5 +70,5 @@ func DeleteTribe(c *gin.Context) {
 		return
 	}
 	models.DB.Delete(&tribe)
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, true)
 }

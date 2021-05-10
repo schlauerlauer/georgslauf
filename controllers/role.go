@@ -17,7 +17,7 @@ type UpdateRoleInput struct {
 func GetRoles(c *gin.Context) {
 	var roles []models.Role
 	models.DB.Find(&roles)
-	c.JSON(http.StatusOK, gin.H{"data": roles})
+	c.JSON(http.StatusOK, roles)
 }
 
 func GetRole(c *gin.Context) {
@@ -27,7 +27,7 @@ func GetRole(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": role})
+	c.JSON(http.StatusOK, role)
 }
 
 func PostRole(c *gin.Context) {
@@ -40,7 +40,7 @@ func PostRole(c *gin.Context) {
 	// Create role
 	role := models.Role{Name: input.Name}
 	models.DB.Create(&role)
-	c.JSON(http.StatusOK, gin.H{"data": role})
+	c.JSON(http.StatusOK, role)
 }
 
 func PatchRole(c *gin.Context) {
@@ -57,7 +57,7 @@ func PatchRole(c *gin.Context) {
 		return
 	}
 	models.DB.Model(&role).Updates(input)
-	c.JSON(http.StatusOK, gin.H{"data": role})
+	c.JSON(http.StatusOK, role)
 }
 
 func DeleteRole(c *gin.Context) {
@@ -68,5 +68,5 @@ func DeleteRole(c *gin.Context) {
 		return
 	}
 	models.DB.Delete(&role)
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	c.JSON(http.StatusOK, true)
 }
