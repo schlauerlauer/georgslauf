@@ -4,11 +4,21 @@ import (
 	"georgslauf/controllers"
 	"georgslauf/models"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
+	"time"
 )
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:	[]string{"http://localhost:3000"},
+		AllowMethods:	[]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:	[]string{"Origin", "Content-Length", "Content-Type", "X-Total-Count"},
+		AllowCredentials: true,
+		MaxAge:	12 * time.Hour,
+		ExposeHeaders:	[]string{"x-total-count","Content-Range"},
+	}))
 	models.ConnectDatabase()
 	v1 := r.Group("/v1")
 	group := v1.Group("/groups")
@@ -17,7 +27,9 @@ func main() {
 		group.GET("/:id", controllers.GetGroup)
 		group.POST("/", controllers.PostGroup)
 		group.PATCH("/:id", controllers.PatchGroup)
+		group.PUT("/:id", controllers.PutGroup)
 		group.DELETE("/:id", controllers.DeleteGroup)
+		group.OPTIONS("/", Options)
 	}
 	tribe := v1.Group("/tribes")
 	{
@@ -69,4 +81,15 @@ func main() {
 	}
 
 	r.Run()
+}
+
+// Options common response for rest options
+func Options(c *gin.Context) {
+	Origin := c.MustGet("CorsOrigin").(string)
+
+	c.Writer.Header().Set("Access-Control-Allow-Origin", Origin)
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,DELETE,POST,PUT")
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	c.Next()
 }
