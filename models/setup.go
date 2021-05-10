@@ -16,13 +16,15 @@ func ConnectDatabase() {
 		panic("Failed to connect to database!")
 	}
 
-	db.AutoMigrate(&Group{})
-	db.AutoMigrate(&GroupPoint{})
-	db.AutoMigrate(&Role{})
-	db.AutoMigrate(&Login{})
-	db.AutoMigrate(&Station{})
-	db.AutoMigrate(&StationPoint{})
-	db.AutoMigrate(&Tribe{})
+	db.AutoMigrate(
+		&Group{},
+		&GroupPoint{},
+		&Role{},
+		&Login{},
+		&Station{},
+		&StationPoint{},
+		&Tribe{},
+	)
 
 	DB = db
 }

@@ -6,7 +6,7 @@ import (
 
 type Tribe struct {
 	ID			uint		`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time
-	UpdatedAt	time.Time
+	CreatedAt	time.Time	`json:"createdat"`
+	UpdatedAt	time.Time	`json:"updatedat"`
 	Name		string		`json:"name"`
 }

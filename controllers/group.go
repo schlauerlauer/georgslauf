@@ -15,7 +15,6 @@ type CreateGroupInput struct {
 	RoleID	uint	`json:"role"`
 	Details	string	`json:"details"`
 	Contact	string	`json:"contact"`
-
 }
 
 type UpdateGroupInput struct {
@@ -68,13 +67,14 @@ func PostGroup(c *gin.Context) {
 
 func PutGroup(c *gin.Context) {
 	// Validate input
-	var input CreateGroupInput
+	var input models.Group
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Println(err)
 		return
 	}
 	// Put group
-	models.DB.Create(&input)
+	models.DB.Save(&input)
 	c.JSON(http.StatusOK, input)
 }
 
