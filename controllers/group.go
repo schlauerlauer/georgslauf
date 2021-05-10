@@ -10,17 +10,18 @@ import (
 type CreateGroupInput struct {
 	Name	string	`json:"name"	binding:"required"`
 	Size	uint	`json:"size"	binding:"required"`
-	TribeID	uint	`json:"tribeid"	binding:"required"`
-	Short 	string	`json:"short"`
-	RoleID	uint	`json:"role"`
-	Details	string	`json:"details"`
-	Contact	string	`json:"contact"`
+	TribeID	uint	`json:"TribeID"	binding:"required"`
+	Short 	string	`json:"short"	binding:"required"`
+	RoleID	uint	`json:"role"	binding:"required"`
+	Details	string	`json:"details"	binding:"required"`
+	Contact	string	`json:"contact"	binding:"required"`
 }
 
 type UpdateGroupInput struct {
 	Name	string	`json:"name"`
 	Size	uint	`json:"size"`
 	Short 	string	`json:"short"`
+	TribeID	uint	`json:"TribeID"`
 	RoleID	uint	`json:"role"`
 	Details	string	`json:"details"`
 	Contact	string	`json:"contact"`
@@ -60,7 +61,15 @@ func PostGroup(c *gin.Context) {
 		return
 	}
 	// Create group
-	group := models.Group{Name: input.Name, Size: input.Size, TribeID: input.TribeID}
+	group := models.Group{
+		Name: input.Name,
+		Size: input.Size,
+		TribeID: input.TribeID,
+		Short: input.Short,
+		RoleID: input.RoleID,
+		Details: input.Details,
+		Contact: input.Contact,
+	}
 	models.DB.Create(&group)
 	c.JSON(http.StatusOK, group)
 }
@@ -75,6 +84,7 @@ func PutGroup(c *gin.Context) {
 	}
 	// Put group
 	models.DB.Save(&input)
+	fmt.Println(&input)
 	c.JSON(http.StatusOK, input)
 }
 

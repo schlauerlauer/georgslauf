@@ -6,13 +6,13 @@ import (
 
 type Group struct {
 	ID			uint		`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time	`json:"createdat"`
-  	UpdatedAt	time.Time	`json:"updatedat"`
+	CreatedAt	time.Time	`json:"CreatedAt"`
+  	UpdatedAt	time.Time	`json:"UpdatedAt"`
 	Short 		string		`json:"short"`
 	Name		string		`json:"name"`
 	Size		uint		`json:"size"`
-	RoleID		uint		`json:"roleid"`
-	TribeID		uint		`json:"tribeid`
+	RoleID		uint		`json:"RoleID"`
+	TribeID		uint		`json:"TribeID`
 	Details		string		`json:"details"`
 	Contact		string		`json:"contact"`
 }
