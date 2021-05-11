@@ -5,30 +5,42 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
+	"strconv"
 )
+
+type CreateGroupInput struct {
+	Short 		string		`json:"short"	binding:"required"`
+	Name		string		`json:"name"	binding:"required"`
+	Size		uint		`json:"size"	binding:"required"`
+	RoleID		uint		`json:"RoleID"	binding:"required"`
+	TribeID		uint		`json:"TribeID"	binding:"required"`
+	Details		string		`json:"details"	binding:"required"`
+	Contact		string		`json:"contact"	binding:"required"`
+}
 
 type UpdateGroupInput struct {
 	Name	string	`json:"name"`
 	Size	uint	`json:"size"`
 	Short 	string	`json:"short"`
 	TribeID	uint	`json:"TribeID"`
-	RoleID	uint	`json:"role"`
+	RoleID	uint	`json:"RoleID"`
 	Details	string	`json:"details"`
 	Contact	string	`json:"contact"`
 }
 
 func GetGroups(c *gin.Context) {
 	var groups []models.Group
-	if err := models.DB.Find(&groups).Error; err != nil {
-		c.AbortWithStatus(404)
-		fmt.Println(err)
+	result := models.DB.Find(&groups)
+	if result.Error != nil {
+		c.AbortWithStatus(404) // TODO do this everywhere
+		fmt.Println(result.Error)
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		//lastname := c.Query("_end")
+		//lastname := c.Query("_end") // TODO
 		// start := c.DefaultQuery("_start", "0")
 		// end := c.DefaultQuery("_end", "10")
 		// fmt.Println(start)
-		c.Header("X-Total-Count", "10") //FIXME
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
 		c.JSON(http.StatusOK, groups)
 	}
 }
@@ -45,15 +57,24 @@ func GetGroup(c *gin.Context) {
 
 func PostGroup(c *gin.Context) {
 	// Validate input
-	var input models.Group
+	var input CreateGroupInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		fmt.Println(err)
 		return
 	}
+	group := models.Group{
+		Short: input.Short,
+		Name: input.Name,
+		Size: input.Size,
+		RoleID: input.RoleID,
+		TribeID: input.TribeID,
+		Details: input.Details,
+		Contact: input.Contact,
+	}
 	// Create group
-	models.DB.Create(&input)
-	c.JSON(http.StatusOK, input)
+	models.DB.Create(&group)
+	c.JSON(http.StatusOK, group) // TODO don't send the whole json back
 }
 
 func PutGroup(c *gin.Context) {
