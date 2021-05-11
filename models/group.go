@@ -12,7 +12,8 @@ type Group struct {
 	Name		string		`json:"name" binding:"required"`
 	Size		uint		`json:"size" binding:"required"`
 	RoleID		uint		`json:"RoleID" binding:"required"`
-	TribeID		uint		`json:"TribeID binding:"required"`
+	TribeID		uint		`json:"TribeID" binding:"required"`
 	Details		string		`json:"details" binding:"required"`
 	Contact		string		`json:"contact" binding:"required"`
+	// TODO createdby
 }
