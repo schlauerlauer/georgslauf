@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
+	"strconv"
 )
 
 type CreateTribeInput struct {
@@ -16,9 +17,10 @@ type UpdateTribeInput struct {
 
 func GetTribes(c *gin.Context) {
 	var tribes []models.Tribe
-	models.DB.Find(&tribes)
+	result := models.DB.Find(&tribes)
 	c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-	c.Header("X-Total-Count", "10") //FIXME
+
+	c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME
 	c.JSON(http.StatusOK, tribes)
 }
 
@@ -40,7 +42,9 @@ func PostTribe(c *gin.Context) {
 		return
 	}
 	// Create tribe
-	tribe := models.Tribe{Name: input.Name}
+	tribe := models.Tribe{
+		Name: input.Name,
+	}
 	models.DB.Create(&tribe)
 	c.JSON(http.StatusOK, tribe)
 }
