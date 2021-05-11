@@ -7,16 +7,6 @@ import (
 	"georgslauf/models"
 )
 
-type CreateGroupInput struct {
-	Name	string	`json:"name"	binding:"required"`
-	Size	uint	`json:"size"	binding:"required"`
-	TribeID	uint	`json:"TribeID"	binding:"required"`
-	Short 	string	`json:"short"	binding:"required"`
-	RoleID	uint	`json:"role"	binding:"required"`
-	Details	string	`json:"details"	binding:"required"`
-	Contact	string	`json:"contact"	binding:"required"`
-}
-
 type UpdateGroupInput struct {
 	Name	string	`json:"name"`
 	Size	uint	`json:"size"`
@@ -55,23 +45,15 @@ func GetGroup(c *gin.Context) {
 
 func PostGroup(c *gin.Context) {
 	// Validate input
-	var input CreateGroupInput
+	var input models.Group
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Println(err)
 		return
 	}
 	// Create group
-	group := models.Group{
-		Name: input.Name,
-		Size: input.Size,
-		TribeID: input.TribeID,
-		Short: input.Short,
-		RoleID: input.RoleID,
-		Details: input.Details,
-		Contact: input.Contact,
-	}
-	models.DB.Create(&group)
-	c.JSON(http.StatusOK, group)
+	models.DB.Create(&input)
+	c.JSON(http.StatusOK, input)
 }
 
 func PutGroup(c *gin.Context) {
