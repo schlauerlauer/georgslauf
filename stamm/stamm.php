@@ -8,7 +8,7 @@ include_once '../session/session.php';
 <button class="ui-btn ui-btn-b ui-btn-inline ui-icon-gear ui-btn-icon-left" onclick="window.location.href='/host'">Hostseite</button>
 <?php endif; ?>
 <?php if($_SESSION['rolle'] >= 2) : ?>
-<h1>Anmeldung Stamm <?php echo $login_session; ?></h1>
+<h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 Dokumente
 <!--<a target="_blank" class="ui-btn ui-btn-b ui-icon-alert ui-btn-icon-left" href="/res/Informationen.pdf">Informationen anzeigen (.pdf)</a>-->
 <a target="_blank" class="ui-btn ui-icon-edit ui-btn-icon-left" href="/res/Interne_Anmeldung.docx">Vorlage für eure interne Anmeldung (.docx)</a>
