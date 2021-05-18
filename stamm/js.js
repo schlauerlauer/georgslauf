@@ -60,7 +60,7 @@
 			var pmat = $("#p_mat").val();
 			var port = $("#p_ort").val();
 			var	psonst = $("#p_sonst").val();
-			var pid = 0;
+			var pid = 2;
 			var kid = $("#k_form input[type='radio']:checked").val();
 			if (pname != "" && pdesc != "" && pkont != "" && pval != "" && pveg != "" && pid != null && kid != null) {
 				$.post('insert.php', { gorp: gorp, pname: pname, pdesc: pdesc, pkont: pkont, pval: pval, pveg: pveg, pmat: pmat, port: port, psonst: psonst, kid: kid, pid : pid }, function(data) {
