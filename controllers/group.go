@@ -85,7 +85,7 @@ func PutGroup(c *gin.Context) {
 		fmt.Println(err)
 		return
 	}
-	// Put group
+	// Put Group
 	models.DB.Save(&input)
 	fmt.Println(&input)
 	c.JSON(http.StatusOK, input)

@@ -43,6 +43,19 @@ func PostRole(c *gin.Context) {
 	c.JSON(http.StatusOK, role)
 }
 
+func PutRole(c *gin.Context) {
+	// Validate input
+	var input models.Role
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// TODO log error
+		return
+	}
+	// Put Tribe
+	models.DB.Save(&input)
+	c.JSON(http.StatusOK, input)
+}
+
 func PatchRole(c *gin.Context) {
 	// Get model if exist
 	var role models.Role

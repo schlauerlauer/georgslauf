@@ -45,6 +45,19 @@ func PostStationPoint(c *gin.Context) {
 	c.JSON(http.StatusOK, stationpoint)
 }
 
+func PutStationPoint(c *gin.Context) {
+	// Validate input
+	var input models.StationPoint
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// TODO log error
+		return
+	}
+	// Put StationPoint
+	models.DB.Save(&input)
+	c.JSON(http.StatusOK, input)
+}
+
 func PatchStationPoint(c *gin.Context) {
 	// Get model if exist
 	var stationpoint models.StationPoint

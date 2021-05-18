@@ -45,6 +45,19 @@ func PostGroupPoint(c *gin.Context) {
 	c.JSON(http.StatusOK, grouppoint)
 }
 
+func PutGroupPoint(c *gin.Context) {
+	// Validate input
+	var input models.GroupPoint
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// TODO log error
+		return
+	}
+	// Put GroupPoint
+	models.DB.Save(&input)
+	c.JSON(http.StatusOK, input)
+}
+
 func PatchGroupPoint(c *gin.Context) {
 	// Get model if exist
 	var grouppoint models.GroupPoint
