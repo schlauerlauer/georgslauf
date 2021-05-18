@@ -2,7 +2,7 @@
 
 include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/dev/includes/connect_gl.php';
 include_once '../settings.php';
-require('../session/session.php');
+require('../../session/session.php');
 
 if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 ?>
