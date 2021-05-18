@@ -8,9 +8,7 @@ type GroupPoint struct {
 	ID			uint		`json:"id" gorm:"primary_key"`
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
-	FromID 		uint		`json:"from"`
-	From		Station
-	ToID		uint		`json:"to"`
-	To			Group
+	StationID 	uint		`json:"StationID" gorm:"foreignKey:StationID` //TODO add unique index
+	GroupID		uint		`json:"GroupID" gorm:"foreignKey:GroupID`
 	Value		uint		`json:"value"`
 }

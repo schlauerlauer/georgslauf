@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
+	"strconv"
 )
 
 type CreateRoleInput struct {
@@ -16,8 +17,14 @@ type UpdateRoleInput struct {
 
 func GetRoles(c *gin.Context) {
 	var roles []models.Role
-	models.DB.Find(&roles)
-	c.JSON(http.StatusOK, roles)
+	result := models.DB.Find(&roles)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.JSON(http.StatusOK, roles)
+	}
 }
 
 func GetRole(c *gin.Context) {
@@ -36,9 +43,11 @@ func PostRole(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
+	} //TODO error checking (e.g. unique error)
 	// Create role
-	role := models.Role{Name: input.Name}
+	role := models.Role{
+		Name: input.Name,
+	}
 	models.DB.Create(&role)
 	c.JSON(http.StatusOK, role)
 }
