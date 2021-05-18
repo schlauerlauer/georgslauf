@@ -57,8 +57,7 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 	<h2 align="center">Die Anmeldung von Gruppen ist noch nicht möglich</h2>
 	<?php endif; ?>
 	<h2>Posten anmelden</h2>
-	<?php if ($GAnmeldung == true) : ?>	
-		
+	<?php if ($PAnmeldung == true) : ?>		
 		<form id="p_form">
 			<fieldset data-role="controlgroup">
 			<legend>Stufe<span style="color:red;">*</span>&nbsp;&nbsp;
