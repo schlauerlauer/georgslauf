@@ -58,7 +58,7 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 	<?php endif; ?>
 	<h2>Posten anmelden</h2>
 	<?php if ($PAnmeldung == true) : ?>		
-		<form id="p_form">
+		<!--<form id="p_form">
 			<fieldset data-role="controlgroup">
 			<legend>Stufe<span style="color:red;">*</span>&nbsp;&nbsp;
 			<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Stufen"></a></legend>
@@ -67,7 +67,7 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 				<input name="p_stufe" id="p_2" value="RoPo" type="radio">
 				<label for="p_2">Pfadi / Rover (RoPo)</label>
 			</fieldset>
-		</form>
+		</form>-->
 		<form id="k_form">
 			<fieldset data-role="controlgroup">
 			<legend>Kategorie<span style="color:red;">*</span>&nbsp;&nbsp;
