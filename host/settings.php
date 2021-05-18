@@ -19,7 +19,7 @@ $ShowLogin = true; //Show Posten Login Information in Stamm -> Posten
 $Rollen = array("keine Rechte", "Posten", "Stamm", "Host", "Admin"); //Rechte vergabe
 
 $Posten = array(false, "Die Posten sind noch nicht öffentlich"); // Posten auf Hauptseite sichtbar oder nicht
-$PostenStufe = 'O'; //Trennung RoPo / WöPo großes o, -> siehe Posten -> update.php
+$PostenStufe = ''; //Trennung RoPo / WöPo großes o, -> siehe Posten -> update.php
 $Punkte = array(true, "Die Posten dürfen noch keine Punkte vergeben!"); //true = Posten dürfen Punkte verteilen, false -> Fehlermeldung;
 
 $Ende = false; //Host kann keine Punkte mehr eintragen wenn true;
