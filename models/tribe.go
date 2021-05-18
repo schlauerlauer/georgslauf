@@ -8,6 +8,7 @@ type Tribe struct {
 	ID			uint		`json:"id" gorm:"primary_key"`
 	CreatedAt	time.Time	`json:"CreatedAt"`
 	UpdatedAt	time.Time	`json:"UpdatedAt"`
-	Name		string		`json:"name"`
-	Short		string		`json:"short"`
+	Name		string		`json:"name" gorm:"unique"`
+	Short		string		`json:"short" gorm:"unique"`
+	// TODO add role?
 }

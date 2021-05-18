@@ -32,11 +32,11 @@ func GetGroups(c *gin.Context) {
 	var groups []models.Group
 	result := models.DB.Find(&groups)
 	if result.Error != nil {
-		c.AbortWithStatus(404) // TODO do this everywhere
-		fmt.Println(result.Error)
+		c.AbortWithStatus(500)
+		// TODO add logging everywhere
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		//lastname := c.Query("_end") // TODO
+		//lastname := c.Query("_end") // TODO !
 		// start := c.DefaultQuery("_start", "0")
 		// end := c.DefaultQuery("_end", "10")
 		// fmt.Println(start)
@@ -71,10 +71,10 @@ func PostGroup(c *gin.Context) {
 		TribeID: input.TribeID,
 		Details: input.Details,
 		Contact: input.Contact,
-	}
+	} //TODO error checking (e.g. unique error)
 	// Create group
 	models.DB.Create(&group)
-	c.JSON(http.StatusOK, group) // TODO don't send the whole json back
+	c.JSON(http.StatusOK, group) // TODO don't send the whole json back (everywhere)
 }
 
 func PutGroup(c *gin.Context) {
@@ -87,7 +87,6 @@ func PutGroup(c *gin.Context) {
 	}
 	// Put Group
 	models.DB.Save(&input)
-	fmt.Println(&input)
 	c.JSON(http.StatusOK, input)
 }
 

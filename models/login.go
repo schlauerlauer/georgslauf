@@ -8,7 +8,7 @@ type Login struct {
 	ID			uint		`json:"id" gorm:"primary_key"`
 	CreatedAt	time.Time
   	UpdatedAt	time.Time
-	Name		string		`json:"name"`
+	Name		string		`json:"name" gorm:"unique"`
 	Password	string		`json:"password"`
 	RoleID		uint		//`json:"roleid"`
 	Role		Role

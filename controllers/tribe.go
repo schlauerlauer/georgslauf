@@ -59,7 +59,7 @@ func PutTribe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		// TODO log error
 		return
-	}
+	} //TODO error checking (e.g. unique error)
 	// Put Tribe
 	models.DB.Save(&input)
 	c.JSON(http.StatusOK, input)

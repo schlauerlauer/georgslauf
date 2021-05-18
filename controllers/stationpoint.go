@@ -4,22 +4,29 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
+	"strconv"
 )
 
 type CreateStationPointInput struct {
-	FromID 		uint		`json:"from"	binding:"required"`
-	ToID		uint		`json:"to"	binding:"required"`
-	Value		uint		`json:"value"	binding:"required"`
+	GroupID 	uint	`json:"GroupID"		binding:"required"`
+	StationID	uint	`json:"StationID"	binding:"required"`
+	Value		uint	`json:"value"		binding:"required"`
 }
 
 type UpdateStationPointInput struct {
-	Value		uint		`json:"value"`
+	Value		uint	`json:"value"`
 }
 
 func GetStationPoints(c *gin.Context) {
 	var stationpoints []models.StationPoint
-	models.DB.Find(&stationpoints)
-	c.JSON(http.StatusOK, stationpoints)
+	result := models.DB.Find(&stationpoints)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.JSON(http.StatusOK, stationpoints)
+	}
 }
 
 func GetStationPoint(c *gin.Context) {
@@ -38,9 +45,13 @@ func PostStationPoint(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
+	} //TODO error checking (e.g. unique error)
 	// Create stationpoint
-	stationpoint := models.StationPoint{FromID: input.FromID, ToID: input.ToID, Value: input.Value}
+	stationpoint := models.StationPoint{
+		GroupID: input.GroupID,
+		StationID: input.StationID,
+		Value: input.Value,
+	}
 	models.DB.Create(&stationpoint)
 	c.JSON(http.StatusOK, stationpoint)
 }

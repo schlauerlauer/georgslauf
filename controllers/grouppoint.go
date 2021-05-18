@@ -4,12 +4,13 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
+	"strconv"
 )
 
 type CreateGroupPointInput struct {
-	FromID 		uint		`json:"from"	binding:"required"`
-	ToID		uint		`json:"to"	binding:"required"`
-	Value		uint		`json:"value"	binding:"required"`
+	StationID 	uint	`json:"StationID"	binding:"required"`
+	GroupID		uint	`json:"GroupID"		binding:"required"`
+	Value		uint	`json:"value"		binding:"required"`
 }
 
 type UpdateGroupPointInput struct {
@@ -18,12 +19,17 @@ type UpdateGroupPointInput struct {
 
 func GetGroupPoints(c *gin.Context) {
 	var grouppoints []models.GroupPoint
-	models.DB.Find(&grouppoints)
-	c.JSON(http.StatusOK, grouppoints)
+	result := models.DB.Find(&grouppoints)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.JSON(http.StatusOK, grouppoints)
+	}
 }
 
 func GetGroupPoint(c *gin.Context) {
-	// Get model if exist
 	var grouppoint models.GroupPoint
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&grouppoint).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
@@ -40,7 +46,10 @@ func PostGroupPoint(c *gin.Context) {
 		return
 	}
 	// Create grouppoint
-	grouppoint := models.GroupPoint{FromID: input.FromID, ToID: input.ToID, Value: input.Value}
+	grouppoint := models.GroupPoint{
+		StationID: input.StationID,
+		GroupID: input.GroupID,
+		Value: input.Value}
 	models.DB.Create(&grouppoint)
 	c.JSON(http.StatusOK, grouppoint)
 }
