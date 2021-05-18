@@ -18,7 +18,7 @@ include_once '../session/session.php';
 				$stmt->execute();
 				$stmt->store_result();
 				$stmt->bind_result($id, $kurz, $pw, $color, $name, $kat, $desc, $kontakt, $val, $veg, $mat, $ort, $sonst, $stufe);
-				echo "bis hier her komme ich"
+				echo "bis hier her komme ich";
 				while ($stmt->fetch()) {
 					$posten++;
 					echo '<div data-role="collapsible"><h3>';
