@@ -62,7 +62,7 @@
 			var	psonst = $("#p_sonst").val();
 			var pid = $("#p_form input[type='radio']:checked").val();
 			var kid = $("#k_form input[type='radio']:checked").val();
-			if (pname != "" && pdesc != "" && pkont != "" && pval != "" && pveg != "" && pid != null && kid != null) {
+			if (pname != "" && pdesc != "" && pkont != "" && pval != "" && /*pveg != "" &&*/ pid != null && kid != null) {
 				$.post('insert.php', { gorp: gorp, pname: pname, pdesc: pdesc, pkont: pkont, pval: pval, pveg: pveg, pmat: pmat, port: port, psonst: psonst, kid: kid, pid : pid }, function(data) {
 					if (data == 1) alertify.success("Posten " + pname + " angemeldet");
 					else if(data==2) alertify.error("Diese Kategorie für " + pid + " ist voll");
