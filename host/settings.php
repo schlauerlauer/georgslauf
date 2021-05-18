@@ -1,7 +1,7 @@
 <?php
 //Einstellungsdatei für den Georgslauf
 
-$Email = "gl20@stamm-prm.de";
+$Email = "gl21@stamm-prm.de";
 
 $Kat = array('Kreativ','Pfadiwissen','Wissen','Action','erste Hilfe'); //Die Kategorien für die Posten, beliebig erweiterbar / veränderbar!
 $Stufe = array('Wölflinge','Jupfis','Pfadis','Rover'); // Stufen namen, wie sie angezeigt werden (auf anmeldeseite aber hardcoded!) (in SQL sind nur nummern) eher nicht verändern
@@ -12,6 +12,8 @@ $RKat = array(2,2,2,3,1); //RoPo-Anzahl Posten pro Kategorie - "
 
 $Anmeldung = true; //Stämme können Gruppen und Posten anmelden
 $Abmeldung = true; //Stämme können Gruppen und Posten löschen
+$PAnmeldung = true; //Stämme können Gruppen anmelden
+$GAnmeldung = false; //Stämme können Posten anmelden
 $ShowLogin = true; //Show Posten Login Information in Stamm -> Posten
 
 $Rollen = array("keine Rechte", "Posten", "Stamm", "Host", "Admin"); //Rechte vergabe
