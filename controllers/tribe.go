@@ -20,10 +20,13 @@ type UpdateTribeInput struct {
 func GetTribes(c *gin.Context) {
 	var tribes []models.Tribe
 	result := models.DB.Find(&tribes)
-	c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-
-	c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME
-	c.JSON(http.StatusOK, tribes)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.JSON(http.StatusOK, tribes)
+	}
 }
 
 func GetTribe(c *gin.Context) {

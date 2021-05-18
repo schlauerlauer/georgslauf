@@ -12,3 +12,6 @@ type Tribe struct {
 	Short		string		`json:"short" gorm:"unique"`
 	// TODO add role?
 }
+
+// TODO add config model ?
+// TODO seperate station login and group login
