@@ -56,13 +56,13 @@
 			var pdesc = $("#p_desc").val();
 			var pkont = $("#p_kont").val();
 			var pval = $("#p_anzahl").val();
-			var pveg = 0;
+			var pveg = '0';
 			var pmat = $("#p_mat").val();
 			var port = $("#p_ort").val();
 			var	psonst = $("#p_sonst").val();
 			var pid = 'egal';
 			var kid = $("#k_form input[type='radio']:checked").val();
-			if (pname != "" && pdesc != "" && pkont != "" && pval != "" && pveg != "" /*&& pid != null */&& kid != null) {
+			if (pname != "" && pdesc != "" && pkont != "" && pval != "" && pveg != "" && pid != null && kid != null) {
 				$.post('insert.php', { gorp: gorp, pname: pname, pdesc: pdesc, pkont: pkont, pval: pval, pveg: pveg, pmat: pmat, port: port, psonst: psonst, kid: kid, pid : pid }, function(data) {
 					if (data == 1) alertify.success("Posten " + pname + " angemeldet");
 					else if(data==2) alertify.error("Diese Kategorie für " + pid + " ist voll");
