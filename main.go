@@ -26,9 +26,9 @@ func main() {
 		group.GET("/", controllers.GetGroups)
 		group.GET("/:id", controllers.GetGroup)
 		group.POST("/", controllers.PostGroup)
-		group.PATCH("/:id", controllers.PatchGroup)
 		group.PUT("/:id", controllers.PutGroup)
 		group.DELETE("/:id", controllers.DeleteGroup)
+		group.PATCH("/:id", controllers.PatchGroup)
 		group.OPTIONS("/", Options)
 	}
 	tribe := v1.Group("/tribes")
@@ -36,48 +36,54 @@ func main() {
 		tribe.GET("/", controllers.GetTribes)
 		tribe.GET("/:id", controllers.GetTribe)
 		tribe.POST("/", controllers.PostTribe)
-		tribe.PATCH("/:id", controllers.PatchTribe)
+		tribe.PUT("/:id", controllers.PutTribe)
 		tribe.DELETE("/:id", controllers.DeleteTribe)
+		tribe.PATCH("/:id", controllers.PatchTribe)
 	}
 	role := v1.Group("/roles")
 	{
 		role.GET("/", controllers.GetRoles)
 		role.GET("/:id", controllers.GetRole)
 		role.POST("/", controllers.PostRole)
-		role.PATCH("/:id", controllers.PatchRole)
+		role.PUT("/:id", controllers.PutRole)
 		role.DELETE("/:id", controllers.DeleteRole)
+		role.PATCH("/:id", controllers.PatchRole)
 	}
 	station := v1.Group("/stations")
 	{
 		station.GET("/", controllers.GetStations)
 		station.GET("/:id", controllers.GetStation)
 		station.POST("/", controllers.PostStation)
-		station.PATCH("/:id", controllers.PatchStation)
+		station.PUT("/:id", controllers.PutStation)
 		station.DELETE("/:id", controllers.DeleteStation)
+		station.PATCH("/:id", controllers.PatchStation)
 	}
 	grouppoint := v1.Group("/grouppoints")
 	{
 		grouppoint.GET("/", controllers.GetGroupPoints)
 		grouppoint.GET("/:id", controllers.GetGroupPoint)
 		grouppoint.POST("/", controllers.PostGroupPoint)
-		grouppoint.PATCH("/:id", controllers.PatchGroupPoint)
+		grouppoint.PUT("/:id", controllers.PutGroupPoint)
 		grouppoint.DELETE("/:id", controllers.DeleteGroupPoint)
+		grouppoint.PATCH("/:id", controllers.PatchGroupPoint)
 	}
 	stationpoint := v1.Group("/stationpoints")
 	{
 		stationpoint.GET("/", controllers.GetStationPoints)
 		stationpoint.GET("/:id", controllers.GetStationPoint)
 		stationpoint.POST("/", controllers.PostStationPoint)
-		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
+		stationpoint.PUT("/:id", controllers.PutStationPoint)
 		stationpoint.DELETE("/:id", controllers.DeleteStationPoint)
+		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
 	}
 	login := v1.Group("/logins")
 	{
 		login.GET("/", controllers.GetLogins)
 		login.GET("/:id", controllers.GetLogin)
 		login.POST("/", controllers.PostLogin)
-		login.PATCH("/:id", controllers.PatchLogin)
+		login.PUT("/:id", controllers.PutLogin)
 		login.DELETE("/:id", controllers.DeleteLogin)
+		login.PATCH("/:id", controllers.PatchLogin)
 	}
 
 	r.Run()
