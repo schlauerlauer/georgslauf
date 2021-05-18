@@ -85,12 +85,12 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 			<input id="p_desc" value="" type="text" placeholder="Was wird an dem Posten gemacht?" maxlength="255">
 			<label for="p_anzahl">Anzahl Leiter<span style="color:red;">*</span></label>
 			<input data-clear-btn="false" id="p_anzahl" value="2" type="number" min="1" max="20">
-			<label for="p_veggie">Davon Vegetarier<span style="color:red;">*</span></label>
-			<input data-clear-btn="false" id="p_veggie" value="0" type="number" min="0" max="20">
+			<!--<label for="p_veggie">Davon Vegetarier<span style="color:red;">*</span></label>
+			<input data-clear-btn="false" id="p_veggie" value="0" type="number" min="0" max="20">-->
 			<label for="p_kont">Handynummer eines Postenleiters<span style="color:red;">*</span></label>
 			<input id="p_kont" value="" type="text" placeholder="Wichtig für den Startschuss (Whatsapp)" maxlength="100">
-			<label for="p_mat">Benötigtes Material</label>
-			<input id="p_mat" value="" type="text" placeholder="Bierbänke ..." maxlength="200">
+			<!--<label for="p_mat">Benötigtes Material</label>
+			<input id="p_mat" value="" type="text" placeholder="Bierbänke ..." maxlength="200">-->
 			<label for="p_ort">Bevorzugter Ort</label>
 			<input id="p_ort" value="" type="text" placeholder="Wiese / Bürgersteig / Nähe Parkplatz ..." maxlength="200">
 			<label for="p_sonst">Sonstiges</label>
