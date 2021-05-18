@@ -9,10 +9,12 @@ import (
 
 type CreateTribeInput struct {
 	Name	string	`json:"name"	binding:"required"`
+	Short	string	`json:"short"	binding:"required"`
 }
 
 type UpdateTribeInput struct {
 	Name	string	`json:"name"`
+	Short	string	`json:"short"`
 }
 
 func GetTribes(c *gin.Context) {
@@ -44,9 +46,23 @@ func PostTribe(c *gin.Context) {
 	// Create tribe
 	tribe := models.Tribe{
 		Name: input.Name,
+		Short: input.Short,
 	}
 	models.DB.Create(&tribe)
 	c.JSON(http.StatusOK, tribe)
+}
+
+func PutTribe(c *gin.Context) {
+	// Validate input
+	var input models.Tribe
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// TODO log error
+		return
+	}
+	// Put Tribe
+	models.DB.Save(&input)
+	c.JSON(http.StatusOK, input)
 }
 
 func PatchTribe(c *gin.Context) {

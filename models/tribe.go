@@ -9,4 +9,5 @@ type Tribe struct {
 	CreatedAt	time.Time	`json:"CreatedAt"`
 	UpdatedAt	time.Time	`json:"UpdatedAt"`
 	Name		string		`json:"name"`
+	Short		string		`json:"short"`
 }
