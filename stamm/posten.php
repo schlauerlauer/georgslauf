@@ -23,7 +23,7 @@ include_once '../session/session.php';
 					$posten++;
 					echo '<div data-role="collapsible"><h3>';
 					if($ShowLogin == true) echo $kurz.' &nbsp;';
-					echo $stufe.' - '.$Kat[$kat].' - '.$name.'</h3><p>';
+					/*echo $stufe.' - '.*/echo $Kat[$kat].' - '.$name.'</h3><p>';
 					if($ShowLogin == true) echo '<h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:'.$Farben[$color].';" >Login '.$kurz.'<br />Passwort '.$pw.'</h3><br />';
 					echo '"'.$desc.'"<br><br>Kontakt <strong>'.$kontakt.'</strong><br>Leiter <strong>'.$val.'</strong> (davon Veggie <strong>'.$veg.')</strong><br>';
 					if (!empty($mat)) echo '<br>benötigtes Material <strong>'.$mat.'</strong>';
