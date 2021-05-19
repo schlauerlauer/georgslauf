@@ -11,7 +11,7 @@ if(isset($_POST['p'])) {
   else if ($pVal < 0) $pVal = 0;
   if ($stmt = $mysqli->prepare("INSERT INTO punkte (von, an, points) VALUES ((SELECT id FROM posten WHERE kurz = ?), ?, ?)
   ON DUPLICATE KEY UPDATE points=VALUES(points), time=CURRENT_TIMESTAMP")) {
-    $stmt->bind_param('siii', $user, $_POST['id'], $pVal);
+    $stmt->bind_param('sii', $user, $_POST['id'], $pVal);
     $stmt->execute();
     echo "ok";
   }
