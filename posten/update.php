@@ -9,11 +9,9 @@ if(isset($_POST['p'])) {
   $pVal = $_POST['p'];
   if ($pVal > 100) $pVal = 100;
   else if ($pVal < 0) $pVal = 0;
-  $vergleich = "< 2";
-  if($user >= $PostenStufe) $vergleich = ">= 2";
-  if ($stmt = $mysqli->prepare("INSERT INTO punkte (von, an, points) VALUES ((SELECT id FROM posten WHERE kurz = ?), IF((SELECT stufe FROM gruppen WHERE id = ?)".$vergleich.", ?, -1), ?)
+  if ($stmt = $mysqli->prepare("INSERT INTO punkte (von, an, points) VALUES ((SELECT id FROM posten WHERE kurz = ?), ?, ?)
   ON DUPLICATE KEY UPDATE points=VALUES(points), time=CURRENT_TIMESTAMP")) {
-    $stmt->bind_param('siii', $user, $_POST['id'], $_POST['id'], $pVal);
+    $stmt->bind_param('siii', $user, $_POST['id'], $pVal);
     $stmt->execute();
     echo "ok";
   }
