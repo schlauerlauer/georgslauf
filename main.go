@@ -20,7 +20,18 @@ func main() {
 		ExposeHeaders:	[]string{"x-total-count","Content-Range"},
 	}))
 	models.ConnectDatabase()
+	controllers.InitTotal()
 	v1 := r.Group("/v1")
+	login := v1.Group("/auth/login")
+	{
+		login.GET("/", controllers.GetLogin)
+	// 	auth.GET("/", controllers.GetLogins)
+	// 	login.GET("/:id", controllers.GetLogin)
+	// 	login.POST("/", controllers.PostLogin)
+	// 	login.PUT("/:id", controllers.PutLogin)
+	// 	login.DELETE("/:id", controllers.DeleteLogin)
+	// 	login.PATCH("/:id", controllers.PatchLogin)
+	}
 	group := v1.Group("/groups")
 	{
 		group.GET("/", controllers.GetGroups)
@@ -75,15 +86,6 @@ func main() {
 		stationpoint.PUT("/:id", controllers.PutStationPoint)
 		stationpoint.DELETE("/:id", controllers.DeleteStationPoint)
 		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
-	}
-	login := v1.Group("/logins")
-	{
-		login.GET("/", controllers.GetLogins)
-		login.GET("/:id", controllers.GetLogin)
-		login.POST("/", controllers.PostLogin)
-		login.PUT("/:id", controllers.PutLogin)
-		login.DELETE("/:id", controllers.DeleteLogin)
-		login.PATCH("/:id", controllers.PatchLogin)
 	}
 
 	r.Run()
