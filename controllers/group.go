@@ -28,19 +28,21 @@ type UpdateGroupInput struct {
 	Contact	string	`json:"contact"`
 }
 
+// TODO move total to redis
+
 func GetGroups(c *gin.Context) {
 	var groups []models.Group
-	result := models.DB.Find(&groups)
+	_start := c.DefaultQuery("_start", "0")
+	_end := c.DefaultQuery("_end", "10")
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&groups)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		// TODO add logging everywhere
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		//lastname := c.Query("_end") // TODO !
-		// start := c.DefaultQuery("_start", "0")
-		// end := c.DefaultQuery("_end", "10")
-		// fmt.Println(start)
-		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		fmt.Println(totalGroup)
+		c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10)) //FIXME everywhere -> only shows current page not all
 		c.JSON(http.StatusOK, groups)
 	}
 }
@@ -74,7 +76,8 @@ func PostGroup(c *gin.Context) {
 	} //TODO error checking (e.g. unique error)
 	// Create group
 	models.DB.Create(&group)
-	c.JSON(http.StatusOK, group) // TODO don't send the whole json back (everywhere)
+	c.JSON(http.StatusOK, "") // TODO don't send the whole json back (everywhere) (get id back! tutorial)
+	totalGroup+=1
 }
 
 func PutGroup(c *gin.Context) {
@@ -87,7 +90,7 @@ func PutGroup(c *gin.Context) {
 	}
 	// Put Group
 	models.DB.Save(&input)
-	c.JSON(http.StatusOK, input)
+	c.JSON(http.StatusOK, input) // TODO here too
 }
 
 func PatchGroup(c *gin.Context) {
