@@ -8,23 +8,38 @@ import (
 )
 
 type CreateTribeInput struct {
-	Name	string	`json:"name"	binding:"required"`
-	Short	string	`json:"short"	binding:"required"`
+	Name		string	`json:"name"		binding:"required"`
+	Short		string	`json:"short"		binding:"required"`
+	Email		string	`json:"email"		binding:"required"`
+	Reset		bool	`json:"reset"		binding:"required"`
+	Active		bool	`json:"active"		binding:"required"`
+	Confirmed	bool	`json:"confirmed	binding:"required"`
+	DPSG		string	`json:"dpsg"`
+	Address		string	`json:"address"`
 }
 
 type UpdateTribeInput struct {
-	Name	string	`json:"name"`
-	Short	string	`json:"short"`
+	Name		string	`json:"name"`
+	Short		string	`json:"short"`
+	Email		string	`json:"email"`
+	Reset		bool	`json:"reset"`
+	Active		bool	`json:"active"`
+	Confirmed	bool	`json:"confirmed"`
+	DPSG		string	`json:"dpsg"`
+	Address		string	`json:"address"`
 }
 
 func GetTribes(c *gin.Context) {
 	var tribes []models.Tribe
-	result := models.DB.Find(&tribes)
+	_start := c.DefaultQuery("_start", "0")
+	_end := c.DefaultQuery("_end", "10")
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&tribes)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.Header("X-Total-Count", strconv.FormatInt(totalTribe, 10))
 		c.JSON(http.StatusOK, tribes)
 	}
 }
@@ -50,9 +65,16 @@ func PostTribe(c *gin.Context) {
 	tribe := models.Tribe{
 		Name: input.Name,
 		Short: input.Short,
+		Email: input.Email,
+		Reset: input.Reset,
+		Active: input.Active,
+		Confirmed: input.Confirmed,
+		DPSG: input.DPSG,
+		Address: input.Address,
 	}
 	models.DB.Create(&tribe)
 	c.JSON(http.StatusOK, tribe)
+	totalTribe+=1
 }
 
 func PutTribe(c *gin.Context) {
