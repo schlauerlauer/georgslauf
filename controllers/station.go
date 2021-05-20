@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
 	"strconv"
+	log "github.com/sirupsen/logrus"
 )
 
 type CreateStationInput struct {
@@ -29,6 +30,7 @@ func GetStations(c *gin.Context) {
 	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&stations)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
+		log.Warn("Get stations failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
@@ -41,6 +43,7 @@ func GetStation(c *gin.Context) {
 	var station models.Station
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&station).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get station failed.")
 		return
 	}
 	c.JSON(http.StatusOK, station)
@@ -51,6 +54,7 @@ func PostStation(c *gin.Context) {
 	var input CreateStationInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Post station failed.")
 		return
 	} //TODO error checking (e.g. unique error)
 	// Create station
@@ -70,6 +74,7 @@ func PutStation(c *gin.Context) {
 	var input models.Station
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Put station failed.")
 		// TODO log error
 		return
 	}
@@ -83,12 +88,14 @@ func PatchStation(c *gin.Context) {
 	var station models.Station
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&station).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Patch station failed.")
 		return
 	}
 	// Validate input
 	var input UpdateStationInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Patch station failed.")
 		return
 	}
 	models.DB.Model(&station).Updates(input)
@@ -100,6 +107,7 @@ func DeleteStation(c *gin.Context) {
 	var station models.Station
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&station).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Delete station failed.")
 		return
 	}
 	models.DB.Delete(&station)

@@ -6,7 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"time"
+	log "github.com/sirupsen/logrus"
 )
+
+func init() {
+	log.SetLevel(log.InfoLevel)
+	log.Info("Log level info.")
+}
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)

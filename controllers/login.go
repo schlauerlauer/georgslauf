@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
 	"strconv"
+	log "github.com/sirupsen/logrus"
 )
 
 // TODO is login needed? Yes
@@ -29,6 +30,7 @@ func GetLogins(c *gin.Context) {
 	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&logins)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
+		log.Warn("Get logins failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalLogin, 10))
@@ -41,6 +43,7 @@ func GetLogin(c *gin.Context) {
 	var login models.Login
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&login).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get login failed.")
 		return
 	}
 	c.JSON(http.StatusOK, login)
@@ -51,6 +54,7 @@ func PostLogin(c *gin.Context) {
 	var input CreateLoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Post login failed.")
 		return
 	} // TODO error checking multiple unique
 	// Create login
@@ -69,7 +73,7 @@ func PutLogin(c *gin.Context) {
 	var input models.Login
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO log error
+		log.Warn("Put login failed.")
 		return
 	}
 	// Put Login
@@ -81,12 +85,14 @@ func PatchLogin(c *gin.Context) {
 	// Get model if exist
 	var login models.Login
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&login).Error; err != nil {
+		log.Warn("Patch login failed.")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
 	// Validate input
 	var input UpdateLoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Warn("Past login failed.")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -98,6 +104,7 @@ func DeleteLogin(c *gin.Context) {
 	// Get model if exist
 	var login models.Login
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&login).Error; err != nil {
+		log.Warn("Delete login failed.")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
