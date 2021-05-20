@@ -17,12 +17,15 @@ type UpdateRoleInput struct {
 
 func GetRoles(c *gin.Context) {
 	var roles []models.Role
-	result := models.DB.Find(&roles)
+	_start := c.DefaultQuery("_start", "0")
+	_end := c.DefaultQuery("_end", "10")
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&roles)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.Header("X-Total-Count", strconv.FormatInt(totalRole, 10))
 		c.JSON(http.StatusOK, roles)
 	}
 }
@@ -50,6 +53,7 @@ func PostRole(c *gin.Context) {
 	}
 	models.DB.Create(&role)
 	c.JSON(http.StatusOK, role)
+	totalRole+=1
 }
 
 func PutRole(c *gin.Context) {

@@ -23,12 +23,15 @@ type UpdateStationInput struct {
 
 func GetStations(c *gin.Context) {
 	var stations []models.Station
-	result := models.DB.Find(&stations)
+	_start := c.DefaultQuery("_start", "0")
+	_end := c.DefaultQuery("_end", "10")
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&stations)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
 		c.JSON(http.StatusOK, stations)
 	}
 }
@@ -59,6 +62,7 @@ func PostStation(c *gin.Context) {
 	}
 	models.DB.Create(&station)
 	c.JSON(http.StatusOK, station)
+	totalStation+=1
 }
 
 func PutStation(c *gin.Context) {
