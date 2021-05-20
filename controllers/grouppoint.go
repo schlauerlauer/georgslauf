@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
 	"strconv"
+	log "github.com/sirupsen/logrus"
 )
 
 type CreateGroupPointInput struct {
@@ -25,6 +26,7 @@ func GetGroupPoints(c *gin.Context) {
 	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&grouppoints)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
+		log.Warn("Get grouppoints failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalGroupPoint, 10))
@@ -36,6 +38,7 @@ func GetGroupPoint(c *gin.Context) {
 	var grouppoint models.GroupPoint
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&grouppoint).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get grouppoint failed.")
 		return
 	}
 	c.JSON(http.StatusOK, grouppoint)
@@ -46,6 +49,7 @@ func PostGroupPoint(c *gin.Context) {
 	var input CreateGroupPointInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Post grouppoint failed.")
 		return
 	}
 	// Create grouppoint
@@ -63,7 +67,7 @@ func PutGroupPoint(c *gin.Context) {
 	var input models.GroupPoint
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO log error
+		log.Warn("Put grouppoint failed.")
 		return
 	}
 	// Put GroupPoint
@@ -76,12 +80,14 @@ func PatchGroupPoint(c *gin.Context) {
 	var grouppoint models.GroupPoint
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&grouppoint).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Patch grouppoint failed.")
 		return
 	}
 	// Validate input
 	var input UpdateGroupPointInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Patch grouppoint failed.")
 		return
 	}
 	models.DB.Model(&grouppoint).Updates(input)
@@ -93,6 +99,7 @@ func DeleteGroupPoint(c *gin.Context) {
 	var grouppoint models.GroupPoint
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&grouppoint).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Delete grouppoint failed.")
 		return
 	}
 	models.DB.Delete(&grouppoint)

@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
 	"strconv"
+	log "github.com/sirupsen/logrus"
 )
 
 type CreateTribeInput struct {
@@ -37,6 +38,7 @@ func GetTribes(c *gin.Context) {
 	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&tribes)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
+		log.Warn("Get tribes failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalTribe, 10))
@@ -49,6 +51,7 @@ func GetTribe(c *gin.Context) {
 	var tribe models.Tribe
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&tribe).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get tribe failed.")
 		return
 	}
 	c.JSON(http.StatusOK, tribe)
@@ -59,6 +62,7 @@ func PostTribe(c *gin.Context) {
 	var input CreateTribeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Post tribe failed.")
 		return
 	}
 	// Create tribe
@@ -82,7 +86,7 @@ func PutTribe(c *gin.Context) {
 	var input models.Tribe
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO log error
+		log.Warn("Put tribe failed.")
 		return
 	} //TODO error checking (e.g. unique error)
 	// Put Tribe
@@ -95,12 +99,14 @@ func PatchTribe(c *gin.Context) {
 	var tribe models.Tribe
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&tribe).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Patch tribe failed.")
 		return
 	}
 	// Validate input
 	var input UpdateTribeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Patch tribe failed.")
 		return
 	}
 	models.DB.Model(&tribe).Updates(input)
@@ -112,6 +118,7 @@ func DeleteTribe(c *gin.Context) {
 	var tribe models.Tribe
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&tribe).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Delete tribe failed.")
 		return
 	}
 	models.DB.Delete(&tribe)

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
 	"strconv"
+	log "github.com/sirupsen/logrus"
 )
 
 type CreateGroupInput struct {
@@ -38,7 +39,7 @@ func GetGroups(c *gin.Context) {
 	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&groups)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
-		// TODO add logging everywhere
+		log.Warn("Get groups failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		fmt.Println(totalGroup)
@@ -52,6 +53,7 @@ func GetGroup(c *gin.Context) {
 	var group models.Group
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&group).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get group failed.")
 		return
 	}
 	c.JSON(http.StatusOK, group)
@@ -62,6 +64,7 @@ func PostGroup(c *gin.Context) {
 	var input CreateGroupInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Post group failed.")
 		fmt.Println(err)
 		return
 	}
@@ -85,6 +88,7 @@ func PutGroup(c *gin.Context) {
 	var input models.Group
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Put group failed.")
 		fmt.Println(err)
 		return
 	}
@@ -98,12 +102,14 @@ func PatchGroup(c *gin.Context) {
 	var group models.Group
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&group).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Patch group failed.")
 		return
 	}
 	// Validate input
 	var input UpdateGroupInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Patch group failed.")
 		return
 	}
 	models.DB.Model(&group).Updates(input)
@@ -115,6 +121,7 @@ func DeleteGroup(c *gin.Context) {
 	var group models.Group
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&group).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Delete group failed.")
 		return
 	}
 	models.DB.Delete(&group)

@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"georgslauf/models"
 	"strconv"
+	log "github.com/sirupsen/logrus"
 )
 
 type CreateRoleInput struct {
@@ -23,6 +24,7 @@ func GetRoles(c *gin.Context) {
 	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&roles)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
+		log.Warn("Get roles failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalRole, 10))
@@ -35,6 +37,7 @@ func GetRole(c *gin.Context) {
 	var role models.Role
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&role).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get role failed.")
 		return
 	}
 	c.JSON(http.StatusOK, role)
@@ -45,6 +48,7 @@ func PostRole(c *gin.Context) {
 	var input CreateRoleInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Post role failed.")
 		return
 	} //TODO error checking (e.g. unique error)
 	// Create role
@@ -61,7 +65,7 @@ func PutRole(c *gin.Context) {
 	var input models.Role
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// TODO log error
+		log.Warn("Put role failed.")
 		return
 	}
 	// Put Tribe
@@ -74,12 +78,14 @@ func PatchRole(c *gin.Context) {
 	var role models.Role
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&role).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Patch role failed.")
 		return
 	}
 	// Validate input
 	var input UpdateRoleInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Warn("Patch role failed.")
 		return
 	}
 	models.DB.Model(&role).Updates(input)
@@ -91,6 +97,7 @@ func DeleteRole(c *gin.Context) {
 	var role models.Role
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&role).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Delete role failed.")
 		return
 	}
 	models.DB.Delete(&role)
