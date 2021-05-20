@@ -19,12 +19,15 @@ type UpdateGroupPointInput struct {
 
 func GetGroupPoints(c *gin.Context) {
 	var grouppoints []models.GroupPoint
-	result := models.DB.Find(&grouppoints)
+	_start := c.DefaultQuery("_start", "0")
+	_end := c.DefaultQuery("_end", "10")
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&grouppoints)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.Header("X-Total-Count", strconv.FormatInt(totalGroupPoint, 10))
 		c.JSON(http.StatusOK, grouppoints)
 	}
 }
@@ -52,6 +55,7 @@ func PostGroupPoint(c *gin.Context) {
 		Value: input.Value}
 	models.DB.Create(&grouppoint)
 	c.JSON(http.StatusOK, grouppoint)
+	totalGroupPoint+=1
 }
 
 func PutGroupPoint(c *gin.Context) {

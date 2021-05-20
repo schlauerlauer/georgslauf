@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+// TODO is login needed? Yes
+
 type CreateLoginInput struct {
 	Name 		string		`json:"name"		binding:"required"`
 	Password	string		`json:"password"	binding:"required"`
@@ -21,12 +23,15 @@ type UpdateLoginInput struct {
 
 func GetLogins(c *gin.Context) {
 	var logins []models.Login
-	result := models.DB.Find(&logins)
+	_start := c.DefaultQuery("_start", "0")
+	_end := c.DefaultQuery("_end", "10")
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&logins)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
-		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10))
+		c.Header("X-Total-Count", strconv.FormatInt(totalLogin, 10))
 		c.JSON(http.StatusOK, logins)
 	}
 }
@@ -56,6 +61,7 @@ func PostLogin(c *gin.Context) {
 	}
 	models.DB.Create(&login)
 	c.JSON(http.StatusOK, login)
+	totalLogin+=1
 }
 
 func PutLogin(c *gin.Context) {
