@@ -28,16 +28,16 @@ func main() {
 	models.ConnectDatabase()
 	controllers.InitTotal()
 	v1 := r.Group("/v1")
-	login := v1.Group("/auth/login")
+	login := v1.Group("/logins")
 	{
-		login.GET("/", controllers.GetLogin)
-	// 	auth.GET("/", controllers.GetLogins)
-	// 	login.GET("/:id", controllers.GetLogin)
-	// 	login.POST("/", controllers.PostLogin)
-	// 	login.PUT("/:id", controllers.PutLogin)
-	// 	login.DELETE("/:id", controllers.DeleteLogin)
-	// 	login.PATCH("/:id", controllers.PatchLogin)
+		login.GET("/", controllers.GetLogins)
+		login.GET("/:id", controllers.GetLogin)
+		login.POST("/", controllers.PostLogin)
+		login.PUT("/:id", controllers.PutLogin)
+		login.DELETE("/:id", controllers.DeleteLogin)
+		login.PATCH("/:id", controllers.PatchLogin)
 	}
+
 	group := v1.Group("/groups")
 	{
 		group.GET("/", controllers.GetGroups)
