@@ -9,4 +9,5 @@ type Role struct {
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
 	Name		string		`json:"name" gorm:"unique"`
+	Short		string		`json:"short" gorm:"unique"`
 }
