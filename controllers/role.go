@@ -10,10 +10,12 @@ import (
 
 type CreateRoleInput struct {
 	Name	string	`json:"name"	binding:"required"`
+	Short	string	`json:"short"	binding:"required"`
 }
 
 type UpdateRoleInput struct {
 	Name	string	`json:"name"`
+	Short	string	`json:"short"`
 }
 
 func GetRoles(c *gin.Context) {
@@ -54,6 +56,7 @@ func PostRole(c *gin.Context) {
 	// Create role
 	role := models.Role{
 		Name: input.Name,
+		Short: input.Short,
 	}
 	models.DB.Create(&role)
 	c.JSON(http.StatusOK, role)
