@@ -8,18 +8,23 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// TODO is login needed? Yes
-
 type CreateLoginInput struct {
 	Name 		string		`json:"name"		binding:"required"`
-	Password	string		`json:"password"	binding:"required"`
+	Password	string		`json:"password"	binding:"required"`//remove from create ?
 	RoleID		uint		`json:"RoleID"		binding:"required"`
+	Salt		string		`json:"salt"		binding:"required"` //TODO generate instead
+	Reset		bool		`json:"reset"		binding:"required"` // TODO set defaults here
+	Active		bool		`json:"active"		binding:"required"`// TODO set defaults here
+	Confirmed	bool		`json:"confirmed"	binding:"required"`// TODO set defaults here
 }
 
 type UpdateLoginInput struct {
 	Name		string		`json:"name"`
 	Password	string		`json:"password"`
 	RoleID		uint		`json:"RoleID"`
+	Reset		bool		`json:"reset"`
+	Active		bool		`json:"active"`
+	Confirmed	bool		`json:"confirmed"`
 }
 
 func GetLogins(c *gin.Context) {
@@ -62,6 +67,10 @@ func PostLogin(c *gin.Context) {
 		Name: input.Name,
 		Password: input.Password,
 		RoleID: input.RoleID,
+		Salt: input.Salt,
+		Reset: input.Reset,
+		Active: input.Active,
+		Confirmed: input.Confirmed,
 	}
 	models.DB.Create(&login)
 	c.JSON(http.StatusOK, login)
