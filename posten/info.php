@@ -5,6 +5,7 @@ include_once '../host/settings.php';
 ?>
 <h3 class="ui-bar ui-bar-a ui-corner-all" align="center">Posteninfo</h3>
 <br>
+<a>https://padlet.com/ToniPRM/PostenA</a>
 <div class="ui-corner-all">
 <?php
 if(isset($login_session) && $_SESSION['rolle'] == 1) {
@@ -15,10 +16,9 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
     $stmt->bind_result($id, $kurz, $name, $stamm, $x_axis, $y_axis, $kat, $desc, $kontakt, $anzahl, $veggie, $material, $ort, $sonstiges, $stufe, $color, $startGruppen);
     while ($stmt->fetch()) {
       echo '<div class="ui-bar ui-bar-a"><h3>'.$kurz.' - '.$name.' ('.$stamm.')</h3></div>
-      <div class="ui-body ui-body-a">Posten für <strong>';
-      if ($stufe == 'RoPo') echo 'Pfadis & Rover  (RoPo)';
-      else echo 'Wölflinge & Jupfis  (WöPo)';
-      echo '</strong><br><h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:'.$Farben[$color].';" align="center"><span style="background-color:white;">Postenfarbe</span></h3><br>Beschreibung <strong>'.$desc.'</strong><br><br>Kontakt <strong>'.$kontakt.'</strong><br>Leiteranzahl <strong>'.$anzahl.'</strong> (davon <strong>'.$veggie.'</strong> Veggies)<br><br />';
+      <div class="ui-body ui-body-a">';
+      echo 'Zugang zum Padlet von eurem Posten: https://padlet.com/ToniPRM/PostenA'.$kurz;
+      echo '<br><h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:'.$Farben[$color].';" align="center"><span style="background-color:white;">Postenfarbe</span></h3><br>Beschreibung <strong>'.$desc.'</strong><br><br>Kontakt <strong>'.$kontakt.'</strong><br>Leiteranzahl <strong>'.$anzahl.'</strong> (davon <strong>'.$veggie.'</strong> Veggies)<br><br />';
       if($material != null) echo 'Material '.$material.'<br />';
       if($sonstiges != null) echo 'Sonstiges '.$sonstiges;
       echo "<br />Start Gruppen <strong>".$startGruppen.'</strong>';
