@@ -9,9 +9,7 @@ include_once '../session/session.php';
 <?php endif; ?>
 <?php if($_SESSION['rolle'] >= 2) : ?>
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
-Dokumente
-<!--<a target="_blank" class="ui-btn ui-btn-b ui-icon-alert ui-btn-icon-left" href="/res/Informationen.pdf">Informationen anzeigen (.pdf)</a>-->
-<a target="_blank" class="ui-btn ui-icon-edit ui-btn-icon-left" href="/res/Interne_Anmeldung.docx">Vorlage für eure interne Anmeldung (.docx)</a>
+
 bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a href="tel:015756456883">anrufen (015756456883)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a>
 <br>
 <br>
