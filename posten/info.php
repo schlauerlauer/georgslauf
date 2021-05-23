@@ -32,16 +32,19 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
 <input class="map" p="<?php echo $kurz; ?>" data-icon="location" x="<?php echo $x_axis; ?>" y="<?php echo $y_axis; ?>" type="button" value="Position"/>
 <br />
 <h4 class="ui-bar ui-bar-a ui-corner-all">
-Zeitplan<br>
+<br>
+Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
 <ul>
-  <li>08:00 &nbsp;&nbsp;Treffpunkt & Check-In auf der Pfarrwiese in Pullach</li>
-  <li>09:00 &nbsp;&nbsp;Gottesdienst in der Heilig Geist Kirche</li>
-  <li>11:00 &nbsp;&nbsp;GEORG2LAUF Startschuss</li>
-  <li>16:30 &nbsp;&nbsp;Abendessen (bis zur Siegerehrung)</li>
-  <li>18:00 &nbsp;&nbsp;Siegerehrung</li>
-  <li>21:00 &nbsp;&nbsp;G2L Afterparty für Leiter & Rover ab 16 (FB Veranstaltung Zugesagt?)</li>
-  <li>03:00 &nbsp;&nbsp;Ab nach Hause</li>
+  <li>08:00 Uhr: Treffen in euren Stämmen</li>
+  <li>09:00 Uhr: Spiritueller Auftackt</li>
+  <li>10:30 Uhr: Startschuss</li>
+  <li>12:30 bis 13:00 Uhr: Mittagspause</li>
+  <li>16:30 Uhr: Ende des Laufs</li>
+  <li>18:00 Uhr: Siegerehrung</li>
+  <li>circa 20:30 Uhr: Ende</li> 
+  <li>circa 21:30 Uhr: Party</li> 
 </ul>
+<br>
 </h4>
 <h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:Tomato; color:white;" align="center">Fehler / Fragen / Hilfe<a data-icon="mail" href="mailto:info@georgslauf.de">Mail an info@georgslauf.de</a><a data-icon="phone" href="tel:015121622448">Anrufen (015121622448)</a><a target="_blank" data-icon="comment" href="https://api.whatsapp.com/send?phone=4915121622448&text=Frage%20von%20Posten%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015121622448)</a></h3>
 <br>
