@@ -38,7 +38,7 @@ Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
   <li>10:30 Uhr: Startschuss</li>
   <li>12:30 bis 13:00 Uhr: Mittagspause</li>
   <li>16:30 Uhr: Ende des Laufs</li>
-  <li>18:00 Uhr: Siegerehrung</li>
+  <li>18:00 Uhr: Sieger*innen Ehrung</li>
   <li>circa 20:30 Uhr: Ende</li> 
   <li>circa 21:30 Uhr: Party</li> 
 </ul>
