@@ -10,7 +10,7 @@ Los geht es <strong>pünktlich um 09 Uhr</strong> bei guter Inzidenz bei euch im
 Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
 <ul>
   <li>08:00 Uhr: Treffen in euren Stämmen</li>
-  <li>09:00 Uhr: Spiritueller Auftackt</li>
+  <li>09:00 Uhr: Spiritueller Auftakt</li>
   <li>10:30 Uhr: Startschuss</li>
   <li>12:30 bis 13:00 Uhr: Mittagspause</li>
   <li>16:30 Uhr: Ende des Laufs</li>
