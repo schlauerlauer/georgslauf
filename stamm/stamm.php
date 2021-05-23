@@ -88,9 +88,9 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 			<label for="p_kont">Handynummer eines Postenleiters<span style="color:red;">*</span></label>
 			<input id="p_kont" value="" type="text" placeholder="Wichtig für den Startschuss (Whatsapp)" maxlength="100">
 			<!--<label for="p_mat">Benötigtes Material</label>
-			<input id="p_mat" value="" type="text" placeholder="Bierbänke ..." maxlength="200">-->
+			<input id="p_mat" value="" type="text" placeholder="Bierbänke ..." maxlength="200">
 			<label for="p_ort">Bevorzugter Ort</label>
-			<input id="p_ort" value="" type="text" placeholder="Wiese / Bürgersteig / Nähe Parkplatz ..." maxlength="200">
+			<input id="p_ort" value="" type="text" placeholder="Wiese / Bürgersteig / Nähe Parkplatz ..." maxlength="200">-->
 			<label for="p_sonst">Sonstiges</label>
 			<input id="p_sonst" value="" type="text" placeholder="Sonstige Wünsche / Anmerkungen ..." maxlength="200">
 			<br>
