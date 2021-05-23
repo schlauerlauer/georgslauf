@@ -16,10 +16,8 @@ if(isset($_SESSION['login_user'])) : ?>
 	<button class="ui-btn ui-btn-b ui-icon-user ui-btn-icon-left" onclick="window.location.href='/session/logout.php'">Abmelden</button>
 <?php else : ?>
 	<h2>Login</h2>
-	<p>Posten und Stamm Login<br><br>
-		Achtung: Änderungen an Posten und Laufgruppen nur noch per EMail !<br><br>
-		Am 21.04.2018 in der Früh werden wir mit allen StaVos noch einmal Kontakt aufnehmen und klären,<br>
-		ob sich bei den Teilnehmern und Laufgruppen Änderungen ergeben haben.
+	<p>Posten Login<br><br>
+		Achtung: Änderungen an Posten und Laufgruppen nur noch per E-Mail!<br><br>
 	</p>
 	<br>
 	<label>Benutzername</label>

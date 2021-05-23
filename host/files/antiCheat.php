@@ -43,6 +43,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 		}
 	}
 	$current = 0;
+	$anzahl = 0;
 	if ($stmt = $mysqli->prepare("SELECT posten.kurz, AVG(points) FROM posten, punkte, gruppen WHERE posten.id = von AND gruppen.id = an AND gruppen.stamm != posten.stamm GROUP BY von ORDER BY posten.kurz ASC")) {
 		$stmt->execute();
 		$stmt->store_result();
@@ -51,11 +52,18 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 			$durchschnitt[$current] = $durchschnitt[$current] - $avg;
 			if($durchschnitt[$current] > 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte über seinem Durchschnitt</h2></li>';
-			} else if ($durchschnitt[$current] < 0)
+				$anzahl++;
+			} else if ($durchschnitt[$current] < 0) {
 				echo '<li><h2>Posten '.$kurz.' bewertet '.$durchschnitt[$current].' Punkte unter seinem Durchschnitt</h2></li>';
+				$anzahl++;
+			}
 			$current++;
+		}
+		if ($anzahl == 0) {
+			echo "Keine Auffälligkeiten.";
 		}
 	}
 	?>
 </ul>
+<p align="center"><img src="files/wanze.png" style="max-width: 100%; max-height: 300px;"/></p>
 <?php endif; ?>

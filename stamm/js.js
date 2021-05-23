@@ -43,9 +43,10 @@
 			var gname = $("#g_name").val();
 			var gval = $("#g_anzahl").val();
 			var gveg = $("#g_veggie").val();
+			var gnum = $("#g_kontakt").val();
 			var stid = $("#g_form input[type='radio']:checked").val();
 			if (gname != "" && gval != "" && stid != null) {
-				$.post('insert.php', { gorp: gorp, gname: gname, gval: gval, stid: stid, gveg: gveg }, function(data) {
+				$.post('insert.php', { gorp: gorp, gname: gname, gval: gval, stid: stid, gveg: gveg, gnum: gnum }, function(data) {
 					if(data == 1) alertify.success("Gruppe " + gname + " angemeldet");
 					else alertify.error("Etwas ist schiefgelaufen");
 				});
@@ -55,11 +56,11 @@
 			var pdesc = $("#p_desc").val();
 			var pkont = $("#p_kont").val();
 			var pval = $("#p_anzahl").val();
-			var pveg = $("#p_veggie").val();
+			var pveg = '0';
 			var pmat = $("#p_mat").val();
 			var port = $("#p_ort").val();
 			var	psonst = $("#p_sonst").val();
-			var pid = $("#p_form input[type='radio']:checked").val();
+			var pid = 'egal';
 			var kid = $("#k_form input[type='radio']:checked").val();
 			if (pname != "" && pdesc != "" && pkont != "" && pval != "" && pveg != "" && pid != null && kid != null) {
 				$.post('insert.php', { gorp: gorp, pname: pname, pdesc: pdesc, pkont: pkont, pval: pval, pveg: pveg, pmat: pmat, port: port, psonst: psonst, kid: kid, pid : pid }, function(data) {

@@ -69,7 +69,48 @@ $(document).ready(function() {
 		$.post(site, { }, function(data) {
 			$('#content').html(data);
 			$('#content').enhanceWithin();
-    });
+			window.location="#content";
+		});
+	});
+
+	$(document).on('click', '#copy', function() {
+		var copyText = document.querySelector("#input");
+		copyText.select();
+		document.execCommand("copy");
+	});
+
+	$(document).on('click', '.confirm', function() {
+		var site = "files/" + $(this).attr('host') + ".php";
+		alertify.confirm("<span style=\"color:red;\">ACHTUNG! Bitte bestätigen</span>", "Wirklich " + $(this).text() + "?", function() {
+			$.post(site, { }, function(data) {
+				alertify.error(data)
+			});
+		}, function() {
+			alertify.error("AAAaaahA!aah!!");
+			setTimeout(
+				function() {
+					alertify.error("AA*CatGifs*saFU*KahWHATAAAAaah!!");
+					alertify.warning("AAO**NOOOAAA1!1!Aah!!");
+				}, 500);
+			setTimeout(
+				function() {
+					alertify.error("AAWHATHAVEYOUDONEAaahSH*TAAAah!!");
+					alertify.error("AAAa*aa!h!AAAAAaah!!");
+					alertify.warning("AA9000AaahAAMFGAAaOMGah!!");
+				}, 900);
+			setTimeout(
+				function() {
+					alertify.error("AAASOPAINFULaaahAah!!");
+					alertify.warning("AAAaaah1AaOHNOah!!");
+					alertify.error("<404>");
+					alertify.error("AAAahAAADAFUQAah!!");
+					alertify.warning("AAAaa1ahAaah!!");
+				}, 1500);
+			setTimeout(
+				function() {
+					alertify.success("nichts passiert.");
+				}, 4000);
+		});
 	});
 
 	$(document).on('change', '.coor', function() {

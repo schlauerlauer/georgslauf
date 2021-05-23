@@ -2,6 +2,7 @@
 include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/master/includes/connect_gl.php';
 require('../../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
+  echo "<h2>Postenpositionen</h2>";
   echo '<fieldset class="ui-grid-a sideByside">';
   if ($stmt = $mysqli->prepare("SELECT id, kurz, x_axis, y_axis FROM posten ORDER BY kurz")) {
     $stmt->execute();

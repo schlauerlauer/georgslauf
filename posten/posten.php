@@ -17,7 +17,7 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) : ?>
 			$gruppen = 0;
 			if ($stmt = $mysqli->prepare("SELECT g.id, g.kurz, g.name, g.size, g.stufe, g.stamm, punkte.points FROM gruppen g LEFT JOIN punkte ON g.id = punkte.an
 			WHERE (von = (SELECT id from posten where kurz = ?) OR von IS NULL)
-			AND (g.stufe = ".$alter." OR g.stufe = ".($alter+1).") ORDER BY kurz ASC")) {
+			 ORDER BY kurz ASC")) {
 				$stmt->bind_param('s', $user);
 				$stmt->execute();
 				$stmt->store_result();

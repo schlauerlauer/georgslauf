@@ -1,32 +1,29 @@
 <br>
-<h1>GEORG2LAUF 2018</h1>
-<h2>in Pullach am 21. April</h2>
-<h1 id="clock"></h1>
+<h1> GEORGSLAUF 2020+1 Isar Kunterbunt</h1>
+<h2>Organisiert von PRM im schönen München am 11. Juli 2021</h2>
 <h3>Hallo und herzlich Willkommen, München-Isar!</h3>
-<p>Wir freuen uns mit Euch auf den 39. Georgslauf 2018!<br>
-Am <strong>Samstag, 21.04.2018</strong> begrüßt Euch Max Kolbe im schönen Pullach!<br>
-Los geht es <strong>pünktlich um 08 Uhr</strong> auf der Pfarrwiese der Heilig Geist Kirche.<br>
+<p>Wir freuen uns mit Euch auf den 41. Georgslauf 2020+1!<br>
+Am <strong>Sonntag, 11.07.2021</strong> begrüßt Euch PRM bei euch zuhause!<br>
+Los geht es <strong>pünktlich um 09 Uhr</strong> bei guter Inzidenz bei euch im Pfaarsaal.<br>
+
 <br>
-Posten- und Gruppen Änderungen laufen nur noch über <a href="mailto:info@georgslauf.de">info@georgslauf.de</a>.<br>
-<br>
-Unser Zeitplan für den 21.04.2018 sieht dann folgendermaßen aus:<br>
+Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
 <ul>
-  <li>08:00 Uhr: Treffpunkt & Check-In auf der Pfarrwiese in Pullach</li>
-  <li>09:00 Uhr: Gottesdienst in der Heilig Geist Kirche</li>
-  <li>11:00 Uhr: GEORG2LAUF Startschuss</li>
-  <li>Ab 16:30 Uhr Abendessen</li>
-  <li>18:00 Siegerehrung</li>
+  <li>08:00 Uhr: Treffen in euren Stämmen</li>
+  <li>09:00 Uhr: Spiritueller Auftakt</li>
+  <li>10:30 Uhr: Startschuss</li>
+  <li>12:30 bis 13:00 Uhr: Mittagspause</li>
+  <li>16:30 Uhr: Ende des Laufs</li>
+  <li>18:00 Uhr: Sieger*innen Ehrung</li>
+  <li>circa 20:30 Uhr: Ende</li> 
+  <li>circa 21:30 Uhr: Party</li> 
 </ul>
 <br>
-Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
-Euer Stamm Maximilian Kolbe<br>
+Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter und gutes Infektionsgeschehen!  <br>
+Euer Stamm PRM<br>
+<h1 id="clock"></h1>
 <br>
 <br>
-Weitere Informationen findet ihr auch unter<br>
-Homepage <a href="https://maxkolbe.de">maxkolbe.de</a><br>
-Facebook &nbsp;<a href="https://fb.com/pfadis.maxko">Pfadfinderstamm Maximilian Kolbe Pullach</a><br>
-Instagram &nbsp;<a href="https://www.instagram.com/scouts.of.maxko/">scouts.of.maxko</a><br>
-<br>
-<br>
-<p align="center"><img src="../res/pic1.jpg" style="max-width: 100%; max-height: 427px;"/></p>
-<p align="center"><img src="../res/pic2.jpg" style="max-width: 100%; max-height: 427px;"/></p>
+<div data-role="footer" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
+		<h2><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></h2>
+</div>

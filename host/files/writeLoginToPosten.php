@@ -3,6 +3,7 @@ include_once '/var/www/vhosts/hosting101172.af98b.netcup.net/www/georgslauf/mast
 include_once '../settings.php';
 require('../../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) {
+  echo "<h2>Zugang an Posten schicken</h2>";
 
   $val = 0;
   echo '<div class="ui-grid-d ui-responsive">';

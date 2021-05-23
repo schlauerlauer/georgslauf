@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Georgslauf 2018</title>
+<title>Georgslauf 2021</title>
 
-<meta name="description" content="GEORG2LAUF 2018 in Pullach am 21. April. Pfadfinder München Georgslauf MXKO Maximilian Kolbe maxkolbe.de"/>
-<meta property="og:title" content="GEORG2LAUF 2018" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#603cba">
+<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+
+<meta name="description" content="Georgslauf 2020+1 in Schwabing am 11. Juli. Pfadfinder München Georgslauf PRM Pater Rupert Mayer stamm-prm.de"/>
+<meta property="og:title" content="GEORGSLAUF 2021" />
 <meta property="og:url" content="https://georgslauf.de" />
-<meta property="og:description" content="Georgslauf 2018 bei MaxKo in Pullach am 21. April">
+<meta property="og:description" content="Georgslauf 2020+1 in Schwabing am 11. Juli">
+
 <meta property="og:image" content="/res/logo.png">
 <meta property="og:type" content="article" />
 <meta property="og:locale" content="de_DE" />
