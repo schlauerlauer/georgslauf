@@ -16,7 +16,7 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
     while ($stmt->fetch()) {
       echo '<div class="ui-bar ui-bar-a"><h3>'.$kurz.' - '.$name.' ('.$stamm.')</h3></div>
       <div class="ui-body ui-body-a">';
-      echo 'Zugang zum Padlet von eurem Posten: <a>https://padlet.com/ToniPRM/Posten'.$kurz.'</a>';
+      echo 'Zugang zum Padlet von eurem Posten: <a href="https://padlet.com/ToniPRM/Posten'.$kurz.'">https://padlet.com/ToniPRM/Posten'.$kurz.'</a>';
       echo '<br><h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:'.$Farben[$color].';" align="center"><span style="background-color:white;">Postenfarbe</span></h3><br>Beschreibung <strong>'.$desc.'</strong><br><br>Kontakt <strong>'.$kontakt.'</strong><br>Leiteranzahl <strong>'.$anzahl.'</strong> (davon <strong>'.$veggie.'</strong> Veggies)<br><br />';
       if($material != null) echo 'Material '.$material.'<br />';
       if($sonstiges != null) echo 'Sonstiges '.$sonstiges;
