@@ -5,6 +5,7 @@ include_once '../host/settings.php';
 ?>
 <h3 class="ui-bar ui-bar-a ui-corner-all" align="center">Posteninfo</h3>
 <br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oKbqzrfO8RE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <div class="ui-corner-all">
 <?php
 if(isset($login_session) && $_SESSION['rolle'] == 1) {
@@ -27,9 +28,7 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
 }
 ?>
 </div>
-<br>
-<input class="map" p="<?php echo $kurz; ?>" data-icon="location" x="<?php echo $x_axis; ?>" y="<?php echo $y_axis; ?>" type="button" value="Position"/>
-<br />
+
 <h4 class="ui-bar ui-bar-a ui-corner-all">
 <br>
 Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
