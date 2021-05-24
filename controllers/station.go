@@ -13,6 +13,7 @@ type CreateStationInput struct {
 	Short	string	`json:"short"	binding:"required"`
 	TribeID	uint	`json:"TribeID"	binding:"required"`
 	Size	uint	`json:"size"	binding:"required"`
+	LoginID	uint	`json:"LoginID"	binding:"required"`
 }
 
 type UpdateStationInput struct {
@@ -20,6 +21,7 @@ type UpdateStationInput struct {
 	Short	string	`json:"short"`
 	TribeID	uint	`json:"TribeID"`
 	Size	uint	`json:"size"`
+	LoginID	uint	`json:"LoginID"`
 }
 
 func GetStations(c *gin.Context) {
@@ -56,13 +58,14 @@ func PostStation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Post station failed.")
 		return
-	} //TODO error checking (e.g. unique error)
+	}
 	// Create station
 	station := models.Station{
 		Name: input.Name,
 		Short: input.Short,
 		TribeID: input.TribeID,
 		Size: input.Size,
+		LoginID: input.LoginID,
 	}
 	models.DB.Create(&station)
 	c.JSON(http.StatusOK, station)
@@ -75,7 +78,6 @@ func PutStation(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Put station failed.")
-		// TODO log error
 		return
 	}
 	// Put Tribe

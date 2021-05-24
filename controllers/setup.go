@@ -13,6 +13,8 @@ var (
 	totalStation int64 = 0
 	totalStationPoint int64 = 0
 	totalTribe int64 = 0
+	totalGrouping int64 = 0
+	totalContent int64 = 0
 )
 
 func InitTotal() {
@@ -23,6 +25,9 @@ func InitTotal() {
 	totalStation = InitStation()
 	totalStationPoint = InitStationPoint()
 	totalTribe = InitTribe()
+	totalGrouping = InitGrouping()
+	totalContent = InitContent()
+	log.Info("Database total calculation complete.")
 }
 
 func InitLogin() int64 {
@@ -96,6 +101,28 @@ func InitTribe() int64 {
 	result := models.DB.Find(&model)
 	if result.Error != nil {
 		log.Warn("Init tribe failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
+}
+
+func InitGrouping() int64 {
+	var model []models.Grouping
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init grouping failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
+}
+
+func InitContent() int64 {
+	var model []models.Content
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init content failed.")
 		return 0
 	} else {
 		return result.RowsAffected
