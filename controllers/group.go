@@ -10,26 +10,20 @@ import (
 )
 
 type CreateGroupInput struct {
-	Short 		string		`json:"short"	binding:"required"`
-	Name		string		`json:"name"	binding:"required"`
-	Size		uint		`json:"size"	binding:"required"`
-	RoleID		uint		`json:"RoleID"	binding:"required"`
-	TribeID		uint		`json:"TribeID"	binding:"required"`
-	Details		string		`json:"details"	binding:"required"`
-	Contact		string		`json:"contact"	binding:"required"`
+	Short 		string		`json:"short"		binding:"required"`
+	Name		string		`json:"name"		binding:"required"`
+	Size		uint		`json:"size"		binding:"required"`
+	GroupingID	uint		`json:"GroupingID"	binding:"required"`
+	TribeID		uint		`json:"TribeID"		binding:"required"`
 }
 
 type UpdateGroupInput struct {
-	Name	string	`json:"name"`
-	Size	uint	`json:"size"`
-	Short 	string	`json:"short"`
-	TribeID	uint	`json:"TribeID"`
-	RoleID	uint	`json:"RoleID"`
-	Details	string	`json:"details"`
-	Contact	string	`json:"contact"`
+	Name		string	`json:"name"`
+	Size		uint	`json:"size"`
+	Short 		string	`json:"short"`
+	TribeID		uint	`json:"TribeID"`
+	GroupingID	uint	`json:"GroupingID"`
 }
-
-// TODO move total to redis
 
 func GetGroups(c *gin.Context) {
 	var groups []models.Group
@@ -43,7 +37,7 @@ func GetGroups(c *gin.Context) {
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		fmt.Println(totalGroup)
-		c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10)) //FIXME everywhere -> only shows current page not all
+		c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10))
 		c.JSON(http.StatusOK, groups)
 	}
 }
@@ -69,17 +63,15 @@ func PostGroup(c *gin.Context) {
 		return
 	}
 	group := models.Group{
-		Short: input.Short,
-		Name: input.Name,
-		Size: input.Size,
-		RoleID: input.RoleID,
-		TribeID: input.TribeID,
-		Details: input.Details,
-		Contact: input.Contact,
-	} //TODO error checking (e.g. unique error)
+		Short:		input.Short,
+		Name:		input.Name,
+		Size:		input.Size,
+		GroupingID:	input.GroupingID,
+		TribeID:	input.TribeID,
+	}
 	// Create group
 	models.DB.Create(&group)
-	c.JSON(http.StatusOK, "") // TODO don't send the whole json back (everywhere) (get id back! tutorial)
+	c.JSON(http.StatusOK, group)
 	totalGroup+=1
 }
 
@@ -94,7 +86,7 @@ func PutGroup(c *gin.Context) {
 	}
 	// Put Group
 	models.DB.Save(&input)
-	c.JSON(http.StatusOK, input) // TODO here too
+	c.JSON(http.StatusOK, input)
 }
 
 func PatchGroup(c *gin.Context) {

@@ -52,7 +52,7 @@ func PostStationPoint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Post stationpoint failed.")
 		return
-	} //TODO error checking (e.g. unique error)
+	}
 	// Create stationpoint
 	stationpoint := models.StationPoint{
 		GroupID: input.GroupID,
@@ -70,7 +70,6 @@ func PutStationPoint(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Put stationpoint failed.")
-		// TODO log error
 		return
 	}
 	// Put StationPoint

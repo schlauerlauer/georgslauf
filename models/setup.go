@@ -30,7 +30,11 @@ func ConnectDatabase() {
 		&Station{},
 		&StationPoint{},
 		&Tribe{},
+		&Grouping{},
+		&Content{},
 	)
 
 	DB = db
+
+	log.Info("Database migration sucessful.")
 }

@@ -10,8 +10,7 @@ type Tribe struct {
 	UpdatedAt	time.Time	`json:"UpdatedAt"`
 	Name		string		`json:"name" gorm:"unique"`
 	Short		string		`json:"short" gorm:"unique"`
-	// TODO add role?
+	DPSG		string		`json:"dpsg"`
+	Address		string		`json:"address"`
+	LoginID		uint		`json:"LoginID" gorm:"foreignKey:LoginID"`
 }
-
-// TODO add config model ?
-// TODO seperate station login and group login

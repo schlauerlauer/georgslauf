@@ -5,26 +5,19 @@ import (
 	"georgslauf/models"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	"time"
+	//"time"
 	log "github.com/sirupsen/logrus"
 )
 
 func init() {
 	log.SetLevel(log.InfoLevel)
-	log.Info("Log level info.")
+	log.Info("Log level: Info.")
 }
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:	[]string{"http://localhost:3000"},
-		AllowMethods:	[]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:	[]string{"Origin", "Content-Length", "Content-Type", "X-Total-Count"},
-		AllowCredentials: true,
-		MaxAge:	12 * time.Hour,
-		ExposeHeaders:	[]string{"x-total-count","Content-Range"},
-	}))
+	r.Use(cors.Default())
 	models.ConnectDatabase()
 	controllers.InitTotal()
 	v1 := r.Group("/v1")
@@ -37,7 +30,6 @@ func main() {
 		login.DELETE("/:id", controllers.DeleteLogin)
 		login.PATCH("/:id", controllers.PatchLogin)
 	}
-
 	group := v1.Group("/groups")
 	{
 		group.GET("/", controllers.GetGroups)
@@ -46,7 +38,6 @@ func main() {
 		group.PUT("/:id", controllers.PutGroup)
 		group.DELETE("/:id", controllers.DeleteGroup)
 		group.PATCH("/:id", controllers.PatchGroup)
-		group.OPTIONS("/", Options)
 	}
 	tribe := v1.Group("/tribes")
 	{
@@ -93,17 +84,24 @@ func main() {
 		stationpoint.DELETE("/:id", controllers.DeleteStationPoint)
 		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
 	}
-
+	grouping := v1.Group("/groupings")
+	{
+		grouping.GET("/", controllers.GetGroupings)
+		grouping.GET("/:id", controllers.GetGrouping)
+		grouping.POST("/", controllers.PostGrouping)
+		grouping.PUT("/:id", controllers.PutGrouping)
+		grouping.DELETE("/:id", controllers.DeleteGrouping)
+		grouping.PATCH("/:id", controllers.PatchGrouping)
+	}
+	content := v1.Group("/content")
+	{
+		content.GET("/", controllers.GetContents)
+		content.GET("/:id", controllers.GetContent)
+		content.POST("/", controllers.PostContent)
+		content.PUT("/:id", controllers.PutContent)
+		content.DELETE("/:id", controllers.DeleteContent)
+		content.PATCH("/:id", controllers.PatchContent)
+	}
+	log.Info("API ready.")
 	r.Run()
-}
-
-// Options common response for rest options
-func Options(c *gin.Context) {
-	Origin := c.MustGet("CorsOrigin").(string)
-
-	c.Writer.Header().Set("Access-Control-Allow-Origin", Origin)
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,DELETE,POST,PUT")
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	c.Next()
 }

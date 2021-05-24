@@ -11,23 +11,17 @@ import (
 type CreateTribeInput struct {
 	Name		string	`json:"name"		binding:"required"`
 	Short		string	`json:"short"		binding:"required"`
-	Email		string	`json:"email"		binding:"required"`
-	Reset		bool	`json:"reset"		binding:"required"`
-	Active		bool	`json:"active"		binding:"required"`
-	Confirmed	bool	`json:"confirmed	binding:"required"`
-	DPSG		string	`json:"dpsg"`
-	Address		string	`json:"address"`
+	DPSG		string	`json:"dpsg"		binding:"required"`
+	Address		string	`json:"address"		binding:"required"`
+	LoginID		uint	`json:"LoginID"		binding:"required"`
 }
 
 type UpdateTribeInput struct {
 	Name		string	`json:"name"`
 	Short		string	`json:"short"`
-	Email		string	`json:"email"`
-	Reset		bool	`json:"reset"`
-	Active		bool	`json:"active"`
-	Confirmed	bool	`json:"confirmed"`
 	DPSG		string	`json:"dpsg"`
 	Address		string	`json:"address"`
+	LoginID		uint	`json:"LoginID`
 }
 
 func GetTribes(c *gin.Context) {
@@ -69,12 +63,9 @@ func PostTribe(c *gin.Context) {
 	tribe := models.Tribe{
 		Name: input.Name,
 		Short: input.Short,
-		Email: input.Email,
-		Reset: input.Reset,
-		Active: input.Active,
-		Confirmed: input.Confirmed,
 		DPSG: input.DPSG,
 		Address: input.Address,
+		LoginID: input.LoginID,
 	}
 	models.DB.Create(&tribe)
 	c.JSON(http.StatusOK, tribe)
@@ -88,7 +79,7 @@ func PutTribe(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Put tribe failed.")
 		return
-	} //TODO error checking (e.g. unique error)
+	}
 	// Put Tribe
 	models.DB.Save(&input)
 	c.JSON(http.StatusOK, input)

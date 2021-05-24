@@ -9,22 +9,28 @@ import (
 )
 
 type CreateLoginInput struct {
-	Name 		string		`json:"name"		binding:"required"`
-	Password	string		`json:"password"	binding:"required"`//remove from create ?
+	Username 	string		`json:"username"	binding:"required"`
+	Password	string		`json:"password"	binding:"required"`
 	RoleID		uint		`json:"RoleID"		binding:"required"`
-	Salt		string		`json:"salt"		binding:"required"` //TODO generate instead
-	Reset		bool		`json:"reset"		binding:"required"` // TODO set defaults here
-	Active		bool		`json:"active"		binding:"required"`// TODO set defaults here
-	Confirmed	bool		`json:"confirmed"	binding:"required"`// TODO set defaults here
+	Salt		string		`json:"salt"		binding:"required"`
+	Reset		bool		`json:"reset"		binding:"required"`
+	Active		bool		`json:"active"		binding:"required"`
+	Confirmed	bool		`json:"confirmed"	binding:"required"`
+	Phone		string		`json:"phone"		binding:"required"`
+	Email		string		`json:"email"		binding:"required"`
+	Contact		string		`json:"contact"		binding:"required"`
 }
 
 type UpdateLoginInput struct {
-	Name		string		`json:"name"`
+	Username	string		`json:"username"`
 	Password	string		`json:"password"`
 	RoleID		uint		`json:"RoleID"`
 	Reset		bool		`json:"reset"`
 	Active		bool		`json:"active"`
 	Confirmed	bool		`json:"confirmed"`
+	Phone		string		`json:"phone"`
+	Email		string		`json:"email"`
+	Contact		string		`json:"contact"`
 }
 
 func GetLogins(c *gin.Context) {
@@ -61,16 +67,19 @@ func PostLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Post login failed.")
 		return
-	} // TODO error checking multiple unique
+	}
 	// Create login
 	login := models.Login{
-		Name: input.Name,
+		Username: input.Username,
 		Password: input.Password,
 		RoleID: input.RoleID,
 		Salt: input.Salt,
 		Reset: input.Reset,
 		Active: input.Active,
 		Confirmed: input.Confirmed,
+		Phone: input.Phone,
+		Email: input.Email,
+		Contact: input.Contact,
 	}
 	models.DB.Create(&login)
 	c.JSON(http.StatusOK, login)

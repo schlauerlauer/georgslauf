@@ -52,7 +52,7 @@ func PostRole(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Post role failed.")
 		return
-	} //TODO error checking (e.g. unique error)
+	}
 	// Create role
 	role := models.Role{
 		Name: input.Name,
