@@ -9,5 +9,5 @@ type Content struct {
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
 	Title		string		`json:"title" gorm:"unique"`
-	Body		string		`json:"body" gorm:"unique"`
+	Body		string		`json:"body" gorm:"unique;size:1023"`
 }
