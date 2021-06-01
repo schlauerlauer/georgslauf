@@ -17,9 +17,7 @@ if (isset($_POST['help'])) {
 			Für Ausnahmen bitte uns kontaktieren, wir werden <strong>versuchen</strong> diese zu ermöglichen.";
 			break;
 		case "Kategorien":
-			echo "Eure Posten sollen zu den unten stehenden Kategorien passen.<br>
-			<br>
-			Die mögliche Postenanzahl je Kategorie bei WöPos und RoPos unterscheiden sich.";
+			echo "Eure Posten sollen zu den unten stehenden Kategorien passen."
 			break;
 		case "Stufen":
 			echo "Eure Posten werden besucht von entweder<br>
