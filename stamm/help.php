@@ -17,7 +17,7 @@ if (isset($_POST['help'])) {
 			Für Ausnahmen bitte uns kontaktieren, wir werden <strong>versuchen</strong> diese zu ermöglichen.";
 			break;
 		case "Kategorien":
-			echo "Eure Posten sollen zu den unten stehenden Kategorien passen."
+			echo "Eure Posten sollen zu den unten stehenden Kategorien passen.";
 			break;
 		case "Stufen":
 			echo "Eure Posten werden besucht von entweder<br>
