@@ -10,8 +10,8 @@ import (
 )
 
 func init() {
-	log.SetLevel(log.InfoLevel)
-	log.Info("Log level: Info.")
+	log.SetLevel(log.DebugLevel)
+	log.Print("Log level ", log.GetLevel())
 }
 
 func main() {
@@ -74,6 +74,11 @@ func main() {
 		grouppoint.PUT("/:id", controllers.PutGroupPoint)
 		grouppoint.DELETE("/:id", controllers.DeleteGroupPoint)
 		grouppoint.PATCH("/:id", controllers.PatchGroupPoint)
+	}
+	grouptop := v1.Group("/grouptops")
+	{
+		grouptop.GET("/", controllers.GetGroupTops)
+		grouptop.GET("/:id", controllers.GetGroupTop)
 	}
 	stationpoint := v1.Group("/stationpoints")
 	{
