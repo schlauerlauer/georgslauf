@@ -16,23 +16,63 @@ var (
 	totalGrouping int64 = 0
 	totalContent int64 = 0
 	totalGroupTop int64 = 0
+	totalStationTop int64 = 0
+	totalRun int64 = 0
+	totalContentType int64 = 0
 )
 
 func InitTotal() {
-	totalLogin = InitLogin()
-	totalGroup = InitGroup()
-	totalGroupPoint = InitGroupPoint()
-	totalRole = InitRole()
-	totalStation = InitStation()
-	totalStationPoint = InitStationPoint()
-	totalTribe = InitTribe()
-	totalGrouping = InitGrouping()
-	totalContent = InitContent()
-	totalGroupTop = InitGroupTop()
+	totalLogin = initLogin()
+	totalGroup = initGroup()
+	totalGroupPoint = initGroupPoint()
+	totalRole = initRole()
+	totalStation = initStation()
+	totalStationPoint = initStationPoint()
+	totalTribe = initTribe()
+	totalGrouping = initGrouping()
+	totalContent = initContent()
+	totalGroupTop = initGroupTop()
+	totalStationTop = initStationPoint()
+	totalRun = initRun()
+	totalContentType = initContentType()
 	log.Info("Database total calculation complete.")
 }
 
-func InitGroupTop() int64 {
+func initContentType() int64 {
+	var model []models.ContentType
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init run failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
+}
+
+
+func initRun() int64 {
+	var model []models.Run
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init run failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
+}
+
+func initStationTop() int64 {
+	var model []models.StationTop
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init stationtop failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
+}
+
+func initGroupTop() int64 {
 	var model []models.GroupTop
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -43,7 +83,7 @@ func InitGroupTop() int64 {
 	}
 }
 
-func InitLogin() int64 {
+func initLogin() int64 {
 	var model []models.Login
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -54,7 +94,7 @@ func InitLogin() int64 {
 	}
 }
 
-func InitGroup() int64 {
+func initGroup() int64 {
 	var model []models.Group
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -65,7 +105,7 @@ func InitGroup() int64 {
 	}
 }
 
-func InitGroupPoint() int64 {
+func initGroupPoint() int64 {
 	var model []models.GroupPoint
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -76,7 +116,7 @@ func InitGroupPoint() int64 {
 	}
 }
 
-func InitRole() int64 {
+func initRole() int64 {
 	var model []models.Role
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -87,7 +127,7 @@ func InitRole() int64 {
 	}
 }
 
-func InitStation() int64 {
+func initStation() int64 {
 	var model []models.Station
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -98,7 +138,7 @@ func InitStation() int64 {
 	}
 }
 
-func InitStationPoint() int64 {
+func initStationPoint() int64 {
 	var model []models.StationPoint
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -109,7 +149,7 @@ func InitStationPoint() int64 {
 	}
 }
 
-func InitTribe() int64 {
+func initTribe() int64 {
 	var model []models.Tribe
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -120,7 +160,7 @@ func InitTribe() int64 {
 	}
 }
 
-func InitGrouping() int64 {
+func initGrouping() int64 {
 	var model []models.Grouping
 	result := models.DB.Find(&model)
 	if result.Error != nil {
@@ -131,7 +171,7 @@ func InitGrouping() int64 {
 	}
 }
 
-func InitContent() int64 {
+func initContent() int64 {
 	var model []models.Content
 	result := models.DB.Find(&model)
 	if result.Error != nil {
