@@ -32,6 +32,8 @@ func ConnectDatabase() {
 		&Tribe{},
 		&Grouping{},
 		&Content{},
+		&Run{},
+		&ContentType{},
 	)
 	db.Exec("DROP VIEW group_top")
 	db.Exec("DROP VIEW station_top")
@@ -60,7 +62,8 @@ func ConnectDatabase() {
 			stations.name AS 'station',
 			tribes.id AS 'tribe_id',
 			tribes.name AS 'tribe',
-			sum(value) as 'sum'
+			sum(value) as 'sum',
+			round(sum(value)/count(value),2) as 'avg'
 		FROM station_points
 		INNER JOIN stations on stations.id = station_id
 		INNER JOIN tribes on tribes.id = stations.tribe_id

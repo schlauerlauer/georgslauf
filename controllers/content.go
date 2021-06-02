@@ -9,13 +9,17 @@ import (
 )
 
 type CreateContentInput struct {
-	Title	string	`json:"title"	binding:"required"`
-	Body	string	`json:"body"	binding:"required"`
+	Title			string	`json:"title"			binding:"required"`
+	Body			string	`json:"body"			binding:"required"`
+	RunID			uint	`json:"RunID"			binding:"required"`
+	ContenttypeID	uint	`json:"ContenttypeID"	binding:"required"`
 }
 
 type UpdateContentInput struct {
-	Title	string	`json:"title"`
-	Body	string	`json:"body"`
+	Title			string	`json:"title"`
+	Body			string	`json:"body"`
+	RunID			uint	`json:"RunID"`
+	ContenttypeID	uint	`json:"ContenttypeID"`
 }
 
 func GetContents(c *gin.Context) {
@@ -57,6 +61,8 @@ func PostContent(c *gin.Context) {
 	content := models.Content{
 		Title: input.Title,
 		Body: input.Body,
+		RunID: input.RunID,
+		ContenttypeID: input.ContenttypeID,
 	}
 	models.DB.Create(&content)
 	c.JSON(http.StatusOK, content)

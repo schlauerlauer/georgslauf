@@ -89,6 +89,11 @@ func main() {
 		stationpoint.DELETE("/:id", controllers.DeleteStationPoint)
 		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
 	}
+	stationtop := v1.Group("/stationtops")
+	{
+		stationtop.GET("/", controllers.GetStationTops)
+		stationtop.GET("/:id", controllers.GetStationTop)
+	}
 	grouping := v1.Group("/groupings")
 	{
 		grouping.GET("/", controllers.GetGroupings)
@@ -98,7 +103,7 @@ func main() {
 		grouping.DELETE("/:id", controllers.DeleteGrouping)
 		grouping.PATCH("/:id", controllers.PatchGrouping)
 	}
-	content := v1.Group("/content")
+	content := v1.Group("/contents")
 	{
 		content.GET("/", controllers.GetContents)
 		content.GET("/:id", controllers.GetContent)
@@ -106,6 +111,24 @@ func main() {
 		content.PUT("/:id", controllers.PutContent)
 		content.DELETE("/:id", controllers.DeleteContent)
 		content.PATCH("/:id", controllers.PatchContent)
+	}
+	contenttype := v1.Group("/contenttypes")
+	{
+		contenttype.GET("/", controllers.GetContentTypes)
+		contenttype.GET("/:id", controllers.GetContentType)
+		contenttype.POST("/", controllers.PostContentType)
+		contenttype.PUT("/:id", controllers.PutContentType)
+		contenttype.DELETE("/:id", controllers.DeleteContentType)
+		contenttype.PATCH("/:id", controllers.PatchContentType)
+	}
+	run := v1.Group("/runs")
+	{
+		run.GET("/", controllers.GetRuns)
+		run.GET("/:id", controllers.GetRun)
+		run.POST("/", controllers.PostRun)
+		run.PUT("/:id", controllers.PutRun)
+		run.DELETE("/:id", controllers.DeleteRun)
+		run.PATCH("/:id", controllers.PatchRun)
 	}
 	log.Info("API ready.")
 	r.Run()
