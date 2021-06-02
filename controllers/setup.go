@@ -15,6 +15,7 @@ var (
 	totalTribe int64 = 0
 	totalGrouping int64 = 0
 	totalContent int64 = 0
+	totalGroupTop int64 = 0
 )
 
 func InitTotal() {
@@ -27,7 +28,19 @@ func InitTotal() {
 	totalTribe = InitTribe()
 	totalGrouping = InitGrouping()
 	totalContent = InitContent()
+	totalGroupTop = InitGroupTop()
 	log.Info("Database total calculation complete.")
+}
+
+func InitGroupTop() int64 {
+	var model []models.GroupTop
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init grouptop failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
 }
 
 func InitLogin() int64 {
