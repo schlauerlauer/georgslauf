@@ -40,15 +40,17 @@ func ConnectDatabase() {
 		SELECT
 			group_id AS 'id',
 			groups.name AS 'group',
+			groupings.id AS 'grouping_id',
 			groupings.name AS 'grouping',
+			tribes.id AS 'tribe_id',
 			tribes.name AS 'tribe',
-			sum(value) as 'sum'
+			sum(value) as 'sum',
+			round(sum(value)/count(value),2) as 'avg'
 		FROM group_points
 		INNER JOIN groups on groups.id = group_id
 		INNER JOIN groupings on groupings.id = groups.grouping_id
 		INNER JOIN tribes on tribes.id = groups.tribe_id
 		GROUP BY groups.name
-		ORDER BY sum DESC
 		;
 	`
 	stationTopQuery := `
@@ -56,13 +58,13 @@ func ConnectDatabase() {
 		SELECT
 			station_id AS 'id',
 			stations.name AS 'station',
+			tribes.id AS 'tribe_id',
 			tribes.name AS 'tribe',
 			sum(value) as 'sum'
 		FROM station_points
 		INNER JOIN stations on stations.id = station_id
 		INNER JOIN tribes on tribes.id = stations.tribe_id
 		GROUP BY station_id
-		ORDER BY sum DESC
 		;
 	`
 	db.Exec(groupingTopQuery)
