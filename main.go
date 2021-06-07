@@ -98,7 +98,7 @@ func main() {
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
-
+	r.Static("/static", "uploads")
 	r.POST("/login/", authMiddleware.LoginHandler)
 	r.GET("/refresh/", authMiddleware.RefreshHandler)
 	r.GET("/logout/", authMiddleware.LogoutHandler)
