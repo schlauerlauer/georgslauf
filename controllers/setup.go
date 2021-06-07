@@ -9,7 +9,7 @@ var (
 	totalLogin int64 = 0
 	totalGroup int64 = 0
 	totalGroupPoint int64 = 0
-	totalRole int64 = 0
+	totalRule int64 = 0
 	totalStation int64 = 0
 	totalStationPoint int64 = 0
 	totalTribe int64 = 0
@@ -19,13 +19,14 @@ var (
 	totalStationTop int64 = 0
 	totalRun int64 = 0
 	totalContentType int64 = 0
+	totalConfig int64 = 0
 )
 
 func InitTotal() {
 	totalLogin = initLogin()
 	totalGroup = initGroup()
 	totalGroupPoint = initGroupPoint()
-	totalRole = initRole()
+	totalRule = initRule()
 	totalStation = initStation()
 	totalStationPoint = initStationPoint()
 	totalTribe = initTribe()
@@ -35,7 +36,19 @@ func InitTotal() {
 	totalStationTop = initStationPoint()
 	totalRun = initRun()
 	totalContentType = initContentType()
+	totalConfig = initConfig()
 	log.Info("Database total calculation complete.")
+}
+
+func initConfig() int64 {
+	var model []models.Config
+	result := models.DB.Find(&model)
+	if result.Error != nil {
+		log.Warn("Init config failed.")
+		return 0
+	} else {
+		return result.RowsAffected
+	}
 }
 
 func initContentType() int64 {
@@ -116,8 +129,8 @@ func initGroupPoint() int64 {
 	}
 }
 
-func initRole() int64 {
-	var model []models.Role
+func initRule() int64 {
+	var model []models.Rule
 	result := models.DB.Find(&model)
 	if result.Error != nil {
 		log.Warn("Init role failed.")
