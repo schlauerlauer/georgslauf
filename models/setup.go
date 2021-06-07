@@ -5,9 +5,14 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	log "github.com/sirupsen/logrus"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
+	"github.com/casbin/casbin/v2"
 )
 
-var DB *gorm.DB
+var (
+	DB *gorm.DB
+	EN *casbin.Enforcer
+)
 
 func ConnectDatabase() {
 	// db, err := gorm.Open(sqlite.Open("./georgslauf.db"), &gorm.Config{
@@ -25,7 +30,6 @@ func ConnectDatabase() {
 	db.AutoMigrate(
 		&Group{},
 		&GroupPoint{},
-		&Role{},
 		&Login{},
 		&Station{},
 		&StationPoint{},
@@ -34,6 +38,7 @@ func ConnectDatabase() {
 		&Content{},
 		&Run{},
 		&ContentType{},
+		&Config{},
 	)
 	db.Exec("DROP VIEW group_top")
 	db.Exec("DROP VIEW station_top")
@@ -76,4 +81,24 @@ func ConnectDatabase() {
 	DB = db
 
 	log.Info("Database migration sucessful.")
+
+}
+
+func SetEnforcer() {
+	a, err := gormadapter.NewAdapterByDBWithCustomTable(DB, &Rule{})
+	if err != nil {
+		log.Fatal("Error: ", err)
+	}
+	en, err := casbin.NewEnforcer("keymatch_model.conf", a)
+	if err != nil {
+		log.Fatal("Error: ", err)
+	}
+	en.LoadPolicy()
+	log.Info("Enforcer connected.")
+
+	en.AddPolicy("admin", "/v1/*", "(GET)|(POST)|(PUT)|(DELETE)|(PATCH)")
+	en.SavePolicy()
+
+	EN = en
+	log.Info("Policies updated.")
 }
