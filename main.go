@@ -21,20 +21,19 @@ var (
 
 func init() {
 	log.SetLevel(log.DebugLevel)
-	log.Print("Log level ", log.GetLevel())
+	log.Print("Log level ", log.GetLevel(), ".")
 }
 
 func main() {
 	models.ConnectDatabase()
 	models.SetEnforcer()
+	controllers.InitTotal()
+
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(cors.Default())
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	
-
-	controllers.InitTotal()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -94,20 +93,21 @@ func main() {
 		TokenHeadName: "Bearer",
 		TimeFunc: time.Now,
 	})
-
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
-	r.Static("/static", "uploads")
-	r.POST("/login/", authMiddleware.LoginHandler)
-	r.GET("/refresh/", authMiddleware.RefreshHandler)
-	r.GET("/logout/", authMiddleware.LogoutHandler)
+	auth := r.Group("/auth")
+	{
+		auth.POST("/login/", authMiddleware.LoginHandler)
+		auth.GET("/refresh/", authMiddleware.RefreshHandler)
+		auth.GET("/logout/", authMiddleware.LogoutHandler)
+	}
+	public := r.Group("/public")
+	{
+		public.Static("/static/", "uploads")
+	}
 	v1 := r.Group("/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
-	test := v1.Group("/test")
-	test.GET("/", func(c *gin.Context) {
-		log.Info("Hello received a GET request..")
-	})
 	login := v1.Group("/logins")
 	{
 		login.GET("/", controllers.GetLogins)
@@ -140,7 +140,7 @@ func main() {
 		rule.GET("/", controllers.GetRules)
 		//rule.GET("/:id", controllers.GetRule)
 		rule.POST("/", controllers.PostRule)
-		//rule.PUT("/:id", controllers.PutRule)
+		//rule.PUT("/:id", controllers.PutRule) // TODO casbin api modify
 		rule.DELETE("/:id", controllers.DeleteRule)
 	}
 	station := v1.Group("/stations")
