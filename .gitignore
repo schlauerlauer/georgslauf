@@ -1,1 +1,3 @@
 *.db
+/uploads/*
+!/uploads/.gitkeep
