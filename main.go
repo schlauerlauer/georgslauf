@@ -1,12 +1,22 @@
 package main
 
 import (
+	"net/http"
 	"georgslauf/controllers"
 	"georgslauf/models"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	//"time"
+	"time"
 	log "github.com/sirupsen/logrus"
+	jwt "github.com/appleboy/gin-jwt/v2"
+	"os"
+)
+
+var (
+	identityKey =	"id"
+	permissionKey =	"permissions"
+	contactKey =	"fullName"
+	avatarKey =		"avatar"
 )
 
 func init() {
@@ -15,12 +25,89 @@ func init() {
 }
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.Default()
-	r.Use(cors.Default())
 	models.ConnectDatabase()
+	models.SetEnforcer()
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
+	r.Use(cors.Default())
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	
+
 	controllers.InitTotal()
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	secret := os.Getenv("SECRET")
+	if secret == "" {
+		secret = "action-copier-shredding-landless-marrow-backhand-vacation-doorway-regulator-truck"
+	}
+
+	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
+		Realm:       "georgslauf.de",
+		Key:         []byte(secret),
+		Timeout:     time.Hour,
+		MaxRefresh:  time.Hour,
+		IdentityKey: identityKey,
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
+			if v, ok := data.(*models.Login); ok {
+				return jwt.MapClaims{
+					identityKey: v.Username,
+					contactKey: v.Contact,
+					avatarKey: v.Avatar,
+				}
+			}
+			return jwt.MapClaims{}
+		},
+		IdentityHandler: func(c *gin.Context) interface{} {
+			claims := jwt.ExtractClaims(c)
+			return &models.Login{
+				Username: claims[identityKey].(string),
+			}
+		},
+		Authenticator: controllers.Login,
+		Authorizator: func(data interface{}, c *gin.Context) bool {
+			if v, ok := data.(*models.Login); ok {
+				//sub := v.Username
+				//obj := c.Request.URL.RequestURI()
+				//act := c.Request.Method
+				en, _ := models.EN.Enforce(v.Username, c.Request.URL.RequestURI(), c.Request.Method)
+				// log.Debug("Enforce(\"", sub, "\",\"", obj, "\",\"", act, "\") is ", en)
+				// log.Debug("Reason: ", reason)
+				if en {
+					//log.Debug("Enforcer passed.")
+					return true
+				}
+			}
+			log.Debug("Enforcer blocked.")
+			return false
+		},
+		Unauthorized: func(c *gin.Context, code int, message string) {
+			c.JSON(code, gin.H{
+				"code":    code,
+				"message": message,
+			})
+		},
+		TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		TokenHeadName: "Bearer",
+		TimeFunc: time.Now,
+	})
+
+	if err != nil {
+		log.Fatal("JWT Error:" + err.Error())
+	}
+
+	r.POST("/login/", authMiddleware.LoginHandler)
+	r.GET("/refresh/", authMiddleware.RefreshHandler)
+	r.GET("/logout/", authMiddleware.LogoutHandler)
 	v1 := r.Group("/v1")
+	v1.Use(authMiddleware.MiddlewareFunc())
+	test := v1.Group("/test")
+	test.GET("/", func(c *gin.Context) {
+		log.Info("Hello received a GET request..")
+	})
 	login := v1.Group("/logins")
 	{
 		login.GET("/", controllers.GetLogins)
@@ -48,14 +135,13 @@ func main() {
 		tribe.DELETE("/:id", controllers.DeleteTribe)
 		tribe.PATCH("/:id", controllers.PatchTribe)
 	}
-	role := v1.Group("/roles")
+	rule := v1.Group("/rules")
 	{
-		role.GET("/", controllers.GetRoles)
-		role.GET("/:id", controllers.GetRole)
-		role.POST("/", controllers.PostRole)
-		role.PUT("/:id", controllers.PutRole)
-		role.DELETE("/:id", controllers.DeleteRole)
-		role.PATCH("/:id", controllers.PatchRole)
+		rule.GET("/", controllers.GetRules)
+		//rule.GET("/:id", controllers.GetRule)
+		rule.POST("/", controllers.PostRule)
+		//rule.PUT("/:id", controllers.PutRule)
+		rule.DELETE("/:id", controllers.DeleteRule)
 	}
 	station := v1.Group("/stations")
 	{
@@ -130,6 +216,18 @@ func main() {
 		run.DELETE("/:id", controllers.DeleteRun)
 		run.PATCH("/:id", controllers.PatchRun)
 	}
+	config := v1.Group("/configs")
+	{
+		config.GET("/", controllers.GetConfigs)
+		config.GET("/:id", controllers.GetConfig)
+		config.POST("/", controllers.PostConfig)
+		config.PUT("/:id", controllers.PutConfig)
+		config.DELETE("/:id", controllers.DeleteConfig)
+		config.PATCH("/:id", controllers.PatchConfig)
+	}
 	log.Info("API ready.")
-	r.Run()
+
+	if err := http.ListenAndServe(":"+port, r); err != nil {
+		log.Fatal(err)
+	}
 }
