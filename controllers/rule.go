@@ -8,10 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type CreateRuleInput struct {
+type RuleInput struct {
 	LoginID		uint		`json:"LoginID"	binding:"required"`
 	Object		string		`json:"object"	binding:"required"`
-	Action		[]string	`json:"action"	binding:"required"`
+	Actions		[]string	`json:"action"	binding:"required"`
 }
 
 // type UpdateRuleInput struct {
@@ -37,60 +37,51 @@ func GetRules(c *gin.Context) {
 	}
 }
 
-// func GetRule(c *gin.Context) {
-// 	// Get model if exist
-// 	var rule models.Rule
-// 	if err := models.DB.Where("id = ?", c.Param("id")).First(&rule).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-// 		log.Warn("Get rule failed.")
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, rule)
-// }
-
 func PostRule(c *gin.Context) {
 	// Validate input
-	var input CreateRuleInput
+	var input RuleInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		log.Warn("Post rule failed: ", err)
 		return
 	}
-	//log.Debug(input.Test) //FIXME array to string with ()
 	var login models.Login
 	if err := models.DB.Where("id = ?", input.LoginID).First(&login).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		log.Warn("Get login failed.")
 		return
 	}
-	rule, _ := models.EN.AddPolicy(login.Username, input.Object, input.Action)
+	action := ""
+	if len(input.Actions) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No action defined!"})
+		log.Warn("Empty action posted.")
+		return
+	}
+	if len(input.Actions) == 1 {
+		action = input.Actions[0]
+	} else {
+		for i := 0; i < len(input.Actions); i++ {
+			action += "(" + input.Actions[i] + ")"
+			if i < len(input.Actions) -1 {
+				action += "|"
+			}
+		}
+	}
+	rule, _ := models.EN.AddPolicy(login.Username, input.Object, action)
 	c.JSON(http.StatusOK, rule)
 	totalRule+=1
 }
 
-// func PutRule(c *gin.Context) {
-// 	// Validate input
-// 	var input models.Rule
-// 	if err := c.ShouldBindJSON(&input); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		log.Warn("Put rule failed.")
-// 		return
-// 	}
-// 	// Put Tribe
-// 	models.DB.Save(&input)
-// 	c.JSON(http.StatusOK, input)
-// }
-
 func DeleteRule(c *gin.Context) {
-	// Get model if exist
 	var rule models.Rule
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&rule).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		log.Warn("Delete rule failed.")
 		return
 	}
-	models.DB.Delete(&rule)
-	c.JSON(http.StatusOK, true)
+	removed, err := models.EN.RemovePolicy(rule.V0, rule.V1, rule.V2)
+	if err != nil {
+		log.Error("Error removing policy: ", err)
+	}
+	c.JSON(http.StatusOK, removed)
 }
-
-// TODO MOVE FROM DELETE GORM TO CASBIN API
