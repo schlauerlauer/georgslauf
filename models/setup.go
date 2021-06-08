@@ -43,6 +43,7 @@ func ConnectDatabase() {
 	db.Exec("DROP VIEW group_top")
 	db.Exec("DROP VIEW station_top")
 	db.Exec("DROP VIEW public_content")
+	//db.Exec("DROP VIEW station_tribe")
 	groupingTopView := `
 		CREATE VIEW group_top AS
 		SELECT
@@ -88,10 +89,21 @@ func ConnectDatabase() {
 		WHERE content_types.public = '1'
 		;
 	`
+	// stationTribeView := `
+	// 	CREATE VIEW station_tribe AS
+	// 	SELECT
+	// 		s.id,
+	// 		s.short,
+	// 		s.name as 'station',
+	// 		size,
+	// 		t.name as 'tribe'
+	// 	FROM stations as s
+	// 	INNER JOIN tribes as t ON t.id = s.tribe_id
+	// `
 	db.Exec(groupingTopView)
 	db.Exec(stationTopView)
 	db.Exec(publicContentView)
-
+	// db.Exec(stationTribeView)
 	DB = db
 
 	log.Info("Database migration sucessful.")
@@ -110,7 +122,7 @@ func SetEnforcer() {
 	en.LoadPolicy()
 	log.Info("Enforcer connected.")
 
-	en.AddPolicy("admin", "/v1/*", "(GET)|(POST)|(PUT)|(DELETE)|(PATCH)")
+	en.AddPolicy("admin", "/*", "(GET)|(POST)|(PUT)|(DELETE)|(PATCH)")
 	en.SavePolicy()
 
 	EN = en
