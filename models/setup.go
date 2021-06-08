@@ -42,7 +42,8 @@ func ConnectDatabase() {
 	)
 	db.Exec("DROP VIEW group_top")
 	db.Exec("DROP VIEW station_top")
-	groupingTopQuery := `
+	db.Exec("DROP VIEW public_content")
+	groupingTopView := `
 		CREATE VIEW group_top AS
 		SELECT
 			group_id AS 'id',
@@ -60,7 +61,7 @@ func ConnectDatabase() {
 		GROUP BY groups.name
 		;
 	`
-	stationTopQuery := `
+	stationTopView := `
 		CREATE VIEW station_top AS
 		SELECT
 			station_id AS 'id',
@@ -75,8 +76,21 @@ func ConnectDatabase() {
 		GROUP BY station_id
 		;
 	`
-	db.Exec(groupingTopQuery)
-	db.Exec(stationTopQuery)
+	publicContentView := `
+		CREATE VIEW public_content AS
+		SELECT
+			contents.id,
+			content_types.name as 'ct',
+			sort,
+			value
+		FROM contents
+		INNER JOIN content_types on contenttype_id = content_types.id
+		WHERE content_types.public = '1'
+		;
+	`
+	db.Exec(groupingTopView)
+	db.Exec(stationTopView)
+	db.Exec(publicContentView)
 
 	DB = db
 

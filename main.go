@@ -104,7 +104,8 @@ func main() {
 	}
 	public := r.Group("/public")
 	{
-		public.Static("/static/", "uploads")
+		public.Static("/media/", "uploads")
+		public.GET("/content/:ct", controllers.GetPublicContent)
 	}
 	v1 := r.Group("/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
@@ -189,7 +190,7 @@ func main() {
 		grouping.DELETE("/:id", controllers.DeleteGrouping)
 		grouping.PATCH("/:id", controllers.PatchGrouping)
 	}
-	content := v1.Group("/contents")
+	content := v1.Group("/content")
 	{
 		content.GET("/", controllers.GetContents)
 		content.GET("/:id", controllers.GetContent)
@@ -216,7 +217,7 @@ func main() {
 		run.DELETE("/:id", controllers.DeleteRun)
 		run.PATCH("/:id", controllers.PatchRun)
 	}
-	config := v1.Group("/configs")
+	config := v1.Group("/config")
 	{
 		config.GET("/", controllers.GetConfigs)
 		config.GET("/:id", controllers.GetConfig)

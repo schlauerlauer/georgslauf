@@ -9,4 +9,5 @@ type ContentType struct {
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
 	Name		string		`json:"name" gorm:"unique;not null"`
+	Public		bool		`json:"public"`
 }
