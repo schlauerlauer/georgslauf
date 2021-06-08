@@ -9,6 +9,7 @@ import (
 )
 
 type RuleInput struct {
+	Ptype		string		`json:"ptype"	binding:"required"`
 	LoginID		uint		`json:"LoginID"	binding:"required"`
 	Object		string		`json:"object"	binding:"required"`
 	Actions		[]string	`json:"action"	binding:"required"`
