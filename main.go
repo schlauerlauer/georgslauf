@@ -96,16 +96,16 @@ func main() {
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
+	public := r.Group("/public")
+	{
+		public.Static("/media/", "uploads")
+		public.GET("/content/:ct", controllers.GetPublicContent)
+	}
 	auth := r.Group("/auth")
 	{
 		auth.POST("/login/", authMiddleware.LoginHandler)
 		auth.GET("/refresh/", authMiddleware.RefreshHandler)
 		auth.GET("/logout/", authMiddleware.LogoutHandler)
-	}
-	public := r.Group("/public")
-	{
-		public.Static("/media/", "uploads")
-		public.GET("/content/:ct", controllers.GetPublicContent)
 	}
 	v1 := r.Group("/v1")
 	v1.Use(authMiddleware.MiddlewareFunc())
@@ -135,6 +135,7 @@ func main() {
 		tribe.PUT("/:id", controllers.PutTribe)
 		tribe.DELETE("/:id", controllers.DeleteTribe)
 		tribe.PATCH("/:id", controllers.PatchTribe)
+		tribe.GET("/stations/:tribeid", controllers.GetStationsByTribe)
 	}
 	rule := v1.Group("/rules")
 	{
