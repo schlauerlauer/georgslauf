@@ -24,6 +24,17 @@ type UpdateStationInput struct {
 	LoginID	uint	`json:"LoginID"`
 }
 
+func GetStationsByTribe(c *gin.Context) {
+	var stations []models.StationTribe
+	result := models.DB.Where("tribe_id = ?", c.Param("tribeid")).Find(&stations)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+		log.Warn("Get stations failed.")
+	} else {
+		c.JSON(http.StatusOK, stations)
+	}
+}
+
 func GetStations(c *gin.Context) {
 	var stations []models.Station
 	_start := c.DefaultQuery("_start", "0")
