@@ -107,9 +107,8 @@ func main() {
 		auth.GET("/refresh/", authMiddleware.RefreshHandler)
 		auth.GET("/logout/", authMiddleware.LogoutHandler)
 	}
-	v1 := r.Group("/v1")
-	v1.Use(authMiddleware.MiddlewareFunc())
-	login := v1.Group("/logins")
+	login := r.Group("/logins")
+	login.Use(authMiddleware.MiddlewareFunc())
 	{
 		login.GET("/", controllers.GetLogins)
 		login.GET("/:id", controllers.GetLogin)
@@ -118,7 +117,8 @@ func main() {
 		login.DELETE("/:id", controllers.DeleteLogin)
 		login.PATCH("/:id", controllers.PatchLogin)
 	}
-	group := v1.Group("/groups")
+	group := r.Group("/groups")
+	group.Use(authMiddleware.MiddlewareFunc())
 	{
 		group.GET("/", controllers.GetGroups)
 		group.GET("/:id", controllers.GetGroup)
@@ -127,7 +127,8 @@ func main() {
 		group.DELETE("/:id", controllers.DeleteGroup)
 		group.PATCH("/:id", controllers.PatchGroup)
 	}
-	tribe := v1.Group("/tribes")
+	tribe := r.Group("/tribes")
+	tribe.Use(authMiddleware.MiddlewareFunc())
 	{
 		tribe.GET("/", controllers.GetTribes)
 		tribe.GET("/:id", controllers.GetTribe)
@@ -137,7 +138,8 @@ func main() {
 		tribe.PATCH("/:id", controllers.PatchTribe)
 		tribe.GET("/stations/:tribeid", controllers.GetStationsByTribe)
 	}
-	rule := v1.Group("/rules")
+	rule := r.Group("/rules")
+	rule.Use(authMiddleware.MiddlewareFunc())
 	{
 		rule.GET("/", controllers.GetRules)
 		//rule.GET("/:id", controllers.GetRule)
@@ -145,7 +147,8 @@ func main() {
 		//rule.PUT("/:id", controllers.PutRule) // TODO casbin api modify
 		rule.DELETE("/:id", controllers.DeleteRule)
 	}
-	station := v1.Group("/stations")
+	station := r.Group("/stations")
+	station.Use(authMiddleware.MiddlewareFunc())
 	{
 		station.GET("/", controllers.GetStations)
 		station.GET("/:id", controllers.GetStation)
@@ -154,7 +157,8 @@ func main() {
 		station.DELETE("/:id", controllers.DeleteStation)
 		station.PATCH("/:id", controllers.PatchStation)
 	}
-	grouppoint := v1.Group("/grouppoints")
+	grouppoint := r.Group("/grouppoints")
+	grouppoint.Use(authMiddleware.MiddlewareFunc())
 	{
 		grouppoint.GET("/", controllers.GetGroupPoints)
 		grouppoint.GET("/:id", controllers.GetGroupPoint)
@@ -163,12 +167,14 @@ func main() {
 		grouppoint.DELETE("/:id", controllers.DeleteGroupPoint)
 		grouppoint.PATCH("/:id", controllers.PatchGroupPoint)
 	}
-	grouptop := v1.Group("/grouptops")
+	grouptop := r.Group("/grouptops")
+	grouptop.Use(authMiddleware.MiddlewareFunc())
 	{
 		grouptop.GET("/", controllers.GetGroupTops)
 		grouptop.GET("/:id", controllers.GetGroupTop)
 	}
-	stationpoint := v1.Group("/stationpoints")
+	stationpoint := r.Group("/stationpoints")
+	stationpoint.Use(authMiddleware.MiddlewareFunc())
 	{
 		stationpoint.GET("/", controllers.GetStationPoints)
 		stationpoint.GET("/:id", controllers.GetStationPoint)
@@ -177,12 +183,14 @@ func main() {
 		stationpoint.DELETE("/:id", controllers.DeleteStationPoint)
 		stationpoint.PATCH("/:id", controllers.PatchStationPoint)
 	}
-	stationtop := v1.Group("/stationtops")
+	stationtop := r.Group("/stationtops")
+	stationtop.Use(authMiddleware.MiddlewareFunc())
 	{
 		stationtop.GET("/", controllers.GetStationTops)
 		stationtop.GET("/:id", controllers.GetStationTop)
 	}
-	grouping := v1.Group("/groupings")
+	grouping := r.Group("/groupings")
+	grouping.Use(authMiddleware.MiddlewareFunc())
 	{
 		grouping.GET("/", controllers.GetGroupings)
 		grouping.GET("/:id", controllers.GetGrouping)
@@ -191,7 +199,8 @@ func main() {
 		grouping.DELETE("/:id", controllers.DeleteGrouping)
 		grouping.PATCH("/:id", controllers.PatchGrouping)
 	}
-	content := v1.Group("/content")
+	content := r.Group("/content")
+	content.Use(authMiddleware.MiddlewareFunc())
 	{
 		content.GET("/", controllers.GetContents)
 		content.GET("/:id", controllers.GetContent)
@@ -200,7 +209,8 @@ func main() {
 		content.DELETE("/:id", controllers.DeleteContent)
 		content.PATCH("/:id", controllers.PatchContent)
 	}
-	contenttype := v1.Group("/contenttypes")
+	contenttype := r.Group("/contenttypes")
+	contenttype.Use(authMiddleware.MiddlewareFunc())
 	{
 		contenttype.GET("/", controllers.GetContentTypes)
 		contenttype.GET("/:id", controllers.GetContentType)
@@ -209,7 +219,8 @@ func main() {
 		contenttype.DELETE("/:id", controllers.DeleteContentType)
 		contenttype.PATCH("/:id", controllers.PatchContentType)
 	}
-	run := v1.Group("/runs")
+	run := r.Group("/runs")
+	run.Use(authMiddleware.MiddlewareFunc())
 	{
 		run.GET("/", controllers.GetRuns)
 		run.GET("/:id", controllers.GetRun)
@@ -218,7 +229,8 @@ func main() {
 		run.DELETE("/:id", controllers.DeleteRun)
 		run.PATCH("/:id", controllers.PatchRun)
 	}
-	config := v1.Group("/config")
+	config := r.Group("/config")
+	config.Use(authMiddleware.MiddlewareFunc())
 	{
 		config.GET("/", controllers.GetConfigs)
 		config.GET("/:id", controllers.GetConfig)
