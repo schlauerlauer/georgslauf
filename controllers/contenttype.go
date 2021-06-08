@@ -10,10 +10,12 @@ import (
 
 type CreateContentTypeInput struct {
 	Name	string	`json:"name"	binding:"required"`
+	Public	bool	`json:"public	binding:"required"`
 }
 
 type UpdateContentTypeInput struct {
 	Name	string	`json:"name"`
+	Public	bool	`json:"public"`
 }
 
 func GetContentTypes(c *gin.Context) {
@@ -54,6 +56,7 @@ func PostContentType(c *gin.Context) {
 	// Create contenttype
 	contenttype := models.ContentType{
 		Name: input.Name,
+		Public: input.Public,
 	}
 	models.DB.Create(&contenttype)
 	c.JSON(http.StatusOK, contenttype)

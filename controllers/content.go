@@ -9,15 +9,15 @@ import (
 )
 
 type CreateContentInput struct {
-	Title			string	`json:"title"			binding:"required"`
-	Body			string	`json:"body"			binding:"required"`
+	Sort			uint	`json:"sort"			binding:"required"`
+	Value			string	`json:"value"			binding:"required"`
 	RunID			uint	`json:"RunID"			binding:"required"`
 	ContenttypeID	uint	`json:"ContenttypeID"	binding:"required"`
 }
 
 type UpdateContentInput struct {
-	Title			string	`json:"title"`
-	Body			string	`json:"body"`
+	Sort			uint	`json:"sort"`
+	Value			string	`json:"value"`
 	RunID			uint	`json:"RunID"`
 	ContenttypeID	uint	`json:"ContenttypeID"`
 }
@@ -35,6 +35,17 @@ func GetContents(c *gin.Context) {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalContent, 10))
 		c.JSON(http.StatusOK, contents)
+	}
+}
+
+func GetPublicContent(c *gin.Context) {
+	var public_content []models.PublicContent
+	result := models.DB.Where("ct = ?", c.Param("ct")).Find(&public_content)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+		log.Warn("Get public content failed.")
+	} else {
+		c.JSON(http.StatusOK, public_content)
 	}
 }
 
@@ -59,8 +70,8 @@ func PostContent(c *gin.Context) {
 	}
 	// Create content
 	content := models.Content{
-		Title: input.Title,
-		Body: input.Body,
+		Sort: input.Sort,
+		Value: input.Value,
 		RunID: input.RunID,
 		ContenttypeID: input.ContenttypeID,
 	}
