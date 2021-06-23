@@ -24,13 +24,15 @@ type UpdateStationInput struct {
 	LoginID	uint	`json:"LoginID"`
 }
 
-func GetStationsByTribe(c *gin.Context) {
+func GetStationsByLogin(c *gin.Context) {
 	var stations []models.StationTribe
-	result := models.DB.Where("tribe_id = ?", c.Param("tribeid")).Find(&stations)
+	result := models.DB.Where("login = ?", c.Param("loginid")).Find(&stations)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get stations failed.")
 	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
 		c.JSON(http.StatusOK, stations)
 	}
 }
