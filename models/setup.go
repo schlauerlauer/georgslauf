@@ -43,7 +43,7 @@ func ConnectDatabase() {
 	db.Exec("DROP VIEW group_top")
 	db.Exec("DROP VIEW station_top")
 	db.Exec("DROP VIEW public_content")
-	//db.Exec("DROP VIEW station_tribe")
+	db.Exec("DROP VIEW station_tribe")
 	groupingTopView := `
 		CREATE VIEW group_top AS
 		SELECT
@@ -89,21 +89,24 @@ func ConnectDatabase() {
 		WHERE content_types.public = '1'
 		;
 	`
-	// stationTribeView := `
-	// 	CREATE VIEW station_tribe AS
-	// 	SELECT
-	// 		s.id,
-	// 		s.short,
-	// 		s.name as 'station',
-	// 		size,
-	// 		t.name as 'tribe'
-	// 	FROM stations as s
-	// 	INNER JOIN tribes as t ON t.id = s.tribe_id
-	// `
+	stationTribeView := `
+		CREATE VIEW station_tribe AS
+		SELECT
+			s.id,
+			s.created_at,
+			s.updated_at,
+			s.short,
+			s.name as 'station',
+			size,
+			t.name as 'tribe',
+			t.login_id as 'login'
+		FROM stations as s
+		INNER JOIN tribes as t ON t.id = s.tribe_id
+	`
 	db.Exec(groupingTopView)
 	db.Exec(stationTopView)
 	db.Exec(publicContentView)
-	// db.Exec(stationTribeView)
+	db.Exec(stationTribeView)
 	DB = db
 
 	log.Info("Database migration sucessful.")
