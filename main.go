@@ -15,8 +15,9 @@ import (
 var (
 	identityKey =	"id"
 	permissionKey =	"permissions"
-	contactKey =	"fullName"
+	emailKey =		"email"
 	avatarKey =		"avatar"
+	loginKey = 		"login"
 )
 
 func init() {
@@ -54,8 +55,10 @@ func main() {
 			if v, ok := data.(*models.Login); ok {
 				return jwt.MapClaims{
 					identityKey: v.Username,
-					contactKey: v.Contact,
+					emailKey: v.Email,
 					avatarKey: v.Avatar,
+					permissionKey: v.Permissions,
+					loginKey: v.ID,
 				}
 			}
 			return jwt.MapClaims{}
@@ -100,6 +103,7 @@ func main() {
 	{
 		public.Static("/media/", "uploads")
 		public.GET("/content/:ct", controllers.GetPublicContent)
+		public.GET("/stations/", controllers.GetStations) //TODO add public stations func without login dep
 	}
 	auth := r.Group("/auth")
 	{
@@ -136,7 +140,7 @@ func main() {
 		tribe.PUT("/:id", controllers.PutTribe)
 		tribe.DELETE("/:id", controllers.DeleteTribe)
 		tribe.PATCH("/:id", controllers.PatchTribe)
-		tribe.GET("/stations/:tribeid", controllers.GetStationsByTribe)
+		tribe.GET("/stations/:loginid", controllers.GetStationsByLogin)
 	}
 	rule := r.Group("/rules")
 	rule.Use(authMiddleware.MiddlewareFunc())
