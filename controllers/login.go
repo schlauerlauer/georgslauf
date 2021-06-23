@@ -25,6 +25,7 @@ type CreateLoginInput struct {
 	Email		string		`json:"email"		binding:"required"`
 	Contact		string		`json:"contact"		binding:"required"`
 	Avatar		string		`json:"avatar"		binding:"required"`
+	Permissions	string		`json:"permissions" binding:"required"`
 }
 
 type UpdateLoginInput struct {
@@ -38,6 +39,7 @@ type UpdateLoginInput struct {
 	Email		string		`json:"email"`
 	Contact		string		`json:"contact"`
 	Avatar		string		`json:"avatar"`
+	Permissions	string		`json:"permissions"`
 }
 
 func hashAndSalt(password string) string {
@@ -179,6 +181,7 @@ func PatchLogin(c *gin.Context) {
 		Email: input.Email,
 		Contact: input.Contact,
 		Avatar: input.Avatar,
+		Permissions: input.Permissions,
 	}
 	log.Debug("ok")
 	//input.Password = hashAndSalt(input.Password)
