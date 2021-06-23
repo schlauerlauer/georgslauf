@@ -17,6 +17,7 @@ type Login struct {
 	Email		string		`json:"email"`
 	Contact		string		`json:"contact"`
 	Avatar		string		`json:"avatar"`
+	Permissions	string		`json:"permissions"`
 
 	UpdatePW 	bool		`json:"updatepw" gorm:"-"`
 }
