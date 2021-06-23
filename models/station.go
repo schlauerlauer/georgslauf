@@ -15,15 +15,16 @@ type Station struct {
 	LoginID		uint		`json:"LoginID" gorm:"foreignKey:LoginID"`
 }
 
-type StationTribe struct { // Redacted Station table // TODO Add Login Information aswell -> contact, login email and so on
+type StationTribe struct {
 	ID			uint		`json:"id"`
-	CreatedAt	time.Time
-	UpdatedAt	time.Time
+	CreatedAt	time.Time	`json:"created_at"`
+	UpdatedAt	time.Time	`json:"updated_at"`
 	Short		string		`json:"short"`
 	Station		string		`json:"station"`
 	Size		uint		`json:"size"`
-	TribeID		string		`json:"TribeID"`
+	Tribe		string		`json:"tribe"`
+	LoginID		uint		`json:"login"`
 }
 func (StationTribe) TableName() string {
-	return "stations"
+	return "station_tribe"
 }
