@@ -24,10 +24,10 @@ type UpdateContentInput struct {
 
 func GetContents(c *gin.Context) {
 	var contents []models.Content
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&contents)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&contents)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get contents failed.")

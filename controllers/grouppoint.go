@@ -20,10 +20,10 @@ type UpdateGroupPointInput struct {
 
 func GetGroupTops(c *gin.Context) {
 	var grouptops []models.GroupTop
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&grouptops)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&grouptops)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get grouptops failed.")
@@ -46,10 +46,10 @@ func GetGroupTop(c *gin.Context) {
 
 func GetGroupPoints(c *gin.Context) {
 	var grouppoints []models.GroupPoint
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&grouppoints)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&grouppoints)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get grouppoints failed.")
