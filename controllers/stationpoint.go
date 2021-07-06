@@ -20,10 +20,10 @@ type UpdateStationPointInput struct {
 
 func GetStationTops(c *gin.Context) {
 	var stationtops []models.StationTop
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&stationtops)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&stationtops)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get stationtops failed.")
@@ -46,10 +46,10 @@ func GetStationTop(c *gin.Context) {
 
 func GetStationPoints(c *gin.Context) {
 	var stationpoints []models.StationPoint
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&stationpoints)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&stationpoints)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get stationpoints failed.")

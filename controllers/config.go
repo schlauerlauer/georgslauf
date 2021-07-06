@@ -20,10 +20,10 @@ type UpdateConfigInput struct {
 
 func GetConfigs(c *gin.Context) {
 	var configs []models.Config
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&configs)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&configs)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get configs failed.")

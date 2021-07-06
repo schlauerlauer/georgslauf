@@ -81,10 +81,10 @@ func Login(c *gin.Context) (interface{}, error) {
 
 func GetLogins(c *gin.Context) {
 	var logins []models.Login
-	_start := c.DefaultQuery("_start", "0")
-	_end := c.DefaultQuery("_end", "10")
+	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
 	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-	result := models.DB.Where("id BETWEEN ? +1 AND ?", _start, _end).Order(_sortOrder).Find(&logins)
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&logins)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get logins failed.")
