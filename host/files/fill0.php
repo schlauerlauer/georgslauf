@@ -6,9 +6,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
 
   if ($stmt = $mysqli->prepare("INSERT IGNORE INTO punkte (von, an, points)
 SELECT DISTINCT posten.id, gruppen.id, 0
-FROM gruppen, posten
-WHERE (posten.stufe = 'egal' AND gruppen.stufe >= 2)
-OR (posten.stufe != 'egal' AND gruppen.stufe < 2)")) {
+FROM gruppen, posten")) {
     $stmt->execute();
     echo "Alle Bewertungen der Posten mit Null gefüllt.";
   }
@@ -16,9 +14,7 @@ OR (posten.stufe != 'egal' AND gruppen.stufe < 2)")) {
 
   if ($stmt = $mysqli->prepare("INSERT IGNORE INTO punkte (von, an, points)
 SELECT DISTINCT gruppen.id, posten.id, 0
-FROM gruppen, posten
-WHERE (posten.stufe = 'egal' AND gruppen.stufe >= 2)
-OR (posten.stufe != 'egal' AND gruppen.stufe < 2)")) {
+FROM gruppen, posten")) {
     $stmt->execute();
     echo "Alle Bewertungen der Gruppen mit Null gefüllt.";
   }
