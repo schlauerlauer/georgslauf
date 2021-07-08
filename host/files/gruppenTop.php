@@ -7,6 +7,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   echo "<h2>Gruppen Sieger</h2>";
   $position = 0;
   $stufenwertung = array(0,0,0,0);
+  $stufenpunkte = array(0,0,0,0);
   echo '<ul data-role="listview" data-count-theme="b" data-inset="true">';
   if ($stmt = $mysqli->prepare("SELECT kurz, name, stufe, stamm, sum(points) summe
 FROM gruppen, punkte
@@ -19,9 +20,11 @@ ORDER BY summe DESC, kurz ASC")) {
     while ($stmt->fetch()) {
       if($prev_punkte != $punkte) {
         $position++;
-        if($prev_stufe == $stufe)  $stufenwertung[$stufe]--;
-      }
-      $stufenwertung[$stufe]++;
+	    }
+      if($stufenpunkte[$stufe] != $punkte) {
+		    $stufenwertung[$stufe]++;
+	    }
+	    $stufenpunkte[$stufe] = $punkte;
       echo '<li><a href="#">'.$position.'. Platz ('.$stufenwertung[$stufe].'. der '.$Stufe[$stufe].') "'.$name.'" - '.$stamm.'<span class="ui-li-count">'.$punkte.'</span></a></li>';
       $prev_punkte = $punkte;
       $prev_stufe = $stufe;
