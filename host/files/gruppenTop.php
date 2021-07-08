@@ -13,7 +13,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
 FROM gruppen, punkte
 WHERE gruppen.id = an
 GROUP BY an
-ORDER BY summe DESC, kurz ASC")) {
+ORDER BY summe DESC, stufe ASC, kurz ASC")) {
     $stmt->execute();
     $stmt->store_result();
     $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
