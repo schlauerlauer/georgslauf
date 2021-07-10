@@ -25,6 +25,19 @@ type UpdateGroupInput struct {
 	GroupingID	uint	`json:"GroupingID"`
 }
 
+func GetGroupsByLogin(c *gin.Context) {
+	var groups []models.GroupTribe
+	result := models.DB.Where("tribe_login = ?", c.Param("loginid")).Find(&groups)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+		log.Warn("Get stations failed.")
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
+		c.JSON(http.StatusOK, groups)
+	}
+}
+
 func GetGroups(c *gin.Context) {
 	var groups []models.Group
 	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))

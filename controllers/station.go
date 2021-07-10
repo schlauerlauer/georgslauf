@@ -26,13 +26,29 @@ type UpdateStationInput struct {
 
 func GetStationsByLogin(c *gin.Context) {
 	var stations []models.StationTribe
-	result := models.DB.Where("login = ?", c.Param("loginid")).Find(&stations)
+	result := models.DB.Where("tribe_login = ?", c.Param("loginid")).Find(&stations)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get stations failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
+		c.JSON(http.StatusOK, stations)
+	}
+}
+
+func GetPublicStations(c *gin.Context) {
+	var stations []models.StationPublic
+	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&stations)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+		log.Warn("Get stations failed.")
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
 		c.JSON(http.StatusOK, stations)
 	}
 }
