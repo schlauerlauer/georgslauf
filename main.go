@@ -103,7 +103,7 @@ func main() {
 	{
 		public.Static("/media/", "uploads")
 		public.GET("/content/:ct", controllers.GetPublicContent)
-		public.GET("/stations/", controllers.GetStations) //TODO add public stations func without login dep
+		public.GET("/stations/", controllers.GetPublicStations)
 	}
 	auth := r.Group("/auth")
 	{
@@ -141,6 +141,7 @@ func main() {
 		tribe.DELETE("/:id", controllers.DeleteTribe)
 		tribe.PATCH("/:id", controllers.PatchTribe)
 		tribe.GET("/stations/:loginid", controllers.GetStationsByLogin)
+		tribe.GET("/groups/:loginid", controllers.GetGroupsByLogin)
 	}
 	rule := r.Group("/rules")
 	rule.Use(authMiddleware.MiddlewareFunc())
