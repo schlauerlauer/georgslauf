@@ -15,6 +15,17 @@ type Group struct {
 	TribeID		uint		`json:"TribeID" binding:"required" gorm:"foreignKey:TribeID;not null"`
 }
 
+type GroupPublic struct {
+	ID			uint		`json:"id"`
+	Short 		string		`json:"short"`
+	Name		string		`json:"name"`
+	Grouping	string		`json:"grouping"`
+	Tribe		string		`json:"tribe"`
+}
+func (GroupPublic) TableName() string {
+	return "group_public"
+}
+
 type GroupTribe struct {
 	ID			uint		`json:"id"`
 	CreatedAt	time.Time	`json:"created_at"`
