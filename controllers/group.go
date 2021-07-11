@@ -38,6 +38,32 @@ func GetGroupsByLogin(c *gin.Context) {
 	}
 }
 
+func GetPublicGroups(c *gin.Context) {
+	var groups []models.GroupPublic
+	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
+	_end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
+	_sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
+	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&groups)
+	if result.Error != nil {
+		c.AbortWithStatus(500)
+		log.Warn("Get public groups failed.")
+	} else {
+		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
+		c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10))
+		c.JSON(http.StatusOK, groups)
+	}
+}
+
+func GetPublicGroup(c *gin.Context) {
+	var group models.GroupPublic
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&group).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get public group failed.")
+		return
+	}
+	c.JSON(http.StatusOK, group)
+}
+
 func GetGroups(c *gin.Context) {
 	var groups []models.Group
 	_start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
