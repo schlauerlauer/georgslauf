@@ -17,9 +17,7 @@ include_once 'host/settings.php';
   			$stmt->store_result();
   			$stmt->bind_result($kurz, $name, $stamm, $stufe, $x_axis, $y_axis);
   			while ($stmt->fetch()) {
-          echo '<div data-role="collapsible"><h3>'.$kurz.' - '.$stufe.' - '.$stamm.'</h3><p>';
-					echo '<input class="map" p="'.$kurz.'" data-icon="location" x="'.$x_axis.'" y="'.$y_axis.'" type="button" value="Karte"/>';
-					echo '</p></div>';
+				echo '<div><h3>'.$kurz.' - '.$stamm.'</h3></div>';
   			}
   		}
   	?>
