@@ -45,12 +45,22 @@ func GetPublicStations(c *gin.Context) {
 	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&stations)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
-		log.Warn("Get stations failed.")
+		log.Warn("Get public stations failed.")
 	} else {
 		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
 		c.JSON(http.StatusOK, stations)
 	}
+}
+
+func GetPublicStation(c *gin.Context) {
+	var station models.StationPublic
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&station).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		log.Warn("Get public station failed.")
+		return
+	}
+	c.JSON(http.StatusOK, station)
 }
 
 func GetStations(c *gin.Context) {
