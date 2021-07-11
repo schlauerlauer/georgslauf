@@ -13,8 +13,8 @@ var (
 	EN *casbin.Enforcer
 )
 
-func ConnectDatabase() {
-	dsn := "k62598_gl_api:P$@bUzrha73cR!DeyZUnf$kKLPTFwLx4JEbA^m6E$5W7vEoQvXF9Geq@tcp(46.38.249.140:3306)/k62598_gl_api?charset=utf8mb4&parseTime=true&loc=Local&tls=skip-verify"
+func ConnectDatabase(config MysqlConfig) {
+	dsn := config.Username + ":" + config.Password + "@tcp(" + config.Hostname + ":" + config.Port + ")/" + config.Database + "?charset=utf8mb4&parseTime=true&loc=Local&tls=skip-verify"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		PrepareStmt: true,
 	})
@@ -36,13 +36,16 @@ func ConnectDatabase() {
 		&ContentType{},
 		&Config{},
 	)
-	db.Exec("DROP VIEW group_top")
-	db.Exec("DROP VIEW station_top")
-	db.Exec("DROP VIEW public_content")
-	db.Exec("DROP VIEW station_tribe")
-	db.Exec("DROP VIEW group_tribe")
-	db.Exec("DROP VIEW station_public")
-	groupingTopView := `
+	db.Exec(`DROP VIEW IF EXISTS
+		group_top,
+		station_top,
+		public_content,
+		station_tribe,
+		group_tribe,
+		station_public,
+		group_public
+	`)
+	db.Exec(`
 		CREATE VIEW group_top AS
 		SELECT
 			group_id AS 'id',
@@ -59,8 +62,8 @@ func ConnectDatabase() {
 		INNER JOIN tribes on tribes.id = groups.tribe_id
 		GROUP BY groups.name
 		;
-	`
-	stationTopView := `
+	`);
+	db.Exec(`
 		CREATE VIEW station_top AS
 		SELECT
 			station_id AS 'id',
@@ -74,8 +77,8 @@ func ConnectDatabase() {
 		INNER JOIN tribes on tribes.id = stations.tribe_id
 		GROUP BY station_id
 		;
-	`
-	publicContentView := `
+	`);
+	db.Exec(`
 		CREATE VIEW public_content AS
 		SELECT
 			contents.id,
@@ -86,8 +89,8 @@ func ConnectDatabase() {
 		INNER JOIN content_types on contenttype_id = content_types.id
 		WHERE content_types.public = '1'
 		;
-	`
-	stationTribeView := `
+	`);
+	db.Exec(`
 		CREATE VIEW station_tribe AS
 		SELECT
 			s.id,
@@ -100,8 +103,8 @@ func ConnectDatabase() {
 			t.login_id as 'tribe_login'
 		FROM stations as s
 		INNER JOIN tribes as t ON t.id = s.tribe_id
-	`
-	groupTribeView := `
+	`);
+	db.Exec(`
 		CREATE VIEW group_tribe AS
 		SELECT
 			g.id,
@@ -114,8 +117,8 @@ func ConnectDatabase() {
 			t.login_id as 'tribe_login'
 		FROM groups as g
 		INNER JOIN tribes as t ON t.id = g.tribe_id
-	`
-	stationPublicView := `
+	`);
+	db.Exec(`
 		CREATE VIEW station_public AS
 		SELECT
 			s.id,
@@ -124,13 +127,19 @@ func ConnectDatabase() {
 			t.name as 'tribe'
 		FROM stations as s
 		INNER JOIN tribes as t ON t.id = s.tribe_id
-	`
-	db.Exec(groupingTopView)
-	db.Exec(stationTopView)
-	db.Exec(publicContentView)
-	db.Exec(stationTribeView)
-	db.Exec(groupTribeView)
-	db.Exec(stationPublicView)
+	`);
+	db.Exec(`
+		CREATE VIEW group_public AS
+		SELECT
+			g.id,
+			g.short,
+			g.name,
+			groupings.name AS 'grouping',
+			t.name as 'tribe'
+		FROM groups as g
+		INNER JOIN tribes as t ON t.id = g.tribe_id
+		INNER JOIN groupings on groupings.id = g.grouping_id
+	`);
 	DB = db
 
 	log.Info("Database migration sucessful.")
