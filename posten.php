@@ -10,18 +10,18 @@ include_once 'host/settings.php';
   <p>Hier findet Ihr am Tag des Georgslaufs genauere Angaben über die Posten sowie deren exakten Standorte.</p>
 </div>
 <?php else : ?>
-  <div data-role="collapsible-set" data-theme="a">
+	<ul data-role="listview" data-inset="true">
   	<?php
   		if ($stmt = $mysqli->prepare("SELECT kurz, name, stamm, stufe, x_axis, y_axis FROM posten ORDER BY kurz ASC")) {
   			$stmt->execute();
   			$stmt->store_result();
   			$stmt->bind_result($kurz, $name, $stamm, $stufe, $x_axis, $y_axis);
   			while ($stmt->fetch()) {
-				echo '<div><h3>'.$kurz.' - '.$stamm.'</h3></div>';
+				echo '<li>'.$kurz.' - '.$stamm.'</li>';
   			}
   		}
   	?>
-  </div>
+  </ul>
 <?php endif; ?>
 <br>
 <br>
