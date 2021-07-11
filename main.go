@@ -9,6 +9,7 @@ import (
 	"time"
 	log "github.com/sirupsen/logrus"
 	jwt "github.com/appleboy/gin-jwt/v2"
+	"gopkg.in/yaml.v2"
 	"os"
 )
 
@@ -18,15 +19,52 @@ var (
 	emailKey =		"email"
 	avatarKey =		"avatar"
 	loginKey = 		"login"
+	cfg = newConfig("./config.yaml")
 )
 
 func init() {
 	log.SetLevel(log.DebugLevel)
 	log.Print("Log level ", log.GetLevel(), ".")
+	checkConfig()
+}
+
+func checkConfig() {
+	checkEmptyString(cfg.Server.Port, "api port")
+	checkEmptyString(cfg.Server.Secret, "api secret")
+	checkEmptyString(cfg.Database.Mysql.Hostname, "DB hostname")
+	checkEmptyString(cfg.Database.Mysql.Port, "DB port")
+	checkEmptyString(cfg.Database.Mysql.Database, "DB database name")
+	checkEmptyString(cfg.Database.Mysql.Username, "DB username")
+	checkEmptyString(cfg.Database.Mysql.Password, "DB password")
+}
+
+func checkEmptyString(checkThis string, description string) {
+	if checkThis == "" {
+		log.Fatal("needed config var ", description, " is empty.")
+	}
+}
+
+func newConfig(configPath string) (*models.APIConfig) {
+	config := &models.APIConfig{}
+	file, err := os.Open(configPath)
+	if err != nil {
+		log.Error(err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Error(err)
+		}
+	}(file)
+	d := yaml.NewDecoder(file)
+	if err := d.Decode(&config); err != nil {
+		log.Error(err)
+	}
+	return config
 }
 
 func main() {
-	models.ConnectDatabase()
+	models.ConnectDatabase(cfg.Database.Mysql)
 	models.SetEnforcer()
 	controllers.InitTotal()
 
@@ -36,18 +74,9 @@ func main() {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	secret := os.Getenv("SECRET")
-	if secret == "" {
-		secret = "action-copier-shredding-landless-marrow-backhand-vacation-doorway-regulator-truck"
-	}
-
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "georgslauf.de",
-		Key:         []byte(secret),
+		Key:         []byte(cfg.Server.Secret),
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
@@ -104,6 +133,9 @@ func main() {
 		public.Static("/media/", "uploads")
 		public.GET("/content/:ct", controllers.GetPublicContent)
 		public.GET("/stations/", controllers.GetPublicStations)
+		public.GET("/stations/:id", controllers.GetPublicStation)
+		public.GET("/groups/", controllers.GetPublicGroups)
+		public.GET("/groups/:id", controllers.GetPublicGroup)
 	}
 	auth := r.Group("/auth")
 	{
@@ -246,7 +278,7 @@ func main() {
 	}
 	log.Info("API ready.")
 
-	if err := http.ListenAndServe(":"+port, r); err != nil {
+	if err := http.ListenAndServe(":"+cfg.Server.Port, r); err != nil {
 		log.Fatal(err)
 	}
 }
