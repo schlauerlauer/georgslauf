@@ -36,17 +36,9 @@ func ConnectDatabase(config MysqlConfig) {
 		&ContentType{},
 		&Config{},
 	)
-	db.Exec(`DROP VIEW IF EXISTS
-		group_top,
-		station_top,
-		public_content,
-		station_tribe,
-		group_tribe,
-		station_public,
-		group_public
-	`)
+	log.Info("Database migration sucessful.")
 	db.Exec(`
-		CREATE VIEW group_top AS
+		CREATE OR REPLACE VIEW group_top AS
 		SELECT
 			group_id AS 'id',
 			groups.name AS 'group',
@@ -57,14 +49,14 @@ func ConnectDatabase(config MysqlConfig) {
 			sum(value) as 'sum',
 			round(sum(value)/count(value),2) as 'avg'
 		FROM group_points
-		INNER JOIN groups on groups.id = group_id
-		INNER JOIN groupings on groupings.id = groups.grouping_id
-		INNER JOIN tribes on tribes.id = groups.tribe_id
+		LEFT JOIN groups on groups.id = group_id
+		LEFT JOIN groupings on groupings.id = groups.grouping_id
+		LEFT JOIN tribes on tribes.id = groups.tribe_id
 		GROUP BY groups.name
 		;
 	`);
 	db.Exec(`
-		CREATE VIEW station_top AS
+		CREATE OR REPLACE VIEW station_top AS
 		SELECT
 			station_id AS 'id',
 			stations.name AS 'station',
@@ -73,13 +65,13 @@ func ConnectDatabase(config MysqlConfig) {
 			sum(value) as 'sum',
 			round(sum(value)/count(value),2) as 'avg'
 		FROM station_points
-		INNER JOIN stations on stations.id = station_id
-		INNER JOIN tribes on tribes.id = stations.tribe_id
+		LEFT JOIN stations on stations.id = station_id
+		LEFT JOIN tribes on tribes.id = stations.tribe_id
 		GROUP BY station_id
 		;
 	`);
 	db.Exec(`
-		CREATE VIEW public_content AS
+		CREATE OR REPLACE VIEW public_content AS
 		SELECT
 			contents.id,
 			content_types.name as 'ct',
@@ -91,7 +83,7 @@ func ConnectDatabase(config MysqlConfig) {
 		;
 	`);
 	db.Exec(`
-		CREATE VIEW station_tribe AS
+		CREATE OR REPLACE VIEW station_tribe AS
 		SELECT
 			s.id,
 			s.created_at,
@@ -105,7 +97,7 @@ func ConnectDatabase(config MysqlConfig) {
 		INNER JOIN tribes as t ON t.id = s.tribe_id
 	`);
 	db.Exec(`
-		CREATE VIEW group_tribe AS
+		CREATE OR REPLACE VIEW group_tribe AS
 		SELECT
 			g.id,
 			g.created_at,
@@ -119,7 +111,7 @@ func ConnectDatabase(config MysqlConfig) {
 		INNER JOIN tribes as t ON t.id = g.tribe_id
 	`);
 	db.Exec(`
-		CREATE VIEW station_public AS
+		CREATE OR REPLACE VIEW station_public AS
 		SELECT
 			s.id,
 			s.name,
@@ -129,7 +121,7 @@ func ConnectDatabase(config MysqlConfig) {
 		INNER JOIN tribes as t ON t.id = s.tribe_id
 	`);
 	db.Exec(`
-		CREATE VIEW group_public AS
+		CREATE OR REPLACE VIEW group_public AS
 		SELECT
 			g.id,
 			g.short,
@@ -141,9 +133,7 @@ func ConnectDatabase(config MysqlConfig) {
 		INNER JOIN groupings on groupings.id = g.grouping_id
 	`);
 	DB = db
-
-	log.Info("Database migration sucessful.")
-
+	log.Info("Database view creation sucessful.")
 }
 
 func SetEnforcer() {
@@ -162,5 +152,5 @@ func SetEnforcer() {
 	en.SavePolicy()
 
 	EN = en
-	log.Info("Policies updated.")
+	log.Info("Enforcer default policies created.")
 }
