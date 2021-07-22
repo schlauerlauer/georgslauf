@@ -1,5 +1,5 @@
 IMAGE=georgslauf
-PORT=3000
+PORT=8080
 
 build:
 	podman build -t $(IMAGE) .

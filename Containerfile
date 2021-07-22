@@ -9,6 +9,7 @@ FROM scratch
 WORKDIR /app/
 COPY uploads ./uploads
 COPY keymatch_model.conf .
+COPY config_default.yaml config.yaml
 COPY --from=builder /app/api .
-EXPOSE 3000
+EXPOSE 8080
 CMD ["./api"]

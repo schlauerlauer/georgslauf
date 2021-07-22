@@ -2,3 +2,4 @@
 /uploads/*
 !/uploads/.gitkeep
 config.yaml
+test.go
