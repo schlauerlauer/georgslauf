@@ -1,0 +1,10 @@
+server:
+  port: "8080"
+  secret: "carnation-repent-entrap-festivity-quality-unknown-eaten-legume-hesitant-coat"
+database:
+  mysql:
+    hostname: "localhost"
+    port: "3306"
+    database: "database"
+    username: "username"
+    password: "password"
