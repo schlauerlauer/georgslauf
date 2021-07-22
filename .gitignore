@@ -1,3 +1,4 @@
 *.db
 /uploads/*
 !/uploads/.gitkeep
+config.yaml
