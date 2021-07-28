@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.16.4 AS builder
+FROM docker.io/library/golang:1.16.6 AS builder
 WORKDIR /app/
 COPY models ./models
 COPY controllers ./controllers
