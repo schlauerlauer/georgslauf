@@ -16,7 +16,3 @@ buildah:
     - podman push -q $CI_REGISTRY/$CI_IMAGE:latest
   after_script:
     - podman logout $CI_REGISTRY
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      exists:
-      - Containerfile
