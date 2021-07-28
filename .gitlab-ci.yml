@@ -1,8 +1,6 @@
 image: "buildah/buildah"
 
-buildah:
-  only:
-    - schedules
+compile:
   stage: build
   variables:
     STORAGE_DRIVER: "vfs"
