@@ -1,8 +1,11 @@
 server:
   port: "8080"
-  secret: "carnation-repent-entrap-festivity-quality-unknown-eaten-legume-hesitant-coat"
+  secret: "Squishier-Untapped-Gangrene-Chowder8-Slurp-Skylight-Siberian-Scolding-National-Hypnotism"
+  metrics:
+    username: "prometheus"
+    password: "Shock-Playable-Drippy1-Caboose-Slideshow-Hardcopy-Gratuity-Twitter-Slicing-Deceiving"
 database:
-  mysql:
+  mariadb:
     hostname: "localhost"
     port: "3306"
     database: "database"

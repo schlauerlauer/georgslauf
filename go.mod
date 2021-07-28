@@ -12,6 +12,7 @@ require (
 	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-redis/redis/v7 v7.4.0 // indirect
+	github.com/prometheus/client_golang v1.11.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/twinj/uuid v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect

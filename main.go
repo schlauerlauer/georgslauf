@@ -31,11 +31,11 @@ func init() {
 func checkConfig() {
 	checkEmptyString(cfg.Server.Port, "api port")
 	checkEmptyString(cfg.Server.Secret, "api secret")
-	checkEmptyString(cfg.Database.Mysql.Hostname, "DB hostname")
-	checkEmptyString(cfg.Database.Mysql.Port, "DB port")
-	checkEmptyString(cfg.Database.Mysql.Database, "DB database name")
-	checkEmptyString(cfg.Database.Mysql.Username, "DB username")
-	checkEmptyString(cfg.Database.Mysql.Password, "DB password")
+	checkEmptyString(cfg.Database.Mariadb.Hostname, "DB hostname")
+	checkEmptyString(cfg.Database.Mariadb.Port, "DB port")
+	checkEmptyString(cfg.Database.Mariadb.Database, "DB database name")
+	checkEmptyString(cfg.Database.Mariadb.Username, "DB username")
+	checkEmptyString(cfg.Database.Mariadb.Password, "DB password")
 }
 
 func checkEmptyString(checkThis string, description string) {
@@ -64,7 +64,7 @@ func newConfig(configPath string) (*models.APIConfig) {
 }
 
 func main() {
-	models.ConnectDatabase(cfg.Database.Mysql)
+	models.ConnectDatabase(cfg.Database.Mariadb)
 	models.SetEnforcer()
 	controllers.InitTotal()
 
@@ -276,6 +276,9 @@ func main() {
 		config.DELETE("/:id", controllers.DeleteConfig)
 		config.PATCH("/:id", controllers.PatchConfig)
 	}
+	r.GET("/metrics", gin.BasicAuth(gin.Accounts{
+		cfg.Server.Metrics.Username: cfg.Server.Metrics.Password,
+	}), controllers.MetricsHandler())
 	log.Info("API ready.")
 
 	if err := http.ListenAndServe(":"+cfg.Server.Port, r); err != nil {

@@ -13,7 +13,7 @@ var (
 	EN *casbin.Enforcer
 )
 
-func ConnectDatabase(config MysqlConfig) {
+func ConnectDatabase(config SqlConfig) {
 	dsn := config.Username + ":" + config.Password + "@tcp(" + config.Hostname + ":" + config.Port + ")/" + config.Database + "?charset=utf8mb4&parseTime=true&loc=Local&tls=skip-verify"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		PrepareStmt: true,
