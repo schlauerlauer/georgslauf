@@ -40,7 +40,7 @@
       - "8080:8080"
       volumes:
       - "/home/{{ lookup('env', 'SSH_USER') }}/api/uploads:/app/uploads:z"
-      - "/home/{{ lookup('env', 'SSH_USER') }}/api/config.yml:/app/config.yml:z"
+      - "/home/{{ lookup('env', 'SSH_USER') }}/api/config.yml:/app/config.yaml:z"
   
   - name: Log out of registry
     containers.podman.podman_logout:
