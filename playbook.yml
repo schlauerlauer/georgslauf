@@ -39,8 +39,8 @@
       ports:
       - "8080:8080"
       volumes:
-      - "/home/{{ lookup('env', 'SSH_USER') }}/api:/app"
-      command: api
+      - "/home/{{ lookup('env', 'SSH_USER') }}/api/uploads:/app/uploads:z"
+      - "/home/{{ lookup('env', 'SSH_USER') }}/api/config.yml:/app/config.yml:z"
   
   - name: Log out of registry
     containers.podman.podman_logout:
