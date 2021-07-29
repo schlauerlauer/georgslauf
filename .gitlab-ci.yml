@@ -13,7 +13,7 @@ compile:
     - podman login -u $CI_USER -p $CI_TOKEN $CI_REGISTRY
   script:
     - export CI_DATE=$(date +%F)
-    - podman build -t $CI_REGISTRY/$CI_IMAGE:$CI_DATE -t $CI_REGISTRY/$CI_IMAGE:latest -f Containerfile .
+    - podman build -q -t $CI_REGISTRY/$CI_IMAGE:$CI_DATE -t $CI_REGISTRY/$CI_IMAGE:latest -f Containerfile .
     - podman push -q $CI_REGISTRY/$CI_IMAGE:$CI_DATE
     - podman push -q $CI_REGISTRY/$CI_IMAGE:latest
   after_script:
