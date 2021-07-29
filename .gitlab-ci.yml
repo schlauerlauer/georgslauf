@@ -1,7 +1,11 @@
-image: "buildah/buildah"
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
 
 compile:
   stage: build
+  image: "buildah/buildah"
   variables:
     STORAGE_DRIVER: "vfs"
     BUILDAH_FORMAT: "docker"
@@ -14,3 +18,16 @@ compile:
     - podman push -q $CI_REGISTRY/$CI_IMAGE:latest
   after_script:
     - podman logout $CI_REGISTRY
+
+deploy-to-prod:
+  stage: deploy
+  image: "docker.io/cytopia/ansible:2.9"
+  before_script:
+    - apk add openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ansible-galaxy collection install containers.podman
+    - ansible-playbook -u $SSH_USER --inventory $SSH_HOST, playbook.yml
