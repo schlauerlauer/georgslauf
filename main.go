@@ -70,7 +70,9 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	r.Use(cors.Default())
+	corsConf := cors.DefaultConfig()
+	corsConf.AllowOrigins = []string{"https://admin.georgslauf.de"}
+	r.Use(cors.New(corsConf))
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
