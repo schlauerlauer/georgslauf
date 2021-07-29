@@ -35,6 +35,7 @@
       state: started
       restart_policy: "always"
       recreate: yes
+      security_opt: "label=disable"
       ports:
       - "8080:8080"
       volumes:
