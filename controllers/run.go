@@ -36,7 +36,6 @@ func GetRuns(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get runs failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalRun, 10))
 		c.JSON(http.StatusOK, runs)
 	}

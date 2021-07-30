@@ -32,7 +32,6 @@ func GetContents(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get contents failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalContent, 10))
 		c.JSON(http.StatusOK, contents)
 	}
@@ -45,7 +44,6 @@ func GetPublicContent(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get public content failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", "10") //FIXME
 		c.JSON(http.StatusOK, public_content)
 	}

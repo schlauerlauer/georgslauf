@@ -31,7 +31,6 @@ func GetStationsByLogin(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get stations failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
 		c.JSON(http.StatusOK, stations)
 	}
@@ -47,7 +46,6 @@ func GetPublicStations(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get public stations failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
 		c.JSON(http.StatusOK, stations)
 	}
@@ -73,7 +71,6 @@ func GetStations(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get stations failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
 		c.JSON(http.StatusOK, stations)
 	}

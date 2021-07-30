@@ -32,7 +32,6 @@ func GetRules(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get rules failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalRule, 10))
 		c.JSON(http.StatusOK, rules)
 	}

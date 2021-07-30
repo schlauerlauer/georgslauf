@@ -28,7 +28,6 @@ func GetConfigs(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get configs failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalConfig, 10))
 		c.JSON(http.StatusOK, configs)
 	}

@@ -89,7 +89,6 @@ func GetLogins(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get logins failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalLogin, 10))
 		c.JSON(http.StatusOK, logins)
 	}

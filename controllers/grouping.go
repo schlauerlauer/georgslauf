@@ -28,7 +28,6 @@ func GetGroupings(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get groupings failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalGrouping, 10))
 		c.JSON(http.StatusOK, groupings)
 	}

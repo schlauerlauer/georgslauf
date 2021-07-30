@@ -32,7 +32,6 @@ func GetGroupsByLogin(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get stations failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
 		c.JSON(http.StatusOK, groups)
 	}
@@ -48,7 +47,6 @@ func GetPublicGroups(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get public groups failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10))
 		c.JSON(http.StatusOK, groups)
 	}
@@ -74,7 +72,6 @@ func GetGroups(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get groups failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		fmt.Println(totalGroup)
 		c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10))
 		c.JSON(http.StatusOK, groups)

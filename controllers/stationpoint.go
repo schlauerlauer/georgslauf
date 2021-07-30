@@ -28,7 +28,6 @@ func GetStationTops(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get stationtops failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalStationTop, 10))
 		c.JSON(http.StatusOK, stationtops)
 	}
@@ -54,7 +53,6 @@ func GetStationPoints(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get stationpoints failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalStationPoint, 10))
 		c.JSON(http.StatusOK, stationpoints)
 	}

@@ -28,7 +28,6 @@ func GetContentTypes(c *gin.Context) {
 		c.AbortWithStatus(500)
 		log.Warn("Get contenttypes failed.")
 	} else {
-		c.Header("Access-Control-Expose-Headers", "X-Total-Count")
 		c.Header("X-Total-Count", strconv.FormatInt(totalContentType, 10))
 		c.JSON(http.StatusOK, contenttypes)
 	}
