@@ -158,11 +158,11 @@ func main() {
 	public := r.Group("/public")
 	{
 		public.Static("/media", "uploads")
-		public.GET("/content:ct", controllers.GetPublicContent)
+		public.GET("/content/:ct", controllers.GetPublicContent)
 		public.GET("/stations", controllers.GetPublicStations)
-		public.GET("/stations:id", controllers.GetPublicStation)
+		public.GET("/stations/:id", controllers.GetPublicStation)
 		public.GET("/groups", controllers.GetPublicGroups)
-		public.GET("/groups:id", controllers.GetPublicGroup)
+		public.GET("/groups/:id", controllers.GetPublicGroup)
 	}
 	auth := r.Group("/auth")
 	{
