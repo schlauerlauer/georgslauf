@@ -5,7 +5,6 @@ import (
 	"georgslauf/controllers"
 	"georgslauf/models"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/cors"
 	"time"
 	log "github.com/sirupsen/logrus"
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -63,6 +62,23 @@ func newConfig(configPath string) (*models.APIConfig) {
 	return config
 }
 
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		//c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Range, X-Total-Count")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With, X-Total-Count")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
 func main() {
 	models.ConnectDatabase(cfg.Database.Mariadb)
 	models.SetEnforcer()
@@ -70,11 +86,20 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	corsConf := cors.DefaultConfig()
-	corsConf.AllowOrigins = []string{"https://admin.georgslauf.de"}
-	r.Use(cors.New(corsConf))
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	r.Use(CORS())
+
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "api.georgslauf.de",
+		})
+	})
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
 
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "georgslauf.de",

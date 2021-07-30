@@ -9,7 +9,6 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.2.12 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gin-contrib/authz v0.0.0-20210429002939-d110fabd0cf0 // indirect
-	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-gonic/gin v1.7.1
 	github.com/go-redis/redis/v7 v7.4.0 // indirect
 	github.com/prometheus/client_golang v1.11.0 // indirect
