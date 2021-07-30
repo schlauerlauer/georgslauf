@@ -33,7 +33,7 @@ func GetStationsByLogin(c *gin.Context) {
 	} else {
 		c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
 		c.JSON(http.StatusOK, stations)
-	}
+	} // TODO add pagination
 }
 
 func GetPublicStations(c *gin.Context) {
