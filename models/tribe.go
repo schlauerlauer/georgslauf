@@ -13,4 +13,5 @@ type Tribe struct {
     DPSG        string      `json:"dpsg"`
     Address     string      `json:"address"`
     LoginID     uint        `json:"LoginID" gorm:"foreignKey:LoginID"`
+    URL         string      `json:"url"`
 }

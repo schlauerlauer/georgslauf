@@ -14,6 +14,7 @@ type CreateTribeInput struct {
     DPSG    string  `json:"dpsg" binding:"required"`
     Address string  `json:"address" binding:"required"`
     LoginID uint    `json:"LoginID" binding:"required"`
+    URL     string  `json:"url"`
 }
 
 type UpdateTribeInput struct {
@@ -22,6 +23,7 @@ type UpdateTribeInput struct {
     DPSG    string  `json:"dpsg"`
     Address string  `json:"address"`
     LoginID uint    `json:"LoginID"`
+    URL     string  `json:"url"`
 }
 
 func GetTribes(c *gin.Context) {
