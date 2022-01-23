@@ -37,6 +37,7 @@ func ConnectDatabase(config SqlConfig) {
 		&Config{},
 	)
 	log.Info("Database migration sucessful.")
+	//TODO db.CreateView
 	db.Exec(`
 		CREATE OR REPLACE VIEW group_top AS
 		SELECT
