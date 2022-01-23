@@ -10,7 +10,7 @@ import (
 
 type CreateConfigInput struct {
     Name    string  `json:"name" binding:"required"`
-    ValueB  bool    `json:"valueb" binding:"required"`
+    ValueB  bool    `json:"valueb"`
 }
 
 type UpdateConfigInput struct {

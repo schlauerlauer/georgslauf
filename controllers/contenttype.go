@@ -10,7 +10,7 @@ import (
 
 type CreateContentTypeInput struct {
     Name    string  `json:"name" binding:"required"`
-    Public  bool    `json:"public" binding:"required"`
+    Public  bool    `json:"public"`
 }
 
 type UpdateContentTypeInput struct {
