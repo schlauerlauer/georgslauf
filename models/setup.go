@@ -43,7 +43,7 @@ func ConnectDatabase(config SqlConfig) {
         CREATE OR REPLACE VIEW group_top AS
         SELECT
             group_id AS 'id',
-            groups.name AS 'group',
+            g.name AS 'group',
             groupings.id AS 'grouping_id',
             groupings.name AS 'grouping',
             tribes.id AS 'tribe_id',
@@ -51,10 +51,10 @@ func ConnectDatabase(config SqlConfig) {
             sum(value) as 'sum',
             round(sum(value)/count(value),2) as 'avg'
         FROM group_points
-        LEFT JOIN groups on groups.id = group_id
-        LEFT JOIN groupings on groupings.id = groups.grouping_id
-        LEFT JOIN tribes on tribes.id = groups.tribe_id
-        GROUP BY groups.name
+        LEFT JOIN ` + "`groups`" + ` g on g.id = group_id
+        LEFT JOIN groupings on groupings.id = g.grouping_id
+        LEFT JOIN tribes on tribes.id = g.tribe_id
+        GROUP BY g.name
         ;
     `);
     db.Exec(`
@@ -109,7 +109,7 @@ func ConnectDatabase(config SqlConfig) {
             g.size,
             t.name as 'tribe',
             t.login_id as 'tribe_login'
-        FROM groups as g
+        FROM ` + "`groups`" + ` g
         INNER JOIN tribes as t ON t.id = g.tribe_id
     `);
     db.Exec(`
@@ -130,7 +130,7 @@ func ConnectDatabase(config SqlConfig) {
             g.name,
             groupings.name AS 'grouping',
             t.name as 'tribe'
-        FROM groups as g
+        FROM ` + "`groups`" + ` g
         INNER JOIN tribes as t ON t.id = g.tribe_id
         INNER JOIN groupings on groupings.id = g.grouping_id
     `);

@@ -14,7 +14,7 @@ type GroupPoint struct { // Points given to a group
 }
 
 type GroupTop struct { // View
-    ID      uint        `json:"id"`
+    ID          uint        `json:"id"`
     Group       string      `json:"group"`
     GroupingID  uint        `json:"grouping_id"`
     Grouping    string      `json:"grouping"`
