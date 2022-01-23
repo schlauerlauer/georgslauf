@@ -8,6 +8,7 @@ import (
     log "github.com/sirupsen/logrus"
     "golang.org/x/crypto/bcrypt"
     jwt "github.com/appleboy/gin-jwt/v2"
+    "time"
 )
 
 type AuthenticateLoginInput struct {
@@ -18,9 +19,9 @@ type AuthenticateLoginInput struct {
 type CreateLoginInput struct {
     Username    string  `json:"username" binding:"required"`
     Password    string  `json:"password" binding:"required"`
-    Reset       bool    `json:"reset" binding:"required"`
-    Active      bool    `json:"active" binding:"required"`
-    Confirmed   bool    `json:"confirmed" binding:"required"`
+    Reset       bool    `json:"reset"`
+    Active      bool    `json:"active"`
+    Confirmed   bool    `json:"confirmed"`
     Phone       string  `json:"phone" binding:"required"`
     Email       string  `json:"email" binding:"required"`
     Contact     string  `json:"contact" binding:"required"`
@@ -76,6 +77,8 @@ func Login(c *gin.Context) (interface{}, error) {
         log.Info("Password wrong for ", input.Username)
         return nil, jwt.ErrFailedAuthentication
     }
+    // Patch Login
+    models.DB.Model(&login).Update("last_login", time.Now())
     return &login, nil
 }
 

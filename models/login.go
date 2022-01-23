@@ -8,6 +8,7 @@ type Login struct {
     ID          uint        `json:"id" gorm:"primary_key"`
     CreatedAt   time.Time
     UpdatedAt   time.Time
+    LastLogin   time.Time   `json:"lastLogin"`
     Username    string      `json:"username" gorm:"unique;not null"`
     Password    string      `json:"password" gorm:"not null"`
     Reset       bool        `json:"reset"`
