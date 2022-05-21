@@ -16,3 +16,6 @@ push = true
 "main.go" = [
     '"version": "{version}",'
 ]
+".gitlab-ci.yml" = [
+    'VERSION: "{version}"',
+]
