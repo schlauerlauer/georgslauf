@@ -93,6 +93,7 @@ func main() {
     r.GET("/", func(c *gin.Context) {
         c.JSON(200, gin.H{
             "message": "api.georgslauf.de",
+            "version": "22.5.1-alpha",
         })
     })
     r.GET("/ping", func(c *gin.Context) {
