@@ -13,10 +13,10 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<meta name="description" content="Georgslauf 2020+1 in Schwabing am 11. Juli. Pfadfinder München Georgslauf PRM Pater Rupert Mayer stamm-prm.de"/>
-<meta property="og:title" content="GEORGSLAUF 2021" />
+<meta name="description" content="Georgslauf 2022 in Schwabing am 16. Juli. Pfadfinder München Georgslauf PRM Pater Rupert Mayer stamm-prm.de"/>
+<meta property="og:title" content="GEORGSLAUF 2022" />
 <meta property="og:url" content="https://georgslauf.de" />
-<meta property="og:description" content="Georgslauf 2020+1 in Schwabing am 11. Juli">
+<meta property="og:description" content="Georgslauf 2022 in Schwabing am 16. Juli">
 
 <meta property="og:image" content="/res/logo.png">
 <meta property="og:type" content="article" />
