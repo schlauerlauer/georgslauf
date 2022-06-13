@@ -10,15 +10,15 @@ $WKat = array(4,2,2,3,1); //WöPo-Anzahl Posten pro Kategorie - Anzahl an Zahlen
 $RKat = array(2,2,2,3,1); //RoPo-Anzahl Posten pro Kategorie - "
 
 
-$Anmeldung = true; //Stämme können Gruppen und Posten anmelden
-$Abmeldung = true; //Stämme können Gruppen und Posten löschen
-$PAnmeldung = true; //Stämme können Gruppen anmelden
+$Anmeldung = false; //Stämme können Gruppen und Posten anmelden
+$Abmeldung = false; //Stämme können Gruppen und Posten löschen
+$PAnmeldung = false; //Stämme können Gruppen anmelden
 $GAnmeldung = false; //Stämme können Posten anmelden
-$ShowLogin = true; //Show Posten Login Information in Stamm -> Posten
+$ShowLogin = false; //Show Posten Login Information in Stamm -> Posten
 
 $Rollen = array("keine Rechte", "Posten", "Stamm", "Host", "Admin"); //Rechte vergabe
 
-$Posten = array(false, "Die Posten sind noch nicht öffentlich"); // Posten auf Hauptseite sichtbar oder nicht
+$Posten = array(true, "Die Posten sind noch nicht öffentlich"); // Posten auf Hauptseite sichtbar oder nicht
 $PostenStufe = 'Z'; //Trennung RoPo / WöPo großes o, -> siehe Posten -> update.php
 $Punkte = array(true, "Die Posten dürfen noch keine Punkte vergeben!"); //true = Posten dürfen Punkte verteilen, false -> Fehlermeldung;
 
