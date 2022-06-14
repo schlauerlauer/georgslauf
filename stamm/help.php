@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (isset($_POST['help'])) {
 	switch($_POST['help']) {
 		//Die Überschrift des Hilfs-Pop-Ups lautet "Hilfe zu den ... " (Deshalb "GruppennameN")
@@ -12,14 +12,14 @@ if (isset($_POST['help'])) {
 			";
 			break;
 		case "Gruppengrößen":
-			echo "Generell sind Gruppengrößen nur von 5 bis 12 Kindern erlaubt.<br>
+			echo "Generell sind Gruppengrößen nur von 3 bis 12 Kindern erlaubt. <br> Teilen der Gruppen erst bei 13 Kindern erlaubt in zwei Laufgruppen.
 			<br>
 			Für Ausnahmen bitte uns kontaktieren, wir werden <strong>versuchen</strong> diese zu ermöglichen.";
 			break;
 		case "Kategorien":
 			echo "Eure Posten sollen zu den unten stehenden Kategorien passen.<br>
 			<br>
-			Die mögliche Postenanzahl je Kategorie bei WöPos und RoPos unterscheiden sich.";
+			Die mögliche Postenanzahl: Wissen & Technik (9x), Spiel & Spaß (10x)";
 			break;
 		case "Stufen":
 			echo "Eure Posten werden besucht von entweder<br>
