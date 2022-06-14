@@ -13,7 +13,7 @@ $RKat = array(2,2,); //RoPo-Anzahl Posten pro Kategorie - "
 $Anmeldung = false; //Stämme können Gruppen und Posten anmelden
 $Abmeldung = false; //Stämme können Gruppen und Posten löschen
 $PAnmeldung = false; //Stämme können Gruppen anmelden
-$GAnmeldung = false; //Stämme können Posten anmelden
+$GAnmeldung = true; //Stämme können Posten anmelden
 $ShowLogin = false; //Show Posten Login Information in Stamm -> Posten
 
 $Rollen = array("keine Rechte", "Posten", "Stamm", "Host", "Admin"); //Rechte vergabe
