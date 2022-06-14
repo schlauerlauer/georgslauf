@@ -11,7 +11,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 	<?php
 		$pval = 0;
 		$totalS = 0;
-		$totalV = 0;
+		$totalV = 1;
 		if ($stmt = $mysqli->prepare("SELECT id, color, kurz, name, stamm, kategorie, beschreibung, kontakt, anzahl, veggie, material, ort, sonstiges, stufe FROM posten ORDER BY stufe DESC, stamm, name")) {
 			$stmt->execute();
 			$stmt->store_result();
