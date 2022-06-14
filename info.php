@@ -1,5 +1,5 @@
 <br>
-<h1> GEORGSLAUF 2022 Pfadis rennt mal</h1>
+<h1> GEORGSLAUF 2022 - PFADIS RENNT MAL</h1>
 <h2>Organisiert von PRM im schönen München am 16. Juli 2022</h2>
 <h3>Hallo und herzlich Willkommen, München-Isar!</h3>
 <p>Wir freuen uns mit Euch auf den 42. Georgslauf 2022!<br>
