@@ -20,7 +20,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 				$totalS += $val;
 				$totalV += $veg;
 				echo '<div data-role="collapsible"><h3>'.$kurz.' '.$stufe.' - '.$stamm.' - '.$Kat[$kat].'</h3><p>
-				<strong>'.$name.'</strong><br>"'.$desc.'"<br><br>Leiter '.$val.' ('.$veg.' Veggie)<br>Kontakt <a href="tel:'.$kont.'">'.$kont.'</a>';
+				<strong>'.$name.'</strong><br>"'.$desc.'"<br><br>Leiter '.$val.' ('$veg' Veggie)<br>Kontakt <a href="tel:'.$kont.'">'.$kont.'</a>';
 				if (!empty($mat)) echo '<br>Material '.$mat;
 				if (!empty($ort)) echo '<br>Ort '.$ort;
 				if (!empty($sonst)) echo '<br>Sonstiges '.$sonst;
