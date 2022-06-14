@@ -40,7 +40,7 @@
 		<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center">
 			<table border="0" width="100%">
 			<tr>
-				<td style="width:5%;" align="center"><a href="/"><img src="res/logo.png" style="max-height:70px;"/></a></td>
+				<td style="width:5%;" align="center"><a href="/"><img src="res/logo300.png" style="max-height:70px;"/></a></td>
 				<td style="width:90%;">
 					<div data-role="navbar" id="menu">
 						<ul>
