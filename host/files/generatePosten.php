@@ -9,7 +9,7 @@ $pval = 0;
 $totalS = 0;
 $totalV = 0;
 $Prevstamm = "";
-if ($stmt = $mysqli->prepare("SELECT name, stamm, kategorie, anzahl, p_veggie, stufe FROM posten ORDER BY stamm ASC, stufe DESC, name")) {
+if ($stmt = $mysqli->prepare("SELECT name, stamm, kategorie, anzahl, veggie, stufe FROM posten ORDER BY stamm ASC, stufe DESC, name")) {
   $stmt->execute();
   $stmt->store_result();
   $stmt->bind_result($name, $stamm, $kat, $val, $veg, $stufe);
