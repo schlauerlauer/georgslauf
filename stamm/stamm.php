@@ -101,7 +101,8 @@ bei Fragen: <a href="mailto:gl22@stamm-prm.de">gl22@stamm-prm.de</a> oder <a hre
 	<h2 align="center">Die Anmeldung von Posten ist noch nicht möglich</h2>
 	<?php endif; ?>
 <?php else : ?>
-<h2 align="center">Die Anmeldung ist nur noch per Email möglich</h2>
+<!-- <h2 align="center">Die Anmeldung ist nur noch per Email möglich</h2> -->
+<h2 align="center">Die Anmeldung ist noch nicht möglich</h2>
 <?php endif; ?>
 <?php else : ?>
 <h2>keine Rechte</h2>
