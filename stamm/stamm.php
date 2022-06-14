@@ -10,7 +10,7 @@ include_once '../session/session.php';
 <?php if($_SESSION['rolle'] >= 2) : ?>
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 
-bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a href="tel:015756456883">anrufen (015756456883)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a>
+bei Fragen: <a href="mailto:gl22@stamm-prm.de">gl22@stamm-prm.de</a> oder <a href="tel:015756456883">anrufen (015756456883)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a>
 <br>
 <br>
 <br>
@@ -36,10 +36,10 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 			<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Gruppennamen"></a>
 			</label>
 			<input id="g_name" value="" type="text" maxlength="50">
-			<label for="g_anzahl">Anzahl Kinder 5-12<span style="color:red;">*</span>&nbsp;&nbsp;
+			<label for="g_anzahl">Anzahl Kinder 3-12<span style="color:red;">*</span>&nbsp;&nbsp;
 			<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Gruppengrößen"></a></label>
-			<input data-clear-btn="false" id="g_anzahl" value="5" type="number" min="4" max="15">
-			<label for="g_veggie">Davon Vegetarier</label>
+			<input data-clear-btn="false" id="g_anzahl" value="5" type="number" min="3" max="15">
+			<label for="g_veggie">Davon Vegetarier/Veganer</label>
 			<input data-clear-btn="false" id="g_veggie" value="0" type="number" min="0" max="15">
 			<label for="g_kontakt">Gruppenleiter Nummer&nbsp;&nbsp;
 			<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Nummern"></a>
@@ -83,14 +83,14 @@ bei Fragen: <a href="mailto:gl21@stamm-prm.de">gl21@stamm-prm.de</a> oder <a hre
 			<input id="p_desc" value="" type="text" placeholder="Was wird an dem Posten gemacht?" maxlength="255">
 			<label for="p_anzahl">Anzahl Leiter<span style="color:red;">*</span></label>
 			<input data-clear-btn="false" id="p_anzahl" value="2" type="number" min="1" max="20">
-			<!--<label for="p_veggie">Davon Vegetarier<span style="color:red;">*</span></label>
-			<input data-clear-btn="false" id="p_veggie" value="0" type="number" min="0" max="20">-->
+			<label for="p_veggie">Davon Vegetarier/Veganer<span style="color:red;">*</span></label>
+			<input data-clear-btn="false" id="p_veggie" value="0" type="number" min="0" max="20">
 			<label for="p_kont">Handynummer eines Postenleiters<span style="color:red;">*</span></label>
 			<input id="p_kont" value="" type="text" placeholder="Wichtig für den Startschuss (Whatsapp)" maxlength="100">
-			<!--<label for="p_mat">Benötigtes Material</label>
+			<label for="p_mat">Benötigtes Material</label>
 			<input id="p_mat" value="" type="text" placeholder="Bierbänke ..." maxlength="200">
 			<label for="p_ort">Bevorzugter Ort</label>
-			<input id="p_ort" value="" type="text" placeholder="Wiese / Bürgersteig / Nähe Parkplatz ..." maxlength="200">-->
+			<input id="p_ort" value="" type="text" placeholder="Wiese / Bürgersteig / Nähe Parkplatz ..." maxlength="200">
 			<label for="p_sonst">Sonstiges</label>
 			<input id="p_sonst" value="" type="text" placeholder="Sonstige Wünsche / Anmerkungen ..." maxlength="200">
 			<br>
