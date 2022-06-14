@@ -31,16 +31,16 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
 
 <h4 class="ui-bar ui-bar-a ui-corner-all">
 <br>
-Unser Zeitplan für den 11.07.2021 sieht dann folgendermaßen aus:<br>
+Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
 <ul>
-  <li>08:00 Uhr: Treffen in euren Stämmen</li>
-  <li>09:00 Uhr: Spiritueller Auftakt</li>
-  <li>10:30 Uhr: Startschuss</li>
+  <li>07:00 Uhr: Treffen bei PRM</li>
+  <li>07:45 Uhr: Auftakt</li>
+  <li>09:30 Uhr: Startschuss</li>
   <li>12:30 bis 13:00 Uhr: Mittagspause</li>
   <li>16:30 Uhr: Ende des Laufs</li>
   <li>18:00 Uhr: Sieger*innen Ehrung</li>
   <li>circa 20:30 Uhr: Ende</li> 
-  <li>circa 21:30 Uhr: Party</li> 
+  <li>circa 22:00 Uhr: Party</li> 
 </ul>
 <br>
 </h4>
