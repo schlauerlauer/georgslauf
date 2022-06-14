@@ -18,9 +18,9 @@ $ShowLogin = false; //Show Posten Login Information in Stamm -> Posten
 
 $Rollen = array("keine Rechte", "Posten", "Stamm", "Host", "Admin"); //Rechte vergabe
 
-$Posten = array(true, "Die Posten sind noch nicht öffentlich"); // Posten auf Hauptseite sichtbar oder nicht
+$Posten = array(false, "Die Posten sind noch nicht öffentlich"); // Posten auf Hauptseite sichtbar oder nicht
 $PostenStufe = 'Z'; //Trennung RoPo / WöPo großes o, -> siehe Posten -> update.php
-$Punkte = array(true, "Die Posten dürfen noch keine Punkte vergeben!"); //true = Posten dürfen Punkte verteilen, false -> Fehlermeldung;
+$Punkte = array(false, "Die Posten dürfen noch keine Punkte vergeben!"); //true = Posten dürfen Punkte verteilen, false -> Fehlermeldung;
 
 $Ende = false; //Host kann keine Punkte mehr eintragen wenn true;
 $Backup = true; //Erstelle automatische Backups der Datenbank;
