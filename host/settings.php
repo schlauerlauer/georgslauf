@@ -10,7 +10,7 @@ $WKat = array(9,10); //WöPo-Anzahl Posten pro Kategorie - Anzahl an Zahlen muss
 $RKat = array(2,2,); //RoPo-Anzahl Posten pro Kategorie - "
 
 
-$Anmeldung = false; //Stämme können Gruppen und Posten anmelden
+$Anmeldung = true; //Stämme können Gruppen und Posten anmelden
 $Abmeldung = false; //Stämme können Gruppen und Posten löschen
 $PAnmeldung = false; //Stämme können Gruppen anmelden
 $GAnmeldung = true; //Stämme können Posten anmelden
