@@ -3,11 +3,11 @@
 
 $Email = "gl22@stamm-prm.de";
 
-$Kat = array('Kreativ','Pfadiwissen','Wissen','Action','erste Hilfe'); //Die Kategorien für die Posten, beliebig erweiterbar / veränderbar!
+$Kat = array('Wissen & Technik','Spiel & Spaß'); //Die Kategorien für die Posten, beliebig erweiterbar / veränderbar!
 $Stufe = array('Wölflinge','Jupfis','Pfadis','Rover'); // Stufen namen, wie sie angezeigt werden (auf anmeldeseite aber hardcoded!) (in SQL sind nur nummern) eher nicht verändern
 
-$WKat = array(4,2,2,3,1); //WöPo-Anzahl Posten pro Kategorie - Anzahl an Zahlen muss mit Kategorien ($Kat) Anzahl übereinstimmen!
-$RKat = array(2,2,2,3,1); //RoPo-Anzahl Posten pro Kategorie - "
+$WKat = array(9,10); //WöPo-Anzahl Posten pro Kategorie - Anzahl an Zahlen muss mit Kategorien ($Kat) Anzahl übereinstimmen!
+$RKat = array(2,2,); //RoPo-Anzahl Posten pro Kategorie - "
 
 
 $Anmeldung = false; //Stämme können Gruppen und Posten anmelden
