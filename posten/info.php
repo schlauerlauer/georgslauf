@@ -7,11 +7,11 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
     $stmt->bind_param('s', $login_session);
     $stmt->execute();
     $stmt->store_result();
-    $stmt->bind_result($id, $kurz, $name, $stamm, $x_axis, $y_axis, $kat, $desc, $kontakt, $anzahl, $veggie, $material, $ort, $sonstiges, $stufe, $color, $startGruppen);
+    $stmt->bind_result($id, $kurz, $name, $stamm, $x_axis, $y_axis, $kat, $desc, $kontakt, $anzahl, $veg, $material, $ort, $sonstiges, $stufe, $color, $startGruppen);
     while ($stmt->fetch()) {
       echo '<div class="ui-bar ui-bar-a"><h3>'.$kurz.' - '.$name.' ('.$stamm.')</h3></div>
       <div class="ui-body ui-body-a">';
-      echo '<br><h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:'.$Farben[$color].';" align="center"><span style="background-color:white;">Postenfarbe</span></h3><br>Beschreibung <strong>'.$desc.'</strong><br><br>Kontakt <strong>'.$kontakt.'</strong><br>Leiteranzahl <strong>'.$anzahl.'</strong> (davon <strong>'.$veggie.'</strong> Veggies)<br><br />';
+      echo '<br><h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:'.$Farben[$color].';" align="center"><span style="background-color:white;">Postenfarbe</span></h3><br>Beschreibung <strong>'.$desc.'</strong><br><br>Kontakt <strong>'.$kontakt.'</strong><br>Leiteranzahl <strong>'.$anzahl.'</strong> (davon <strong>'.$veg.'</strong> Veggies)<br><br />';
       if($material != null) echo 'Material '.$material.'<br />';
       if($sonstiges != null) echo 'Sonstiges '.$sonstiges;
       echo "<br />Start Gruppen <strong>".$startGruppen.'</strong>';
