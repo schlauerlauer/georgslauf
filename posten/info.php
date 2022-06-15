@@ -37,7 +37,7 @@ Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
 </ul>
 <br>
 </h4>
-<h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:Tomato; color:white;" align="center">Fehler / Fragen / Hilfe<a data-icon="mail" href="https://bezirkmueisar.slack.com/archives/C03KCKD0DKR">Slack Channel im Bezirksslack</a><a data-icon="mail" href="mailto:gl22@stamm-prm.de">Mail an gl22@stamm-prm.de</a><a data-icon="phone" href="tel:015756456883">Anrufen (015756456883)</a><a target="_blank" data-icon="comment" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Posten%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a></h3>
+<h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:Tomato; color:white;" align="center">Fehler / Fragen / Hilfe<a data-icon="slack" href="https://bezirkmueisar.slack.com/archives/C03KCKD0DKR">Slack Channel im Bezirksslack</a><a data-icon="mail" href="mailto:gl22@stamm-prm.de">Mail an gl22@stamm-prm.de</a><a data-icon="phone" href="tel:015756456883">Anrufen (015756456883)</a><a target="_blank" data-icon="comment" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Posten%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a></h3>
 <br>
 <br>
 <p align="center"><img src="/res/logo.png" style="max-width: 100%; max-height: 500px;"/></p>
