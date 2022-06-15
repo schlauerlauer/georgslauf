@@ -16,7 +16,7 @@ Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
   <li>16:30 Uhr: Ende des Laufs</li>
   <li>18:00 Uhr: Sieger*innen Ehrung</li>
   <li>circa 20:30 Uhr: Ende</li> 
-  <li>circa 22:00 Uhr: Party</li> 
+  <li>circa 22:00 Uhr: Party für Leiter*innen und Rover*innen ab 16 Jahren</li> 
 </ul>
 <br>
 Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
