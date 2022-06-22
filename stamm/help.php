@@ -4,7 +4,7 @@ if (isset($_POST['help'])) {
 		//Die Überschrift des Hilfs-Pop-Ups lautet "Hilfe zu den ... " (Deshalb "GruppennameN")
 		case "Gruppenstufen":
 			echo "Mischgruppen als Stufe der Ältesten Kinder anmelden.";
-				break;
+			break;
 		case "Gruppennamen":
 			echo "Euer Gruppenname sollte einzigartig sein.<br>
 			<br>

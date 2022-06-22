@@ -13,7 +13,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
     $stmt->bind_result($kurz, $name, $stufe, $stamm, $punkte);
     while ($stmt->fetch()) {
       if($prev_punkte != $punkte) $position++;
-      echo '<li><a href="#">'.$position.'. Platz - '.$stufe.' '.$kurz.' - "'.$name.'" - '.$stamm.'<span class="ui-li-count">'.round($punkte,3).'</span></a></li>';
+      echo '<li><a href="#">'.$position.'. Platz - '.$kurz.' - "'.$name.'" - '.$stamm.'<span class="ui-li-count">'.round($punkte,3).'</span></a></li>';
       $prev_punkte = $punkte;
     }
   }

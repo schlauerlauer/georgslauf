@@ -19,7 +19,7 @@ ORDER BY kurz ASC")) {
       $stmt->bind_result($id, $kurz, $name, $punkte);
       while ($stmt->fetch()) {
         echo '<li><h2>'.$kurz.' '.$name.'</h2><p class="ui-li-aside">
-        <input von="'.$_POST['gruppe'].'" an="'.$id.'" class="ppunkte" style="max-width:60px;" data-mini="true" type="number" min="0" max="100" value="'.$punkte.'"/>
+        <input id="p'.$id.'" von="'.$_POST['gruppe'].'" an="'.$id.'" class="ppunkte" style="max-width:60px;" data-mini="true" type="number" min="0" max="100" value="'.$punkte.'"/>
         </p></li>';
       }
     }

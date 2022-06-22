@@ -32,19 +32,4 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
   }
   echo '</div>';
 } else echo "Keine Berechtigung";
-
-/*
-b Paul maria
-d timo canisius
-f Melvin
-g -> F
-h Dominik Engel
-i lena st.anna
-l martin Fc
-r esther
-s andreas fc
-t chris
-u alex canisius
-x vera pfaff
-y lena prm */
 ?>

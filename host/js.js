@@ -146,8 +146,9 @@ $(document).ready(function() {
 		var punkte = $(this).val();
 		var an = $(this).attr('an');
 		var von = $(this).attr('von');
+		var id = $(this).attr('id');
 		$.post('punkte.php', { punkte: punkte, von: von, an: an }, function(data) {
-			if(data == "ok") {}
+			if(data == "ok") $("#"+id).css("color", "green");
 			else alertify.error("Etwas ist schiefgelaufen");
 		});
 	});
