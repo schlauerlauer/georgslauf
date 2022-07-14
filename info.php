@@ -9,7 +9,7 @@ Start ist <strong>pünktlich um 07:00 Uhr</strong> an der Ursl.<br>
 <br>
 Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
 <ul>
-  <li>07:00 Uhr: Treffen bei PRM</li>
+  <li>07:30 Uhr: Treffen bei PRM</li>
   <li>07:45 Uhr: Auftakt</li>
   <li>09:30 Uhr: Startschuss</li>
   <li>12:30 bis 13:00 Uhr: Mittagspause</li>
