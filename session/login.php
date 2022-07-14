@@ -1,5 +1,5 @@
 ﻿<?php
-include_once '../../includes/connect_gl.php';
+include_once '../includes/connect_gl.php';
 session_start();
 $row = '';
 if (isset($_POST['un'])) {
