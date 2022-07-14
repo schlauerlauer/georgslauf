@@ -1,5 +1,5 @@
 <?php
-include('session/login.php');
+require('session/login.php');
 include('host/settings.php');
 
 if(isset($_SESSION['login_user'])) : ?>

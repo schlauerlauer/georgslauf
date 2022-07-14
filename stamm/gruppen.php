@@ -1,6 +1,6 @@
 ﻿<?php
 include_once '../host/settings.php';
-include_once '../session/session.php';
+require('../session/session.php');
 ?>
 <h1>Angemeldete Gruppen</h1>
 <h2>Stamm <?php echo $login_session; ?></h2>

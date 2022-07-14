@@ -1,6 +1,6 @@
 ﻿<?php
 include_once '../host/settings.php';
-include_once '../session/session.php';
+require('../session/session.php');
 include_once '../host/mail.php';
 require './pGet.php';
 

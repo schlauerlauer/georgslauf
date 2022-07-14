@@ -1,7 +1,7 @@
 <?php
 include_once '../host/settings.php';
 include_once 'pGet.php';
-include_once '../session/session.php';
+require('../session/session.php');
 ?>
 <button class="ui-btn ui-btn-inline ui-icon-home ui-btn-icon-left" onclick="window.location.href='/'">Zurück zur Startseite</button>
 <?php if(isset($login_session) && $_SESSION['rolle'] >= 3) : ?>
