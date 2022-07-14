@@ -1,5 +1,5 @@
 <?php
-include_once '../includes/connect_gl.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/includes/connect_gl.php';
 session_start();
 $user_check=$_SESSION['login_user'];
 $row;
