@@ -13,11 +13,11 @@ import (
 )
 
 var (
-    identityKey =	"id"
-    permissionKey =	"permissions"
-    emailKey =		"email"
-    avatarKey =		"avatar"
-    loginKey = 		"login"
+    identityKey =   "id"
+    permissionKey = "permissions"
+    emailKey =      "email"
+    avatarKey =     "avatar"
+    loginKey =      "login"
     cfg = newConfig("./config.yaml")
 )
 
