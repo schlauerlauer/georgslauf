@@ -1,12 +1,14 @@
 package controllers
 
 import (
-    "fmt"
-    "net/http"
-    "github.com/gin-gonic/gin"
-    "georgslauf/models"
-    "strconv"
-    log "github.com/sirupsen/logrus"
+	"fmt"
+	"georgslauf/models"
+	"net/http"
+	"strconv"
+
+	jwt "github.com/appleboy/gin-jwt/v2"
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 type CreateGroupInput struct {
@@ -64,6 +66,10 @@ func GetPublicGroup(c *gin.Context) {
 
 func GetGroups(c *gin.Context) {
     var groups []models.Group
+    claims := jwt.ExtractClaims(c)
+    user, _ := c.Get("id")
+    log.Warn("CLAIM ", claims["permissions"])
+    log.Warn("CONTE ", user.(*models.Login).ID)
     _start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
     _end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
     _sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
