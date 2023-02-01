@@ -5,3 +5,4 @@ config.yaml
 test.go
 georgslauf
 auth/db
+vars/local.yml
