@@ -10,14 +10,16 @@ type APIConfig struct {
         } `yaml:"metrics"`
     } `yaml:"server"`
     Database struct {
-        Mariadb SqlConfig `yaml:"mariadb" binding:"required"`
+        Postgresql SqlConfig `yaml:"postgresql"`
     } `yaml:"database"`
 }
 
 type SqlConfig struct {
-    Username    string  `yaml:"username"`
-    Password    string  `yaml:"password"`
-    Hostname    string  `yaml:"hostname"`
-    Port        string  `yaml:"port"`
-    Database    string  `yaml:"database"`
+    Username    string  `yaml:"username" binding:"required"`
+    Password    string  `yaml:"password" binding:"required"`
+    Hostname    string  `yaml:"hostname" binding:"required"`
+    Port        string  `yaml:"port" binding:"required"`
+    Database    string  `yaml:"database" binding:"required"`
+    SSL         string  `yaml:"ssl" binding:"required"`
+    TZ          string  `yaml:"tz" binding:"required"`
 }

@@ -5,9 +5,11 @@ server:
     username: "prometheus"
     password: "Shock-Playable-Drippy1-Caboose-Slideshow-Hardcopy-Gratuity-Twitter-Slicing-Deceiving"
 database:
-  mariadb:
-    hostname: "localhost"
-    port: "3306"
+  postgresql:
+    hostname: "127.0.0.1"
+    port: "5432"
     database: "database"
     username: "username"
     password: "password"
+    ssl: "disable"
+    tz: "Europe/Berlin"
