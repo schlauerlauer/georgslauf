@@ -1,4 +1,5 @@
 server:
+  host: "0.0.0.0"
   port: "8080"
   secret: "Squishier-Untapped-Gangrene-Chowder8-Slurp-Skylight-Siberian-Scolding-National-Hypnotism"
   metrics:

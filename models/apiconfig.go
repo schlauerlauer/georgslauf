@@ -2,6 +2,7 @@ package models
 
 type APIConfig struct {
     Server struct {
+        Host    string  `yaml:"host" binding:"required"`
         Port    string  `yaml:"port" binding:"required"`
         Secret  string  `yaml:"secret" binding:"required"`
         Metrics struct {
