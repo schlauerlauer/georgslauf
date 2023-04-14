@@ -11,7 +11,7 @@ require('../session/session.php');
     <!--TODO-->
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 
-bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C03KCKJB1E3">Slack Channel </a>, <a href="mailto:gl22@stamm-prm.de">gl22@stamm-prm.de</a> oder <a href="tel:015756456883">anrufen (015756456883)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a>
+bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel </a>, <a href="mailto:gl22@stamm-prm.de">gl22@stamm-prm.de</a> oder <a href="tel:015756456883">anrufen (015756456883)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a>
 <br>
 <br>
 <br>

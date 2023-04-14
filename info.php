@@ -1,29 +1,56 @@
 <br>
-<h1> GEORGSLAUF 2022 - PFADIS RENNT MAL</h1>
-<h2>Organisiert von PRM im schönen München am 16. Juli 2022</h2>
-<h3>Hallo und herzlich Willkommen, München-Isar!</h3>
-<p>Wir freuen uns mit Euch auf den 42. Georgslauf 2022!<br>
-Am <strong>Samstag, 16.07.2022</strong> begrüßt Euch PRM im schönen Schwabing!<br>
-Start ist <strong>pünktlich um 07:30 Uhr</strong> an der Ursl.<br>
-    <!--TODO-->
-<br>
-Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
+<h1> GEORGSLAUF 2023 - Bezirkenstock</h1>
+<h2>Hallo und Herzlich Willkommen lieber Bezirk München Isar,</h2>
+
+Der 43. Georgslauf steht vor der Tür! Wir freuen uns euch alle am <strong>Samstag, den 6.05.2023</strong>
+beim Stamm Sankt Ansgar begrüßen zu dürfen! Adresse ist die <strong>Gulbranssonstraße 30, 81477 München.</strong>
+
+<br><br>
+<strong>Beginn ist pünktlich um 8:00 Uhr.</strong>
+<br><br>
+
+Nach der Ankunft, können die Stavos dann ihre Stämme bzw. die Laufgruppen am Check-in anmelden. Dafür bitte gesammelt die Anmeldungen, Datenschutzerklärungen & das Geld mitbringen.
+<br><br>
+<u><strong>Unser Zeitplan:</strong></u><br>
 <ul>
-  <li>07:30 Uhr: Treffen bei PRM</li>
-  <li>07:45 Uhr: Auftakt</li>
-  <li>09:30 Uhr: Startschuss</li>
-  <li>12:30 bis 13:00 Uhr: Mittagspause</li>
-  <li>16:30 Uhr: Ende des Laufs</li>
+  <li>8:00 Uhr: Treffen bei Sankt Ansgar </li>
+  <li>8:30 Uhr: Auftakt & Andacht</li>
+  <li>10:00 Uhr: Startschuss</li>
+  <li>13:00 bis 13:30 Uhr: Mittagspause</li>
+  <li>16:00 Uhr: Ende des Postenlaufs</li>
   <li>18:00 Uhr: Sieger*innen Ehrung</li>
   <li>circa 20:30 Uhr: Ende</li> 
   <li>circa 22:00 Uhr: Party für Leiter*innen und Rover*innen ab 16 Jahren</li> 
 </ul>
 <br>
-Wir freuen uns auf einen tollen Tag und hoffen auf gutes Wetter!  <br>
-Euer Stamm PRM<br>
+
+<u><strong>Posteninfos:</strong></u><br>
+
+für die Postenaufteilung haben wir uns folgendes gedacht: <br><br>
+
+Ansgar: 3 Posten, Canisius: 3 Posten, Maxko: 1 Posten, St. Anna:  1 Posten, FC: 1 Posten, Swapingo: 2 Posten, Prm: 2 Posten, Maria Hilf:  1 Posten, Heilig Kreuz: 1 Posten, St. Severin:  1 Posten, Heilig Engel:  1 Posten, St. Louis:  1 Posten
+
+<br>
+Falls mit dieser Aufteilung irgendwas nicht stimmen sollte, dann meldet euch bitte schnellstmöglich bei uns!
+<ul>
+    <li>Jeder Posten muss zwei Laufgruppen gleichzeitig beschäftigen können!</li>
+    <li>Postenzeit: 7 Minuten ohne Begrüßung</li>
+    <li>Bitte gebt auch an, was für eine Art Posten ihr machen wollt damit es ausgeglichen ist</li>
+</ul>
+
+
+<u><strong>Laufgruppeninfos:</strong></u><br>
+
+Teilt eure Kinder bitte bis 11 Personen in eine Laufgruppe ein, ab 11 Personen darf die Gruppe geteilt werden.
+Tragt dann bitte die Gruppen Namen und jeweilige Stufe im Tool ein.
+<br><br>
+
+Wir freuen uns, gemeinsam mit euch im Süden Münchens Spuren zu hinterlassen!<br><br>
+Gut Pfad<br>
+Euer Stamm Sankt Ansgar<br>
 <h1 id="clock"></h1>
 <br>
 <br>
 <div data-role="footer" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
-		<h2><a target="_blank" href="https://stamm-prm.de/"><img src="/res/logo.png"/></a></h2>
+		<h2><a target="_blank" href="https://sanktansgar.de/"><img src="/res/logo.png"/></a></h2>
 </div>
