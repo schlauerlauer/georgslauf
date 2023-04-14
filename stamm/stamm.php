@@ -11,13 +11,44 @@ require('../session/session.php');
     <!--TODO-->
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 
-bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=49157872971823&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
+bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915787297182&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
 <br><br>
 <u><strong>Posteninfos:</strong></u><br>
 
 für die Postenaufteilung haben wir uns folgendes gedacht: <br><br>
 
-Ansgar: 3 Posten, Canisius: 3 Posten, Maxko: 1 Posten, St. Anna:  1 Posten, FC: 1 Posten, Swapingo: 2 Posten, Prm: 2 Posten, Maria Hilf:  1 Posten, Heilig Kreuz: 1 Posten, St. Severin:  1 Posten, Heilig Engel:  1 Posten, St. Louis:  1 Posten
+Stamm <?php echo $login_session; ?>, bitte
+<strong>
+<?php
+if(isset($login_session) && $login_session == 'St.Ansgar') {
+    echo "3";
+} elseif (isset($login_session) && $login_session == 'Maxkolbe') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'Canisius') {
+    echo "3";
+} elseif (isset($login_session) && $login_session == 'FC') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'PRM') {
+    echo "2";
+} elseif (isset($login_session) && $login_session == 'Swapingo') {
+    echo "2";
+} elseif (isset($login_session) && $login_session == 'St.Severin') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'Hl.Engel') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'Hl.Kreuz') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'MariaHilf') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'St.Anna') {
+    echo "1";
+} elseif (isset($login_session) && $login_session == 'SGDF') {
+    echo "1";
+} else {
+    echo "0";
+}
+?>
+ Posten</strong> anmelden
 
 <br><br>
 Falls mit dieser Aufteilung irgendwas nicht stimmen sollte, dann meldet euch bitte schnellstmöglich bei uns!
