@@ -11,7 +11,25 @@ require('../session/session.php');
     <!--TODO-->
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 
-bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel </a>, <a href="mailto:gl22@stamm-prm.de">gl22@stamm-prm.de</a> oder <a href="tel:015756456883">anrufen (015756456883)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a>
+bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=49157872971823&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
+<br><br>
+<u><strong>Posteninfos:</strong></u><br>
+
+für die Postenaufteilung haben wir uns folgendes gedacht: <br><br>
+
+Ansgar: 3 Posten, Canisius: 3 Posten, Maxko: 1 Posten, St. Anna:  1 Posten, FC: 1 Posten, Swapingo: 2 Posten, Prm: 2 Posten, Maria Hilf:  1 Posten, Heilig Kreuz: 1 Posten, St. Severin:  1 Posten, Heilig Engel:  1 Posten, St. Louis:  1 Posten
+
+<br><br>
+Falls mit dieser Aufteilung irgendwas nicht stimmen sollte, dann meldet euch bitte schnellstmöglich bei uns!
+<ul>
+    <li>Jeder Posten muss zwei Laufgruppen gleichzeitig beschäftigen können!</li>
+    <li>Postenzeit: 7 Minuten ohne Begrüßung</li>
+</ul>
+
+<u><strong>Laufgruppeninfos:</strong></u><br>
+
+Teilt eure Kinder bitte bis 11 Personen in eine Laufgruppe ein, ab 11 Personen darf die Gruppe geteilt werden.
+Tragt dann bitte die Gruppen Namen und jeweilige Stufe im Tool ein.
 <br>
 <br>
 <br>

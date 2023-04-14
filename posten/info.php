@@ -34,23 +34,8 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
         <li>circa 22:00 Uhr: Party für Leiter*innen und Rover*innen ab 16 Jahren</li>
     </ul>
     <br>
-
-    <u><strong>Posteninfos:</strong></u><br>
-
-    für die Postenaufteilung haben wir uns folgendes gedacht: <br><br>
-
-    Ansgar: 3 Posten, Canisius: 3 Posten, Maxko: 1 Posten, St. Anna:  1 Posten, FC: 1 Posten, Swapingo: 2 Posten, Prm: 2 Posten, Maria Hilf:  1 Posten, Heilig Kreuz: 1 Posten, St. Severin:  1 Posten, Heilig Engel:  1 Posten, St. Louis:  1 Posten
-
-    <br>
-    Falls mit dieser Aufteilung irgendwas nicht stimmen sollte, dann meldet euch bitte schnellstmöglich bei uns!
-    <ul>
-        <li>Jeder Posten muss zwei Laufgruppen gleichzeitig beschäftigen können!</li>
-        <li>Postenzeit: 7 Minuten ohne Begrüßung</li>
-        <li>Bitte gebt auch an, was für eine Art Posten ihr machen wollt damit es ausgeglichen ist</li>
-    </ul>
-
 </h4>
-<h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:Tomato; color:white;" align="center">Fehler / Fragen / Hilfe<a data-icon="slack" href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel im Bezirksslack</a><a data-icon="mail" href="mailto:gl22@stamm-prm.de">Mail an gl22@stamm-prm.de</a><a data-icon="phone" href="tel:015756456883">Anrufen (015756456883)</a><a target="_blank" data-icon="comment" href="https://api.whatsapp.com/send?phone=4915756456883&text=Frage%20von%20Posten%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015756456883)</a></h3>
+<h3 class="ui-bar ui-bar-a ui-corner-all" style="background-color:Tomato; color:white;" align="center">Fehler / Fragen / Hilfe<a data-icon="slack" href="https://bezirkmueisar.slack.com/archives/C03KCKD0DKR">Slack Channel im Bezirksslack</a><a data-icon="phone" href="tel:015756456883">Anrufen (015787297182)</a><a target="_blank" data-icon="comment" href="https://api.whatsapp.com/send?phone=4915787297182&text=Frage%20von%20Posten%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a></h3>
 <br>
 <br>
 <p align="center"><img src="/res/logo.png" style="max-width: 100%; max-height: 500px;"/></p>

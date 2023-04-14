@@ -23,27 +23,7 @@ Nach der Ankunft, können die Stavos dann ihre Stämme bzw. die Laufgruppen am C
   <li>circa 22:00 Uhr: Party für Leiter*innen und Rover*innen ab 16 Jahren</li> 
 </ul>
 <br>
-
-<u><strong>Posteninfos:</strong></u><br>
-
-für die Postenaufteilung haben wir uns folgendes gedacht: <br><br>
-
-Ansgar: 3 Posten, Canisius: 3 Posten, Maxko: 1 Posten, St. Anna:  1 Posten, FC: 1 Posten, Swapingo: 2 Posten, Prm: 2 Posten, Maria Hilf:  1 Posten, Heilig Kreuz: 1 Posten, St. Severin:  1 Posten, Heilig Engel:  1 Posten, St. Louis:  1 Posten
-
 <br>
-Falls mit dieser Aufteilung irgendwas nicht stimmen sollte, dann meldet euch bitte schnellstmöglich bei uns!
-<ul>
-    <li>Jeder Posten muss zwei Laufgruppen gleichzeitig beschäftigen können!</li>
-    <li>Postenzeit: 7 Minuten ohne Begrüßung</li>
-    <li>Bitte gebt auch an, was für eine Art Posten ihr machen wollt damit es ausgeglichen ist</li>
-</ul>
-
-
-<u><strong>Laufgruppeninfos:</strong></u><br>
-
-Teilt eure Kinder bitte bis 11 Personen in eine Laufgruppe ein, ab 11 Personen darf die Gruppe geteilt werden.
-Tragt dann bitte die Gruppen Namen und jeweilige Stufe im Tool ein.
-<br><br>
 
 Wir freuen uns, gemeinsam mit euch im Süden Münchens Spuren zu hinterlassen!<br><br>
 Gut Pfad<br>
