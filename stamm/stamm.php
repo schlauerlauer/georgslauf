@@ -51,7 +51,7 @@ if(isset($login_session) && $login_session == 'St.Ansgar') {
  Posten</strong> anmelden
 
 <br><br>
-Falls mit dieser Aufteilung irgendwas nicht stimmen sollte, dann meldet euch bitte schnellstmöglich bei uns!
+Falls ihr doch nicht so viele Posten stämmen könnt, dann meldet euch bitte schnellstmöglich bei uns!
 <ul>
     <li>Jeder Posten muss zwei Laufgruppen gleichzeitig beschäftigen können!</li>
     <li>Postenzeit: 7 Minuten ohne Begrüßung</li>
