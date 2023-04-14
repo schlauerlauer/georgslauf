@@ -22,7 +22,7 @@ require('../session/session.php');
 		<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center">
 			<table border="0" width="100%">
 			<tr>
-				<td style="width:5%;" align="center"><img src="../res/logo300.png" onclick="window.location.href='/'" style="max-height:70px;"/></td>
+				<td style="width:5%;" align="center"><img src="../res/logo300.png" onclick="window.location.href='/'" style="max-height:50px;"/></td>
 				<td style="width:90%;">
 					<div data-role="navbar" id="menu">
 						<ul>

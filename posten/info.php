@@ -23,6 +23,7 @@ if(isset($login_session) && $_SESSION['rolle'] == 1) {
 
 <h4 class="ui-bar ui-bar-a ui-corner-all">
 <br>
+    <!--TODO-->
 Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
 <ul>
   <li>07:30 Uhr: Treffen bei PRM</li>

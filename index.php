@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Georgslauf 2022</title>
+<title>Georgslauf 2023</title>
 
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -13,10 +13,10 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<meta name="description" content="Georgslauf 2022 in Schwabing am 16. Juli. Pfadfinder München Georgslauf PRM Pater Rupert Mayer stamm-prm.de"/>
-<meta property="og:title" content="GEORGSLAUF 2022" />
+<meta name="description" content="Georgslauf 2023 in Solln am 6. Mai. Pfadfinder München Georgslauf St. Ansgar sanktansgar.de"/>
+<meta property="og:title" content="GEORGSLAUF 2023" />
 <meta property="og:url" content="https://georgslauf.de" />
-<meta property="og:description" content="Georgslauf 2022 in Schwabing am 16. Juli">
+<meta property="og:description" content="Georgslauf 2023 in Solln am 6. Mai">
 
 <meta property="og:image" content="/res/logo.png">
 <meta property="og:type" content="article" />
@@ -40,7 +40,7 @@
 		<div data-role="header" data-position="fixed" data-tap-toggle="false" align="center">
 			<table border="0" width="100%">
 			<tr>
-				<td style="width:5%;" align="center"><a href="/"><img src="res/logo300.png" style="max-height:70px;"/></a></td>
+				<td style="width:5%;" align="center"><a href="/"><img src="res/logo300.png" style="max-height:50px;"/></a></td>
 				<td style="width:90%;">
 					<div data-role="navbar" id="menu">
 						<ul>

@@ -2,7 +2,7 @@
 require('../session/session.php');
 if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 ?>
-<h1>Georgslauf 2022 <?php echo $login_session; ?></h1>
+<h1>Georgslauf 2023 <?php echo $login_session; ?></h1>
 <div class="ui-grid-b ui-responsive">
   <div class="ui-block-a"><input data-icon="back" value="Anmeldeseite" onclick="window.location.href='/stamm'" type="button"></div>
   <div class="ui-block-b"><input data-icon="home" value="Startseite" onclick="window.location.href='/'" type="button"></div>

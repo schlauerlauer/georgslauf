@@ -5,7 +5,7 @@
 <p>Wir freuen uns mit Euch auf den 42. Georgslauf 2022!<br>
 Am <strong>Samstag, 16.07.2022</strong> begrüßt Euch PRM im schönen Schwabing!<br>
 Start ist <strong>pünktlich um 07:30 Uhr</strong> an der Ursl.<br>
-
+    <!--TODO-->
 <br>
 Unser Zeitplan für den 16.07.2022 sieht dann folgendermaßen aus:<br>
 <ul>

@@ -27,5 +27,5 @@ include_once 'host/settings.php';
 <?php endif; ?>
 <br>
 <br>
-<p align="center"><img src="../res/Schwabing.jpg" style="max-width: 100%; max-height: 700px;"/></p>
-<div align="center">Georgslauf 2015 - im schönen Schwabing</div>
+<p align="center"><img src="../res/Ansgar.jpg" style="max-width: 100%; max-height: 700px;"/></p>
+<div align="center">Kreuzsäule in St.Ansgar</div>
