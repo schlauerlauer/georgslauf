@@ -28,7 +28,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 	?>
 </ul>
 <br>
-<h4>Insgesamt <?php echo $gruppen; ?> Laufgruppen mit <?php echo $totalS; ?> Teilnehmern, davon <?php echo $totalV; ?> Vegetarier</h4>
+<h4>Insgesamt <?php echo $gruppen; ?> Laufgruppen mit <?php echo $totalS; ?> Teilnehmern, davon <?php echo $totalV; ?> Veganer</h4>
 <?php endif;
 //SELECT an, name, size, stufe, stamm, sum(points) FROM gruppen, punkte WHERE an = name_varchar GROUP BY an ORDER BY points DESC
 ?>

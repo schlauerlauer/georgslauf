@@ -17,7 +17,7 @@ require('../session/session.php');
 				$stmt->bind_result($id, $name, $stufe, $stamm, $size, $veggies);
 				while ($stmt->fetch()) {
 					$gruppen++;
-					echo '<div data-role="collapsible"><h3>'.$name.' - '.$Stufe[$stufe].'</h3><p>Stamm: '.$stamm.'<br><br>Größe: '.$size.' (Davon '.$veggies.' Vegetarier)</p>
+					echo '<div data-role="collapsible"><h3>'.$name.' - '.$Stufe[$stufe].'</h3><p>Stamm: '.$stamm.'<br><br>Größe: '.$size.' (Davon '.$veggies.' Veganer)</p>
 					<a href="#" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-notext delete" type="g" name='.$name.' id='.$id.'></a>
 					</div>';
 				}

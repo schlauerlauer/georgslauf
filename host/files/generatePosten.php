@@ -19,7 +19,7 @@ if ($stmt = $mysqli->prepare("SELECT name, stamm, kategorie, anzahl, veggie, stu
       $pval = 1;
       $Prevstamm = $stamm;
     } else $pval++;
-    echo $stamm.' '.$stufe.' '.$Kat[$kat]. ' - '.$name.' -- mit '.$val.' Leitern (davon '.$veg.' Vegetarier)<br>';
+    echo $stamm.' '.$stufe.' '.$Kat[$kat]. ' - '.$name.' -- mit '.$val.' Leitern (davon '.$veg.' Veganer)<br>';
   }
   echo "<br>Insgesamt ".$pval.' Posten';
 }

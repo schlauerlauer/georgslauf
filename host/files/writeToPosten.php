@@ -26,7 +26,7 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) {
           $val = 0;
           break;
       }
-      echo '<div class="ui-block-'.$bs.'"><a class="ui-btn ui-icon-comment ui-btn-icon-left" href="https://api.whatsapp.com/send?phone=49'.substr($zwei, 1).'" type="button">'.$eins.'</a></div>';
+      echo '<div class="ui-block-'.$bs.'"><a class="ui-btn ui-icon-comment ui-btn-icon-left" target="_blank" href="https://api.whatsapp.com/send?phone=49'.substr($zwei, 1).'" type="button">'.$eins.'</a></div>';
     }
   }
   echo '</div>';

@@ -11,7 +11,7 @@ require('../session/session.php');
     <!--TODO-->
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 
-bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915787297182&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
+bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7" target="_blank">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915787297182&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
 <br><br>
 <u><strong>Posteninfos:</strong></u><br>
 
@@ -45,7 +45,7 @@ if(isset($login_session) && $login_session == 'St.Ansgar') {
 } elseif (isset($login_session) && $login_session == 'SGDF') {
     echo "1";
 } else {
-    echo "0";
+    echo "??";
 }
 ?>
  Posten</strong> anmelden
@@ -89,7 +89,7 @@ Tragt dann bitte die Gruppen Namen und jeweilige Stufe im Tool ein.
 			<label for="g_anzahl">Anzahl Kinder 3-12<span style="color:red;">*</span>&nbsp;&nbsp;
 			<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Gruppengrößen"></a></label>
 			<input data-clear-btn="false" id="g_anzahl" value="5" type="number" min="3" max="15">
-			<label for="g_veggie">Davon Vegetarier/Veganer</label>
+			<label for="g_veggie">Davon Veganer (Verpflegung ist vegetarisch)</label>
 			<input data-clear-btn="false" id="g_veggie" value="0" type="number" min="0" max="15">
 			<label for="g_kontakt">Gruppenleiter Nummer&nbsp;&nbsp;
 			<a href="#" class="help ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all" help="Nummern"></a>
@@ -133,7 +133,7 @@ Tragt dann bitte die Gruppen Namen und jeweilige Stufe im Tool ein.
 			<input id="p_desc" value="" type="text" placeholder="Was wird an dem Posten gemacht?" maxlength="255">
 			<label for="p_anzahl">Anzahl Leiter<span style="color:red;">*</span></label>
 			<input data-clear-btn="false" id="p_anzahl" value="2" type="number" min="1" max="20">
-			<label for="p_veggie">Davon Vegetarier/Veganer<span style="color:red;">*</span></label>
+			<label for="p_veggie">Davon Veganer (Verpflegung ist vegetarisch)<span style="color:red;">*</span></label>
 			<input data-clear-btn="false" id="p_veggie" value="0" type="number" min="0" max="20">
 			<label for="p_kont">Handynummer eines Postenleiters<span style="color:red;">*</span></label>
 			<input id="p_kont" value="" type="text" placeholder="Wichtig für den Startschuss (Whatsapp)" maxlength="100">

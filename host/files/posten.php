@@ -43,5 +43,5 @@ if(isset($login_session) && $_SESSION['rolle'] >= 3) :
 	?>
 </div>
 <br>
-<h3>Insgesamt <?php echo $pval; ?> Posten mit <?php echo $totalS; ?> Leitern, davon <?php echo $totalV; ?> Vegetarier</h3>
+<h3>Insgesamt <?php echo $pval; ?> Posten mit <?php echo $totalS; ?> Leitern, davon <?php echo $totalV; ?> Veganer</h3>
 <?php endif; ?>

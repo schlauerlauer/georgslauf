@@ -56,7 +56,7 @@
 		<div data-role="content" id="home" class="divPrint" style="max-width:1200px; margin-left:auto; margin-right:auto;">
 		</div>
 		<!--<div data-role="footer" data-position="fixed" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
-			<h2><img src="res/maxko.png" style="max-height:30px;"/></h2>
+			<h2><img src="res/PRM.png" style="max-height:30px;"/></h2>
 		</div>-->
 	</div>
 </body>

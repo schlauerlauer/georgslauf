@@ -17,7 +17,7 @@ if ($stmt = $mysqli->prepare("SELECT name, stufe, stamm, size, veggies FROM grup
       $pval = 1;
       $Prevstamm = $stamm;
     } else $pval++;
-    echo $stamm.' '.$Stufe[$stufe].' - '.$name.' -- mit '.$size.' Kindern (davon '.$veggies.' Vegetarier)<br>';
+    echo $stamm.' '.$Stufe[$stufe].' - '.$name.' -- mit '.$size.' Kindern (davon '.$veggies.' Veganer)<br>';
   }
   echo "<br>Insgesamt ".$pval.' Gruppen';
 }
