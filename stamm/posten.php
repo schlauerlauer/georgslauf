@@ -10,7 +10,8 @@ require('../session/session.php');
 		if(isset($login_session)) {
 			$posten = 0;
 			if ($stmt = $mysqli->prepare("SELECT posten.id, kurz, password, color, name, kategorie, beschreibung, kontakt, anzahl, veggie, material, ort, sonstiges, stufe
-				FROM posten, login
+				FROM posten
+				LEFT JOIN login on posten.kurz = login.username
 				WHERE stamm = ?
 				ORDER BY stufe DESC, name ASC")) {
 				$stmt->bind_param('s', $login_session);
