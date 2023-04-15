@@ -14,7 +14,7 @@ $Anmeldung = true; //Stämme können Gruppen und Posten anmelden
 $Abmeldung = true; //Stämme können Gruppen und Posten löschen
 $PAnmeldung = true; //Stämme können Posten anmelden
 $GAnmeldung = true; //Stämme können Gruppen anmelden
-$ShowLogin = true; //Show Posten Login Information in Stamm -> Posten
+$ShowLogin = false; //Show Posten Login Information in Stamm -> Posten
 
 $Rollen = array("keine Rechte", "Posten", "Stamm", "Host", "Admin"); //Rechte vergabe
 
