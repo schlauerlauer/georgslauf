@@ -11,7 +11,7 @@ require('../session/session.php');
 			$posten = 0;
 			if ($stmt = $mysqli->prepare("SELECT posten.id, kurz, password, color, name, kategorie, beschreibung, kontakt, anzahl, veggie, material, ort, sonstiges, stufe
 				FROM posten, login
-				WHERE stamm = ? AND kurz = username
+				WHERE stamm = ?
 				ORDER BY stufe DESC, name ASC")) {
 				$stmt->bind_param('s', $login_session);
 				$stmt->execute();
