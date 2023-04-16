@@ -1,13 +1,10 @@
 <?php
 //Einstellungsdatei für den Georgslauf
 
-$Email = "anton@sanktansgar.de";
-
 $Kat = array('Wissen & Technik','Spiel & Spaß'); //Die Kategorien für die Posten, beliebig erweiterbar / veränderbar!
 $Stufe = array('Wölflinge','Jupfis','Pfadis','Rover'); // Stufen namen, wie sie angezeigt werden (auf anmeldeseite aber hardcoded!) (in SQL sind nur nummern) eher nicht verändern
 
 $max_posten_pro_kategorie = array(9,10); //WöPo-Anzahl Posten pro Kategorie - Anzahl an Zahlen muss mit Kategorien ($Kat) Anzahl übereinstimmen!
-
 
 $Anmeldung = true; //Stämme können Gruppen und Posten anmelden
 $Abmeldung = true; //Stämme können Gruppen und Posten löschen
