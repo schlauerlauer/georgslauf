@@ -25,6 +25,8 @@ if (isset ($_POST['gorp'])) {
 				return;
 			}
 		}
+		echo 3;
+		return;
 		if ($stmt = $mysqli->prepare("INSERT INTO `posten` (`name`,`stamm`,`kategorie`,`beschreibung`,`kontakt`,`anzahl`,`veggie`,`material`,`ort`,`sonstiges`,`stufe`) VALUES (?,?,?,?,?,?,?,?,?,?,?)")) {
 			$stmt->bind_param('sssssssssss', $_POST['pname'], $login_session, $_POST['kid'], $_POST['pdesc'], $_POST['pkont'], $_POST['pval'], $_POST['pveg'], $_POST['pmat'], $_POST['port'], $_POST['psonst'], $_POST['pid']);
 			$stmt->execute();
