@@ -20,32 +20,49 @@ für die Postenaufteilung haben wir uns folgendes gedacht: <br><br>
 Stamm <?php echo $login_session; ?>, bitte
 <strong>
 <?php
-if(isset($login_session) && $login_session == 'St.Ansgar') {
-    echo "3";
-} elseif (isset($login_session) && $login_session == 'Maxkolbe') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'Canisius') {
-    echo "3";
-} elseif (isset($login_session) && $login_session == 'FC') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'PRM') {
-    echo "2";
-} elseif (isset($login_session) && $login_session == 'Swapingo') {
-    echo "2";
-} elseif (isset($login_session) && $login_session == 'St.Severin') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'Hl.Engel') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'Hl.Kreuz') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'MariaHilf') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'St.Anna') {
-    echo "1";
-} elseif (isset($login_session) && $login_session == 'SGDF') {
-    echo "1";
+if(isset($login_session)) {
+	switch($login_session) {
+		case 'St.Ansgar':
+			echo "3";
+			break;
+		case 'Maxkolbe':
+			echo "1";
+			break;
+		case 'Canisius':
+			echo "3";
+			break;
+		case 'FC':
+			echo "1";
+			break;
+		case 'PRM':
+			echo "2";
+			break;
+		case 'Swapingo':
+			echo "2";
+			break;
+		case 'St.Severin':
+			echo "1";
+			break;
+		case 'Hl.Engel':
+			echo "1";
+			break;
+		case 'Hl.Kreuz':
+			echo "1";
+			break;
+		case 'MariaHilf':
+			echo "1";
+			break;
+		case 'St.Anna':
+			echo "1";
+			break;
+		case 'SGDF':
+			echo "1";
+			break;
+		default:
+			echo "?";
+	}
 } else {
-    echo "??";
+	echo "?";
 }
 ?>
  Posten</strong> anmelden
