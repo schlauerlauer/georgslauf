@@ -11,7 +11,7 @@ require('../session/session.php');
     <!--TODO-->
 <h1>Anmeldung für Stamm <?php echo $login_session; ?></h1>
 
-bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7" target="_blank">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a target="_blank" href="https://api.whatsapp.com/send?phone=4915787297182&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
+bei Fragen: <a href="https://bezirkmueisar.slack.com/archives/C053NHL45H7" rel="noreferrer noopener" target="_blank">Slack Channel </a>oder <a href="tel:015756456883">anrufen (015787297182)</a> / <a rel="noreferrer noopener" target="_blank" href="https://api.whatsapp.com/send?phone=4915787297182&text=Frage%20von%20Stamm%20<?php echo $login_session; ?>%3A%0D%0A%0D%0A">WhatsApp (015787297182)</a>
 <br><br>
 <u><strong>Posteninfos:</strong></u><br>
 
@@ -159,4 +159,4 @@ Tragt dann bitte die Gruppen Namen und jeweilige Stufe im Tool ein.
 <?php endif; ?>
 <br>
 <br>
-<div align="center"><a target="_blank" href="https://sanktansgar.de/"><img src="/res/logo.png"/></a></div>
+<div align="center"><a rel="noreferrer noopener" target="_blank" href="https://sanktansgar.de/"><img src="/res/logo.png"/></a></div>

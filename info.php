@@ -32,5 +32,5 @@ Euer Stamm Sankt Ansgar<br>
 <br>
 <br>
 <div data-role="footer" data-tap-toggle="false" style="overflow:hidden; margin: 0px;">
-		<h2><a target="_blank" href="https://sanktansgar.de/"><img src="/res/logo.png"/></a></h2>
+		<h2><a target="_blank" rel="noreferrer noopener" href="https://sanktansgar.de/"><img src="/res/logo.png"/></a></h2>
 </div>
