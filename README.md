@@ -1,4 +1,4 @@
-# Georgslauf API 22.5.1-alpha
+# Georgslauf API 23.2.0-alpha
 
 ## Local Development
 
