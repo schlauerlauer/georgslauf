@@ -1,3 +1,4 @@
 baseURL: "https://georgslauf.de/"
 languageCode: "de-DE"
 title: "Georgslauf"
+theme: "georgslauf"

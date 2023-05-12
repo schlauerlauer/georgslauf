@@ -70,7 +70,7 @@
   - name: "georgslauf auth migration"
     containers.podman.podman_container:
       name: "georgslauf-auth-migrate"
-      image: "docker.io/oryd/kratos:v0.11.0"
+      image: "docker.io/oryd/kratos:v0.13.0"
       state: "started"
       restart_policy: "no"
       rm: yes
@@ -86,7 +86,7 @@
   - name: "kratos"
     containers.podman.podman_container:
       name: "georgslauf-auth-app"
-      image: "docker.io/oryd/kratos:v0.11.0"
+      image: "docker.io/oryd/kratos:v0.13.0"
       state: "started"
       restart_policy: "no"
       rm: no

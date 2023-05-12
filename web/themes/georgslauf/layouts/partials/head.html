@@ -1,0 +1,6 @@
+    {{- $scss := resources.Get "style.scss" }}
+    {{ $style := $scss | resources.ToCSS | resources.Minify -}}
+    <link rel="stylesheet" href="{{ $style.Permalink }}">
+
+    {{- $htmx := resources.Get "js/htmx.js" | js.Build (dict "minify" true) }}
+    <script src="{{ $htmx.RelPermalink }}"></script>
