@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"{{ with .Site.LanguageCode }} xml:lang="{{.}}" lang="{{.}}"{{end}}>
+<head>
+{{- block "head" . -}}
+    {{ partial "head.html" . -}}
+{{ end -}}
+</head>
+<body>
+    {{ block "header" . }}
+        {{- partial "header.html" . -}}
+    {{- end }}
+{{- block "main" . }}
+<section class="main">
+    <div>
+        <h1>{{ .Site.Params.NotFound }}</h1>
+    </div>
+</section>
+{{ end }}
+{{ block "footer" . }}
+    {{- partial "footer.html" . -}}
+{{ end }}
+</body>
+</html>
