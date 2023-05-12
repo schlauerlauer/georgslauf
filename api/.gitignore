@@ -4,6 +4,7 @@ config.yaml
 test.go
 georgslauf
 auth/db
+!auth/.gitkeep
 vars/local.yml
 db/
 .idea/*

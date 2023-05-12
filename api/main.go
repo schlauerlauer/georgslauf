@@ -5,19 +5,12 @@ import (
     "georgslauf/controllers"
     "georgslauf/models"
     "github.com/gin-gonic/gin"
-    // "time"
     log "github.com/sirupsen/logrus"
-    // jwt "github.com/appleboy/gin-jwt/v2"
     "gopkg.in/yaml.v2"
     "os"
 )
 
 var (
-    // identityKey =   "id"
-    // permissionKey = "permissions"
-    // emailKey =      "email"
-    // avatarKey =     "avatar"
-    // loginKey =      "login"
     cfg = newConfig("./config.yaml")
 )
 
