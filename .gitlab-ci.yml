@@ -1,0 +1,37 @@
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+
+variables:
+  VERSION: "23.2.0-alpha"
+
+compile:
+  stage: build
+  image: "buildah/buildah"
+  variables:
+    STORAGE_DRIVER: "vfs"
+    BUILDAH_FORMAT: "docker"
+  before_script:
+    - podman login -u $CI_USER -p $CI_TOKEN $CI_REGISTRY
+  script:
+    - podman build -q -t $CI_REGISTRY/$CI_IMAGE:$VERSION -t $CI_REGISTRY/$CI_IMAGE:latest -f Containerfile .
+    - podman push -q $CI_REGISTRY/$CI_IMAGE:$VERSION
+    - podman push -q $CI_REGISTRY/$CI_IMAGE:latest
+  after_script:
+    - podman logout $CI_REGISTRY
+
+deploy-to-prod:
+  stage: deploy
+  image: "docker.io/cytopia/ansible:2.9"
+  before_script:
+    - apk add openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ansible-galaxy collection install containers.podman
+    - ansible-playbook -u $SSH_USER --inventory $SSH_HOST, playbook.yml
