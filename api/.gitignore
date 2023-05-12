@@ -1,4 +1,3 @@
-.idea/*
 /uploads/*
 !/uploads/.gitkeep
 config.yaml
@@ -7,3 +6,4 @@ georgslauf
 auth/db
 vars/local.yml
 db/
+.idea/*
