@@ -26,7 +26,6 @@ func InitTotal() {
     totalLogin = initLogin()
     totalGroup = initGroup()
     totalGroupPoint = initGroupPoint()
-    totalRule = initRule()
     totalStation = initStation()
     totalStationPoint = initStationPoint()
     totalTribe = initTribe()
@@ -123,17 +122,6 @@ func initGroupPoint() int64 {
     result := models.DB.Find(&model)
     if result.Error != nil {
         log.Warn("Init grouppoint failed.")
-        return 0
-    } else {
-        return result.RowsAffected
-    }
-}
-
-func initRule() int64 {
-    var model []models.Rule
-    result := models.DB.Find(&model)
-    if result.Error != nil {
-        log.Warn("Init role failed.")
         return 0
     } else {
         return result.RowsAffected

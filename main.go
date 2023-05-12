@@ -5,19 +5,19 @@ import (
     "georgslauf/controllers"
     "georgslauf/models"
     "github.com/gin-gonic/gin"
-    "time"
+    // "time"
     log "github.com/sirupsen/logrus"
-    jwt "github.com/appleboy/gin-jwt/v2"
+    // jwt "github.com/appleboy/gin-jwt/v2"
     "gopkg.in/yaml.v2"
     "os"
 )
 
 var (
-    identityKey =   "id"
-    permissionKey = "permissions"
-    emailKey =      "email"
-    avatarKey =     "avatar"
-    loginKey =      "login"
+    // identityKey =   "id"
+    // permissionKey = "permissions"
+    // emailKey =      "email"
+    // avatarKey =     "avatar"
+    // loginKey =      "login"
     cfg = newConfig("./config.yaml")
 )
 
@@ -30,11 +30,11 @@ func init() {
 func checkConfig() {
     checkEmptyString(cfg.Server.Port, "api port")
     checkEmptyString(cfg.Server.Secret, "api secret")
-    checkEmptyString(cfg.Database.Mariadb.Hostname, "DB hostname")
-    checkEmptyString(cfg.Database.Mariadb.Port, "DB port")
-    checkEmptyString(cfg.Database.Mariadb.Database, "DB database name")
-    checkEmptyString(cfg.Database.Mariadb.Username, "DB username")
-    checkEmptyString(cfg.Database.Mariadb.Password, "DB password")
+    checkEmptyString(cfg.Database.Postgresql.Hostname, "DB hostname")
+    checkEmptyString(cfg.Database.Postgresql.Port, "DB port")
+    checkEmptyString(cfg.Database.Postgresql.Database, "DB database name")
+    checkEmptyString(cfg.Database.Postgresql.Username, "DB username")
+    checkEmptyString(cfg.Database.Postgresql.Password, "DB password")
 }
 
 func checkEmptyString(checkThis string, description string) {
@@ -74,15 +74,13 @@ func CORS() gin.HandlerFunc {
             c.AbortWithStatus(204)
             return
         }
-
         c.Next()
     }
 }
 
 func main() {
-    models.ConnectDatabase(cfg.Database.Mariadb)
-    models.SetEnforcer()
-    controllers.InitTotal()
+    models.ConnectDatabase(cfg.Database.Postgresql)
+    // controllers.InitTotal()
 
     gin.SetMode(gin.ReleaseMode)
     r := gin.New()
@@ -93,7 +91,7 @@ func main() {
     r.GET("/", func(c *gin.Context) {
         c.JSON(200, gin.H{
             "message": "api.georgslauf.de",
-            "version": "22.5.1-alpha",
+            "version": "23.2.0-alpha",
         })
     })
     r.GET("/ping", func(c *gin.Context) {
@@ -102,60 +100,60 @@ func main() {
         })
     })
 
-    authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-        Realm:       "georgslauf.de",
-        Key:         []byte(cfg.Server.Secret),
-        Timeout:     time.Hour,
-        MaxRefresh:  time.Hour,
-        IdentityKey: identityKey,
-        PayloadFunc: func(data interface{}) jwt.MapClaims {
-            if v, ok := data.(*models.Login); ok {
-                return jwt.MapClaims{
-                    identityKey: v.Username,
-                    emailKey: v.Email,
-                    avatarKey: v.Avatar,
-                    permissionKey: v.Permissions,
-                    loginKey: v.ID,
-                }
-            }
-            return jwt.MapClaims{}
-        },
-        IdentityHandler: func(c *gin.Context) interface{} {
-            claims := jwt.ExtractClaims(c)
-            return &models.Login{
-                Username: claims[identityKey].(string),
-            }
-        },
-        Authenticator: controllers.Login,
-        Authorizator: func(data interface{}, c *gin.Context) bool {
-            if v, ok := data.(*models.Login); ok {
-                //sub := v.Username
-                //obj := c.Request.URL.RequestURI()
-                //act := c.Request.Method
-                en, _ := models.EN.Enforce(v.Username, c.Request.URL.RequestURI(), c.Request.Method)
-                // log.Debug("Enforce(\"", sub, "\",\"", obj, "\",\"", act, "\") is ", en)
-                // log.Debug("Reason: ", reason)
-                if en {
-                    //log.Debug("Enforcer passed.")
-                    return true
-                }
-            }
-            log.Debug("Enforcer blocked.")
-            return false
-        },
-        Unauthorized: func(c *gin.Context, code int, message string) {
-            c.JSON(code, gin.H{
-                "code":    code,
-                "message": message,
-            })
-        },
-        TokenLookup: "header: Authorization, query: token, cookie: jwt",
-        TokenHeadName: "Bearer",
-        TimeFunc: time.Now,
-    })
-    if err != nil {
-        log.Fatal("JWT Error:" + err.Error())
-    }
+    // authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
+    //     Realm:       "georgslauf.de",
+    //     Key:         []byte(cfg.Server.Secret),
+    //     Timeout:     time.Hour,
+    //     MaxRefresh:  time.Hour,
+    //     IdentityKey: identityKey,
+    //     PayloadFunc: func(data interface{}) jwt.MapClaims {
+    //         if v, ok := data.(*models.Login); ok {
+    //             return jwt.MapClaims{
+    //                 identityKey: v.Username,
+    //                 emailKey: v.Email,
+    //                 avatarKey: v.Avatar,
+    //                 permissionKey: v.Permissions,
+    //                 loginKey: v.ID,
+    //             }
+    //         }
+    //         return jwt.MapClaims{}
+    //     },
+    //     IdentityHandler: func(c *gin.Context) interface{} {
+    //         claims := jwt.ExtractClaims(c)
+    //         return &models.Login{
+    //             Username: claims[identityKey].(string),
+    //         }
+    //     },
+    //     Authenticator: controllers.Login,
+    //     Authorizator: func(data interface{}, c *gin.Context) bool {
+    //         if v, ok := data.(*models.Login); ok {
+    //             //sub := v.Username
+    //             //obj := c.Request.URL.RequestURI()
+    //             //act := c.Request.Method
+    //             en, _ := models.EN.Enforce(v.Username, c.Request.URL.RequestURI(), c.Request.Method)
+    //             // log.Debug("Enforce(\"", sub, "\",\"", obj, "\",\"", act, "\") is ", en)
+    //             // log.Debug("Reason: ", reason)
+    //             if en {
+    //                 //log.Debug("Enforcer passed.")
+    //                 return true
+    //             }
+    //         }
+    //         log.Debug("Enforcer blocked.")
+    //         return false
+    //     },
+    //     Unauthorized: func(c *gin.Context, code int, message string) {
+    //         c.JSON(code, gin.H{
+    //             "code":    code,
+    //             "message": message,
+    //         })
+    //     },
+    //     TokenLookup: "header: Authorization, query: token, cookie: jwt",
+    //     TokenHeadName: "Bearer",
+    //     TimeFunc: time.Now,
+    // })
+    // if err != nil {
+    //     log.Fatal("JWT Error:" + err.Error())
+    // }
     public := r.Group("/public")
     {
         public.Static("/media", "uploads")
@@ -165,14 +163,14 @@ func main() {
         public.GET("/groups", controllers.GetPublicGroups)
         public.GET("/groups/:id", controllers.GetPublicGroup)
     }
-    auth := r.Group("/auth")
-    {
-        auth.POST("/login", authMiddleware.LoginHandler)
-        auth.GET("/refresh", authMiddleware.RefreshHandler)
-        auth.GET("/logout", authMiddleware.LogoutHandler)
-    }
+    // auth := r.Group("/auth")
+    // {
+    //     auth.POST("/login", authMiddleware.LoginHandler)
+    //     auth.GET("/refresh", authMiddleware.RefreshHandler)
+    //     auth.GET("/logout", authMiddleware.LogoutHandler)
+    // }
     login := r.Group("/logins")
-    login.Use(authMiddleware.MiddlewareFunc())
+    // login.Use(authMiddleware.MiddlewareFunc())
     {
         login.GET("", controllers.GetLogins)
         login.GET(":id", controllers.GetLogin)
@@ -182,7 +180,7 @@ func main() {
         login.PATCH(":id", controllers.PatchLogin)
     }
     group := r.Group("/groups")
-    group.Use(authMiddleware.MiddlewareFunc())
+    // group.Use(authMiddleware.MiddlewareFunc())
     {
         group.GET("", controllers.GetGroups)
         group.GET(":id", controllers.GetGroup)
@@ -192,7 +190,7 @@ func main() {
         group.PATCH(":id", controllers.PatchGroup)
     }
     tribe := r.Group("/tribes")
-    tribe.Use(authMiddleware.MiddlewareFunc())
+    // tribe.Use(authMiddleware.MiddlewareFunc())
     {
         tribe.GET("", controllers.GetTribes)
         tribe.GET(":id", controllers.GetTribe)
@@ -203,17 +201,8 @@ func main() {
         tribe.GET("/stations:loginid", controllers.GetStationsByLogin)
         tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
     }
-    rule := r.Group("/rules")
-    rule.Use(authMiddleware.MiddlewareFunc())
-    {
-        rule.GET("", controllers.GetRules)
-        //rule.GET(":id", controllers.GetRule)
-        rule.POST("", controllers.PostRule)
-        //rule.PUT(":id", controllers.PutRule) // TODO casbin api modify
-        rule.DELETE(":id", controllers.DeleteRule)
-    }
     station := r.Group("/stations")
-    station.Use(authMiddleware.MiddlewareFunc())
+    // station.Use(authMiddleware.MiddlewareFunc())
     {
         station.GET("", controllers.GetStations)
         station.GET(":id", controllers.GetStation)
@@ -223,7 +212,7 @@ func main() {
         station.PATCH(":id", controllers.PatchStation)
     }
     grouppoint := r.Group("/grouppoints")
-    grouppoint.Use(authMiddleware.MiddlewareFunc())
+    // grouppoint.Use(authMiddleware.MiddlewareFunc())
     {
         grouppoint.GET("", controllers.GetGroupPoints)
         grouppoint.GET(":id", controllers.GetGroupPoint)
@@ -233,13 +222,13 @@ func main() {
         grouppoint.PATCH(":id", controllers.PatchGroupPoint)
     }
     grouptop := r.Group("/grouptops")
-    grouptop.Use(authMiddleware.MiddlewareFunc())
+    // grouptop.Use(authMiddleware.MiddlewareFunc())
     {
         grouptop.GET("", controllers.GetGroupTops)
         grouptop.GET(":id", controllers.GetGroupTop)
     }
     stationpoint := r.Group("/stationpoints")
-    stationpoint.Use(authMiddleware.MiddlewareFunc())
+    // stationpoint.Use(authMiddleware.MiddlewareFunc())
     {
         stationpoint.GET("", controllers.GetStationPoints)
         stationpoint.GET(":id", controllers.GetStationPoint)
@@ -249,13 +238,13 @@ func main() {
         stationpoint.PATCH(":id", controllers.PatchStationPoint)
     }
     stationtop := r.Group("/stationtops")
-    stationtop.Use(authMiddleware.MiddlewareFunc())
+    // stationtop.Use(authMiddleware.MiddlewareFunc())
     {
         stationtop.GET("", controllers.GetStationTops)
         stationtop.GET(":id", controllers.GetStationTop)
     }
     grouping := r.Group("/groupings")
-    grouping.Use(authMiddleware.MiddlewareFunc())
+    // grouping.Use(authMiddleware.MiddlewareFunc())
     {
         grouping.GET("", controllers.GetGroupings)
         grouping.GET(":id", controllers.GetGrouping)
@@ -265,7 +254,7 @@ func main() {
         grouping.PATCH(":id", controllers.PatchGrouping)
     }
     content := r.Group("/content")
-    content.Use(authMiddleware.MiddlewareFunc())
+    // content.Use(authMiddleware.MiddlewareFunc())
     {
         content.GET("", controllers.GetContents)
         content.GET(":id", controllers.GetContent)
@@ -275,7 +264,7 @@ func main() {
         content.PATCH(":id", controllers.PatchContent)
     }
     contenttype := r.Group("/contenttypes")
-    contenttype.Use(authMiddleware.MiddlewareFunc())
+    // contenttype.Use(authMiddleware.MiddlewareFunc())
     {
         contenttype.GET("", controllers.GetContentTypes)
         contenttype.GET(":id", controllers.GetContentType)
@@ -285,7 +274,7 @@ func main() {
         contenttype.PATCH(":id", controllers.PatchContentType)
     }
     run := r.Group("/runs")
-    run.Use(authMiddleware.MiddlewareFunc())
+    // run.Use(authMiddleware.MiddlewareFunc())
     {
         run.GET("", controllers.GetRuns)
         run.GET(":id", controllers.GetRun)
@@ -295,7 +284,7 @@ func main() {
         run.PATCH(":id", controllers.PatchRun)
     }
     config := r.Group("/config")
-    config.Use(authMiddleware.MiddlewareFunc())
+    // config.Use(authMiddleware.MiddlewareFunc())
     {
         config.GET("", controllers.GetConfigs)
         config.GET(":id", controllers.GetConfig)
@@ -307,8 +296,8 @@ func main() {
     r.GET("/metrics", gin.BasicAuth(gin.Accounts{
         cfg.Server.Metrics.Username: cfg.Server.Metrics.Password,
     }), controllers.MetricsHandler())
-    log.Info("API ready.")
-
+    
+    log.Info("Listening on ", cfg.Server.Host, ":", cfg.Server.Port)
     if err := http.ListenAndServe(":"+cfg.Server.Port, r); err != nil {
         log.Fatal(err)
     }

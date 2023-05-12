@@ -2,7 +2,7 @@
 - name: Pull & Update georgslauf api container
   hosts: all
   gather_facts: false
-  become: no
+  become: false
   tasks:
 
   - name: Create directories
@@ -48,4 +48,4 @@
 
   - name: Remove old podman images
     command: podman rmi --all
-    ignore_errors: yes
+    ignore_errors: true
