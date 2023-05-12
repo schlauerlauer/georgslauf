@@ -1,0 +1,51 @@
+---
+- name: Pull & Update georgslauf api container
+  hosts: all
+  gather_facts: false
+  become: false
+  tasks:
+
+  - name: Create directories
+    file:
+      path: "/home/{{ lookup('env', 'SSH_USER') }}/api/uploads"
+      state: directory
+      recurse: yes
+
+  - name: Copy config
+    copy:
+      src: "{{ lookup('env', 'CONFIG') }}"
+      dest: "/home/{{ lookup('env', 'SSH_USER') }}/api/config.yml"
+
+  - name: Login to registry
+    containers.podman.podman_login:
+      username: ansible
+      registry: "{{ lookup('env', 'CI_REGISTRY') }}"
+      password: "{{ lookup('env', 'REGISTRY_KEY') }}"
+
+  - name: Pull the latest image
+    containers.podman.podman_image:
+      name: "{{ lookup('env', 'CI_REGISTRY') }}/{{ lookup('env', 'CI_IMAGE') }}"
+      tag: latest
+      force: yes
+
+  - name: Run the container
+    containers.podman.podman_container:
+      name: georgslauf-api
+      image: "{{ lookup('env', 'CI_REGISTRY') }}/{{ lookup('env', 'CI_IMAGE') }}:latest"
+      state: started
+      restart_policy: "always"
+      recreate: yes
+      security_opt: "label=disable"
+      ports:
+      - "8080:8080"
+      volumes:
+      - "/home/{{ lookup('env', 'SSH_USER') }}/api/uploads:/app/uploads:z"
+      - "/home/{{ lookup('env', 'SSH_USER') }}/api/config.yml:/app/config.yaml:z"
+  
+  - name: Log out of registry
+    containers.podman.podman_logout:
+      registry: "{{ lookup('env', 'CI_REGISTRY') }}"
+
+  - name: Remove old podman images
+    command: podman rmi --all
+    ignore_errors: true

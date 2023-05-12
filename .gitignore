@@ -1,1 +1,9 @@
 .idea/*
+/uploads/*
+!/uploads/.gitkeep
+config.yaml
+test.go
+georgslauf
+auth/db
+vars/local.yml
+db/
