@@ -1,5 +1,5 @@
 [bumpver]
-current_version = "23.2.0-alpha"
+current_version = "23.5.0-alpha"
 version_pattern = "YY.MM.PATCH[-TAG]"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = false
@@ -7,15 +7,9 @@ tag = false
 push = false
 
 [bumpver.file_patterns]
-"README.md" = [
-    "{version}",
-]
 "bumpver.toml" = [
     'current_version = "{version}"',
 ]
-"main.go" = [
+"api/main.go" = [
     '"version": "{version}",'
-]
-".gitlab-ci.yml" = [
-    'VERSION: "{version}"',
 ]

@@ -45,8 +45,9 @@
       - "11431:5432" # postgresql
       - "11455:3000" # selfservice example
       - "11433:4433" # kratos public
+      - "11434:4434" # kratos admin
       - "11446:4446"  # mailslurper dashboard
-      - "11447:4447" # mailslurper api
+      - "4447:4447" # mailslurper api, FE expects this port
     tags:
     - "auth"
 
@@ -96,5 +97,32 @@
       env:
         DSN: "postgres://kratos:{{ georgslauf_auth_db.password }}@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4"
       command: "serve -c /etc/config/kratos/kratos.yml --dev --watch-courier"
+    tags:
+    - "auth"
+
+  - name: "mailslurper"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-mailslurper"
+      image: "docker.io/oryd/mailslurper:smtps-latest"
+      state: "started"
+      restart_policy: "no"
+      recreate: yes
+      pod: "georgslauf-auth-pod"
+      volume:
+      - "./mailslurper.json:/go/src/github.com/mailslurper/mailslurper/cmd/mailslurper/config.json:ro,Z"
+    tags:
+    - "auth"
+
+  - name: "kratos-selfservice-example"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-selfservice"
+      image: "docker.io/oryd/kratos-selfservice-ui-node:v0.13.0"
+      state: "started"
+      restart_policy: "no"
+      rm: no
+      pod: "georgslauf-auth-pod"
+      env:
+        KRATOS_PUBLIC_URL: "http://127.0.0.1:4433/"
+        KRATOS_BROWSER_URL: "http://localhost:11433/"
     tags:
     - "auth"
