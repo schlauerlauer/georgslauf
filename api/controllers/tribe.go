@@ -36,7 +36,6 @@ func GetTribes(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get tribes failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalTribe, 10))
         c.JSON(http.StatusOK, tribes)
     }
 }
@@ -70,7 +69,6 @@ func PostTribe(c *gin.Context) {
     }
     models.DB.Create(&tribe)
     c.JSON(http.StatusOK, tribe)
-    totalTribe+=1
 }
 
 func PutTribe(c *gin.Context) {

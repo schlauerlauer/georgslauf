@@ -26,13 +26,21 @@ func ConnectDatabase(config SqlConfig) {
         &Station{},
         &StationPoint{},
         &Tribe{},
-        &Grouping{},
-        &Content{},
-        &Run{},
-        &ContentType{},
         &Config{},
     )
     log.Info("Database migration sucessful.")
+    db.Exec(`
+    DO $$ BEGIN
+        CREATE TYPE grouping AS ENUM (
+            'Wös',
+            'Jupfis',
+            'Pfadis',
+            'Rover');
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+    END $$;
+    `);
+
     // db.Exec(`
     //     CREATE OR REPLACE VIEW group_top AS
     //     SELECT
@@ -66,68 +74,7 @@ func ConnectDatabase(config SqlConfig) {
     //     GROUP BY station_id
     //     ;
     // `);
-    // db.Exec(`
-    //     CREATE OR REPLACE VIEW public_content AS
-    //     SELECT
-    //         contents.id,
-    //         content_types.name as 'ct',
-    //         sort,
-    //         value
-    //     FROM contents
-    //     INNER JOIN content_types on contenttype_id = content_types.id
-    //     WHERE content_types.public = '1'
-    //     ;
-    // `);
-    // db.Exec(`
-    //     CREATE OR REPLACE VIEW station_tribe AS
-    //     SELECT
-    //         s.id,
-    //         s.created_at,
-    //         s.updated_at,
-    //         s.short,
-    //         s.name as 'station',
-    //         s.size,
-    //         t.name as 'tribe',
-    //         t.login_id as 'tribe_login'
-    //     FROM stations as s
-    //     INNER JOIN tribes as t ON t.id = s.tribe_id
-    // `);
-    // db.Exec(`
-    //     CREATE OR REPLACE VIEW group_tribe AS
-    //     SELECT
-    //         g.id,
-    //         g.created_at,
-    //         g.updated_at,
-    //         g.short,
-    //         g.name as 'group',
-    //         g.size,
-    //         t.name as 'tribe',
-    //         t.login_id as 'tribe_login'
-    //     FROM ` + "`groups`" + ` g
-    //     INNER JOIN tribes as t ON t.id = g.tribe_id
-    // `);
-    // db.Exec(`
-    //     CREATE OR REPLACE VIEW station_public AS
-    //     SELECT
-    //         s.id,
-    //         s.name,
-    //         s.short,
-    //         t.name as 'tribe'
-    //     FROM stations as s
-    //     INNER JOIN tribes as t ON t.id = s.tribe_id
-    // `);
-    // db.Exec(`
-    //     CREATE OR REPLACE VIEW group_public AS
-    //     SELECT
-    //         g.id,
-    //         g.short,
-    //         g.name,
-    //         groupings.name AS 'grouping',
-    //         t.name as 'tribe'
-    //     FROM ` + "`groups`" + ` g
-    //     INNER JOIN tribes as t ON t.id = g.tribe_id
-    //     INNER JOIN groupings on groupings.id = g.grouping_id
-    // `);
+
     DB = db
     log.Warn("Database view creation skipped!")
 }
