@@ -28,7 +28,6 @@ func GetGroupTops(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get grouptops failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalGroupTop, 10))
         c.JSON(http.StatusOK, grouptops)
     }
 }
@@ -53,7 +52,6 @@ func GetGroupPoints(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get grouppoints failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalGroupPoint, 10))
         c.JSON(http.StatusOK, grouppoints)
     }
 }
@@ -83,7 +81,6 @@ func PostGroupPoint(c *gin.Context) {
         Value: input.Value}
     models.DB.Create(&grouppoint)
     c.JSON(http.StatusOK, grouppoint)
-    totalGroupPoint+=1
 }
 
 func PutGroupPoint(c *gin.Context) {

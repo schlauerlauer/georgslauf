@@ -28,7 +28,6 @@ func GetStationTops(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get stationtops failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalStationTop, 10))
         c.JSON(http.StatusOK, stationtops)
     }
 }
@@ -53,7 +52,6 @@ func GetStationPoints(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get stationpoints failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalStationPoint, 10))
         c.JSON(http.StatusOK, stationpoints)
     }
 }
@@ -85,7 +83,6 @@ func PostStationPoint(c *gin.Context) {
     }
     models.DB.Create(&stationpoint)
     c.JSON(http.StatusOK, stationpoint)
-    totalStationPoint+=1
 }
 
 func PutStationPoint(c *gin.Context) {

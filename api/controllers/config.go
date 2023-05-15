@@ -28,7 +28,6 @@ func GetConfigs(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get configs failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalConfig, 10))
         c.JSON(http.StatusOK, configs)
     }
 }
@@ -59,7 +58,6 @@ func PostConfig(c *gin.Context) {
     }
     models.DB.Create(&config)
     c.JSON(http.StatusOK, config)
-    totalConfig+=1
 }
 
 func PutConfig(c *gin.Context) {

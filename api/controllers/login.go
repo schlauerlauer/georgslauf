@@ -92,7 +92,6 @@ func GetLogins(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get logins failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalLogin, 10))
         c.JSON(http.StatusOK, logins)
     }
 }
@@ -134,7 +133,6 @@ func PostLogin(c *gin.Context) {
     }
     models.DB.Create(&login)
     c.JSON(http.StatusOK, login)
-    totalLogin+=1
 }
 
 func PutLogin(c *gin.Context) {
