@@ -15,7 +15,7 @@ type CreateGroupInput struct {
     Short       string  `json:"short" binding:"required"`
     Name        string  `json:"name" binding:"required"`
     Size        uint    `json:"size" binding:"required"`
-    GroupingID  uint    `json:"GroupingID" binding:"required"`
+    Grouping    models.Grouping  `json:"grouping" binding:"required"`
     TribeID     uint    `json:"TribeID" binding:"required"`
 }
 
@@ -24,44 +24,32 @@ type UpdateGroupInput struct {
     Size        uint    `json:"size"`
     Short       string  `json:"short"`
     TribeID     uint    `json:"TribeID"`
-    GroupingID  uint    `json:"GroupingID"`
+// GROuping?
 }
 
 func GetGroupsByLogin(c *gin.Context) {
-    var groups []models.GroupTribe
+    var groups []models.Group
     result := models.DB.Where("tribe_login = ?", c.Param("loginid")).Find(&groups)
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
         c.JSON(http.StatusOK, groups)
     }
 }
 
 func GetPublicGroups(c *gin.Context) {
-    var groups []models.GroupPublic
-    _start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
-    _end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
+    var groups []models.Group
+    _start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
+    _end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))
     _sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
     result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&groups)
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get public groups failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10))
-        c.JSON(http.StatusOK, groups)
+        c.HTML(http.StatusOK, "group/public", groups)
     }
-}
-
-func GetPublicGroup(c *gin.Context) {
-    var group models.GroupPublic
-    if err := models.DB.Where("id = ?", c.Param("id")).First(&group).Error; err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-        log.Warn("Get public group failed.")
-        return
-    }
-    c.JSON(http.StatusOK, group)
 }
 
 func GetGroups(c *gin.Context) {
@@ -78,8 +66,6 @@ func GetGroups(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get groups failed.")
     } else {
-        fmt.Println(totalGroup)
-        c.Header("X-Total-Count", strconv.FormatInt(totalGroup, 10))
         c.JSON(http.StatusOK, groups)
     }
 }
@@ -108,13 +94,12 @@ func PostGroup(c *gin.Context) {
         Short:		input.Short,
         Name:		input.Name,
         Size:		input.Size,
-        GroupingID:	input.GroupingID,
+        // Grouping:	input.Grouping, // TODO
         TribeID:	input.TribeID,
     }
     // Create group
     models.DB.Create(&group)
     c.JSON(http.StatusOK, group)
-    totalGroup+=1
 }
 
 func PutGroup(c *gin.Context) {

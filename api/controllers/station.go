@@ -25,40 +25,25 @@ type UpdateStationInput struct {
 }
 
 func GetStationsByLogin(c *gin.Context) {
-    var stations []models.StationTribe
+    var stations []models.Station
     result := models.DB.Where("tribe_login = ?", c.Param("loginid")).Find(&stations)
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(result.RowsAffected, 10)) //FIXME total count
         c.JSON(http.StatusOK, stations)
     } // TODO add pagination
 }
 
 func GetPublicStations(c *gin.Context) {
-    var stations []models.StationPublic
-    _start, _ :=strconv.Atoi(c.DefaultQuery("_start", "0"))
-    _end, _ :=strconv.Atoi(c.DefaultQuery("_end", "10"))
-    _sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-    result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&stations)
+    var stations []models.Station
+    result := models.DB.Find(&stations)
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get public stations failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
-        c.JSON(http.StatusOK, stations)
+        c.HTML(http.StatusOK, "station/public", stations)
     }
-}
-
-func GetPublicStation(c *gin.Context) {
-    var station models.StationPublic
-    if err := models.DB.Where("id = ?", c.Param("id")).First(&station).Error; err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-        log.Warn("Get public station failed.")
-        return
-    }
-    c.JSON(http.StatusOK, station)
 }
 
 func GetStations(c *gin.Context) {
@@ -71,7 +56,6 @@ func GetStations(c *gin.Context) {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
     } else {
-        c.Header("X-Total-Count", strconv.FormatInt(totalStation, 10))
         c.JSON(http.StatusOK, stations)
     }
 }
@@ -105,7 +89,6 @@ func PostStation(c *gin.Context) {
     }
     models.DB.Create(&station)
     c.JSON(http.StatusOK, station)
-    totalStation+=1
 }
 
 func PutStation(c *gin.Context) {
