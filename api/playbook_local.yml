@@ -7,6 +7,32 @@
     - "./vars/local.yml"
   tasks:
 
+  - name: "Build loadbalancer image"
+    containers.podman.podman_image:
+      name: "localhost/georgslauf-lb"
+      path: "./"
+      build:
+        extra_args: "-f Containerfile.lb_local"
+      force: yes
+      pull: no
+      tag: "latest"
+    tags:
+    - "lb"
+    - "recreate"
+
+  - name: "Start loadbalancer container"
+    containers.podman.podman_container:
+      name: "andugo-lb"
+      image: "localhost/georgslauf-lb:latest"
+      state: "started"
+      restart_policy: "on-failure"
+      recreate: yes
+      ports:
+      - "8081:8081"
+    tags:
+    - "lb"
+    - "recreate"
+
   - name: "georglsauf api pod"
     containers.podman.podman_pod:
       name: "georgslauf-api-pod"
