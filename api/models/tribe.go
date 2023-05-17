@@ -12,6 +12,6 @@ type Tribe struct {
     Short       string      `json:"short" gorm:"unique; not null"`
     DPSG        string      `json:"dpsg"`
     Address     string      `json:"address"`
-    LoginID     uint        `json:"LoginID" gorm:"foreignKey:LoginID"`
+    // LoginID     uint        `json:"LoginID" gorm:"foreignKey:LoginID"`
     URL         string      `json:"url"`
 }

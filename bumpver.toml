@@ -11,5 +11,8 @@ push = false
     'current_version = "{version}"',
 ]
 "api/main.go" = [
-    '"version": "{version}",'
+    'c.String(http.StatusOK, "{version}"',
+]
+"web/config.yaml" = [
+    'version: "{version}",
 ]

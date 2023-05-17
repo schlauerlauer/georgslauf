@@ -11,6 +11,7 @@ type Station struct {
     Name        string      `json:"name" gorm:"unique"`
     Short       string      `json:"short" gorm:"unique"`
     Size        uint        `json:"size"`
-    TribeID     uint        `json:"TribeID" gorm:"foreignKey:TribeID"`
-    LoginID     uint        `json:"LoginID" gorm:"foreignKey:LoginID"`
+    TribeID     uint        `json:"TribeID" gorm:"foreignKey:TribeID,index"`
+    Tribe       Tribe
+    // LoginID     uint        `json:"LoginID" gorm:"foreignKey:LoginID"`
 }
