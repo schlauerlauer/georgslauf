@@ -10,12 +10,12 @@ import (
 
 type CreateConfigInput struct {
     Name    string  `json:"name" binding:"required"`
-    ValueB  bool    `json:"valueb"`
+    // ValueB  bool    `json:"valueb"`
 }
 
 type UpdateConfigInput struct {
     Name	string	`json:"name"`
-    ValueB	bool	`json:"valueb"`
+    // ValueB	bool	`json:"valueb"`
 }
 
 func GetConfigs(c *gin.Context) {
@@ -54,7 +54,7 @@ func PostConfig(c *gin.Context) {
     // Create config
     config := models.Config{
         Name: input.Name,
-        ValueB: input.ValueB,
+        // ValueB: input.ValueB,
     }
     models.DB.Create(&config)
     c.JSON(http.StatusOK, config)
