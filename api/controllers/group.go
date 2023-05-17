@@ -15,7 +15,7 @@ type CreateGroupInput struct {
     Short       string  `json:"short" binding:"required"`
     Name        string  `json:"name" binding:"required"`
     Size        uint    `json:"size" binding:"required"`
-    Grouping    models.Grouping  `json:"grouping" binding:"required"`
+    GroupingID  uint    `json:"groupingID" binding:"required"`
     TribeID     uint    `json:"TribeID" binding:"required"`
 }
 
@@ -27,18 +27,18 @@ type UpdateGroupInput struct {
 // GROuping?
 }
 
-func GetGroupsByLogin(c *gin.Context) {
+func GetGroupsByTribe(c *gin.Context) {
     var groups []models.Group
-    result := models.DB.Where("tribe_login = ?", c.Param("loginid")).Find(&groups)
+    result := models.DB.Where("tribe_id = ?", c.Param("tribeid")).Find(&groups)
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
     } else {
-        c.JSON(http.StatusOK, groups)
+        c.HTML(http.StatusOK, "group/tribe", groups)
     }
 }
 
-func GetPublicGroups(c *gin.Context) {
+func GetGroupsPublic(c *gin.Context) {
     var groups []models.Group
     _start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
     _end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))

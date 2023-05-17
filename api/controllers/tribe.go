@@ -13,7 +13,7 @@ type CreateTribeInput struct {
     Short   string  `json:"short" binding:"required"`
     DPSG    string  `json:"dpsg" binding:"required"`
     Address string  `json:"address" binding:"required"`
-    LoginID uint    `json:"LoginID" binding:"required"`
+    // LoginID uint    `json:"LoginID" binding:"required"`
     URL     string  `json:"url"`
 }
 
@@ -22,8 +22,19 @@ type UpdateTribeInput struct {
     Short   string  `json:"short"`
     DPSG    string  `json:"dpsg"`
     Address string  `json:"address"`
-    LoginID uint    `json:"LoginID"`
+    // LoginID uint    `json:"LoginID"`
     URL     string  `json:"url"`
+}
+
+func GetTribeInfo(c *gin.Context) {
+    var config models.Config
+    result := models.DB.Where("name = 'contact'").Take(&config)
+    if result.Error != nil {
+        c.AbortWithStatus(500)
+        log.Warn("Get tribes failed.")
+    } else {
+        c.HTML(http.StatusOK, "tribe/info", config.Value)
+    }
 }
 
 func GetTribes(c *gin.Context) {
@@ -65,7 +76,7 @@ func PostTribe(c *gin.Context) {
         Short: input.Short,
         DPSG: input.DPSG,
         Address: input.Address,
-        LoginID: input.LoginID,
+        // LoginID: input.LoginID,
     }
     models.DB.Create(&tribe)
     c.JSON(http.StatusOK, tribe)
