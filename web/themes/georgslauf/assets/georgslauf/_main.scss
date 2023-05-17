@@ -1,3 +1,180 @@
-h1 {
-    color: red;
+body {
+    color: $font-color;
+    font-family: $font;
+    background: $body-background-color;
+    background: $body-background-gradient;
+    max-width: $body-max-width-header ;
+    margin-inline: auto;
+    padding-inline: 0.5rem;
+}
+
+button {
+    margin-left: 0.8rem;
+    border-radius: 0.8rem;
+    padding-inline: 2em;
+    padding-block: 0.25em;
+    font-size: 0.8rem;
+    color: $button-color;
+    border: none;
+    text-align: center;
+    color: $font-color;
+    text-decoration: none;
+    background-color: $button-background-color;
+    cursor: pointer;
+    transition: color 150ms ease-in-out, background 150ms ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: solid 1px $button-color;
+    font-weight: bold;
+}
+
+button:hover,
+button:focus {
+    background: $button-focus-background-color;
+    color: $button-focus-color;
+}
+
+button:active {
+    box-shadow: 0px 0px 2px 3px $button-focus-shadow-color;
+}
+
+// .button-signup {
+    // border: none;
+    // box-shadow: 0px 0px 2px 3px red;
+    // background: $button-login-background-color;
+    // background: $button-login-background-gradient
+// }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    margin-block: 0.5rem;
+    margin-inline: 1rem;
+    div {
+        display: flex;
+        align-items: center; /* align vertical */
+    }
+    a {
+        color: $header-color;
+        text-decoration: none;
+    }
+    img {
+        max-width: 70px;
+        text-align: center;
+        padding: 0.5rem;
+        margin-left: 1ch;
+    }
+    h1 {
+        margin-left: 1ch;
+        font-size: 1.3rem;
+        display: none;
+    }
+    button {
+    }
+}
+
+.main {
+    max-width: $body-max-width;
+    margin-inline: auto;
+    background-color: $main-background-color;
+    border-bottom-left-radius: 0.8rem;
+    border-bottom-right-radius: 0.8rem;
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+}
+
+.main-nav {
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+    background-color: $menu-background-color;
+    ul {
+        padding-left: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        list-style: none;
+        min-height: 4rem;
+        align-items: center;
+        margin-block: 0;
+        color: $font-color;
+    }
+    li {
+        text-align: center;
+        font-size: 1.1rem;
+        vertical-align: middle;
+    }
+    a {
+        text-decoration: none;
+        color: $font-color;
+        padding-block: 1.3rem;
+        padding-inline: 1em;
+        width: 100%;
+        display: inline-block;
+        font-weight: bold;
+        transition: color 150ms ease-in-out, background 150ms ease-in-out;
+    }
+    li:first-child>a {
+        border-top-left-radius: 0.8rem;
+    }
+    li:last-child>a {
+        border-top-right-radius: 0.8rem;
+    }
+    a:hover {
+        background-color: $font-color;
+        color: $font-color-contrast !important;
+        box-shadow: 0px 0px 1px 1px $font-color;
+    }
+}
+
+.main-nav-selected {
+    color: $font-color !important;
+    box-shadow: 0px 0px 1px 1px $font-color;
+    // background-color: $menu-selected-color;
+}
+
+.main-tab {
+    img {
+        max-height: 240px;
+        border-radius: 0.3rem;
+        width: 100%;
+        object-fit: cover;
+        object-position: 50% 35%; // don't zoom main to the top a bit
+        margin-bottom: 0.6rem;
+    }
+    span {
+        font-size: 0.8rem;
+        color: $menu-deselected-color;
+    }
+    padding: 0.6rem;
+}
+
+footer {
+    margin-block: 4rem;
+    color: $menu-deselected-color;
+    a {
+        color: $menu-deselected-color;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    div {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+        justify-items: center;
+        justify-content: space-between;
+        column-gap: 0px;
+        align-content: center;
+    }
+}
+
+.posten-list>ul {
+    list-style: none;
+    background-color: $menu-background-color;
+}
+
+@media (min-width: 500px) {
+    header {
+        h1 {
+            display: block;
+        }
+    }
 }
