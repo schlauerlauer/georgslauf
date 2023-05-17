@@ -13,7 +13,9 @@ var (
 
 func ConnectDatabase(config SqlConfig) {
     dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s TimeZone=%s", config.Hostname, config.Username, config.Password, config.Database, config.Port, config.TZ)
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+        PrepareStmt: true,
+    })
 
     if err != nil {
         log.Fatal("Failed to connect to database!")
@@ -28,18 +30,23 @@ func ConnectDatabase(config SqlConfig) {
         &Tribe{},
         &Config{},
     )
+
+    // TODO remove
+    // data := Config{
+    //     Name: "test",
+    //     Value: false,
+    //     JobInfo: Job{
+    //         Title: "test",
+    //         Location: "test",
+    //         IsIntern: false,
+    //     },
+    // }
+
+    var cfg Config
+    db.Where("name = 'test'").Find(&cfg)
+    log.Info(cfg.Value)
+
     log.Info("Database migration sucessful.")
-    db.Exec(`
-    DO $$ BEGIN
-        CREATE TYPE grouping AS ENUM (
-            'Wös',
-            'Jupfis',
-            'Pfadis',
-            'Rover');
-        EXCEPTION
-            WHEN duplicate_object THEN null;
-    END $$;
-    `);
 
     // db.Exec(`
     //     CREATE OR REPLACE VIEW group_top AS
@@ -76,5 +83,4 @@ func ConnectDatabase(config SqlConfig) {
     // `);
 
     DB = db
-    log.Warn("Database view creation skipped!")
 }
