@@ -13,7 +13,7 @@ type CreateStationInput struct {
     Short   string  `json:"short" binding:"required"`
     TribeID uint    `json:"TribeID" binding:"required"`
     Size    uint    `json:"size" binding:"required"`
-    LoginID uint    `json:"LoginID" binding:"required"`
+    // LoginID uint    `json:"LoginID" binding:"required"`
 }
 
 type UpdateStationInput struct {
@@ -21,21 +21,21 @@ type UpdateStationInput struct {
     Short   string  `json:"short"`
     TribeID uint    `json:"TribeID"`
     Size    uint    `json:"size"`
-    LoginID uint    `json:"LoginID"`
+    // LoginID uint    `json:"LoginID"`
 }
 
-func GetStationsByLogin(c *gin.Context) {
+func GetStationsByTribe(c *gin.Context) {
     var stations []models.Station
-    result := models.DB.Where("tribe_login = ?", c.Param("loginid")).Find(&stations)
+    result := models.DB.Where("tribe_id = ?", c.Param("tribeid")).Find(&stations)
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
     } else {
-        c.JSON(http.StatusOK, stations)
-    } // TODO add pagination
+        c.HTML(http.StatusOK, "station/tribe", stations)
+    }
 }
 
-func GetPublicStations(c *gin.Context) {
+func GetStationsPublic(c *gin.Context) {
     var stations []models.Station
     result := models.DB.Find(&stations)
     if result.Error != nil {
@@ -85,7 +85,7 @@ func PostStation(c *gin.Context) {
         Short: input.Short,
         TribeID: input.TribeID,
         Size: input.Size,
-        LoginID: input.LoginID,
+        // LoginID: input.LoginID,
     }
     models.DB.Create(&station)
     c.JSON(http.StatusOK, station)
