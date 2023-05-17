@@ -1,15 +1,20 @@
 ---
-type: "default"
-title: "GEORGSLAUF 2023 - Bezirkenstock"
+type: "home"
+title: "Georgslauf 2023 - Bezirkenstock"
+image: "/images/ansgar-min.jpg"
+imageAlt: "Kirche Sankt Ansgar"
+nav: 1
 ---
 
 ## Hallo und Herzlich Willkommen lieber Bezirk München Isar
 
-Der 43. Georgslauf steht vor der Tür! Wir freuen uns euch alle am **Samstag, den 6.05.2023** beim Stamm Sankt Ansgar begrüßen zu dürfen! Adresse ist die **Gulbranssonstraße 30, 81477 München**.
+Der 43. Georgslauf steht vor der Tür! Wir freuen uns euch alle am Samstag, den 6.05.2023 beim Stamm Sankt Ansgar begrüßen zu dürfen!
+Adresse ist die Gulbranssonstraße 30, 81477 München.
 
-**Beginn ist pünktlich um 8:00 Uhr.**
+Beginn ist pünktlich um 8:00 Uhr.
 
-Nach der Ankunft, können die Stavos dann ihre Stämme bzw. die Laufgruppen am Check-in anmelden. Dafür bitte gesammelt die Anmeldungen, Datenschutzerklärungen & das Geld mitbringen.
+Nach der Ankunft, können die Stavos dann ihre Stämme bzw. die Laufgruppen am Check-in anmelden.
+Dafür bitte gesammelt die Anmeldungen, Datenschutzerklärungen & das Geld mitbringen.
 
 ### Unser Zeitplan
 
