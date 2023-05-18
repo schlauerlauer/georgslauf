@@ -12,17 +12,3 @@ type GroupPoint struct { // Points given to a group
     GroupID     uint        `json:"GroupID" gorm:"foreignKey:GroupID;index:idx_gp,unique"`
     Value       uint        `json:"value"`
 }
-
-type GroupTop struct { // View
-    ID          uint        `json:"id"`
-    Group       string      `json:"group"`
-    GroupingID  uint        `json:"grouping_id"`
-    Grouping    string      `json:"grouping"`
-    TribeID     uint        `json:"tribe_id"`
-    Tribe       string      `json:"tribe"`
-    Sum         uint        `json:"sum"`
-    Avg         float64     `json:"avg"`
-}
-func (GroupTop) TableName() string {
-    return "group_top"
-}
