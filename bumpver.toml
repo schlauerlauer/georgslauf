@@ -1,0 +1,18 @@
+[bumpver]
+current_version = "23.5.0-alpha"
+version_pattern = "YY.MM.PATCH[-TAG]"
+commit_message = "bump version {old_version} -> {new_version}"
+commit = false
+tag = false
+push = false
+
+[bumpver.file_patterns]
+"bumpver.toml" = [
+    'current_version = "{version}"',
+]
+"api/main.go" = [
+    'c.String(http.StatusOK, "{version}"',
+]
+"web/config.yaml" = [
+    'version: "{version}",
+]

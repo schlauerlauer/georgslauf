@@ -1,0 +1,24 @@
+.contributors-list {
+    ul {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+        img {
+            max-width: 3rem;
+            border-radius: 50%;
+            margin-inline: auto;
+        }
+        list-style: none;
+        text-align: center;
+        h4 {
+            font-size: 0.9rem;
+        }
+        p {
+            font-size: 0.7rem;
+        }
+        padding-inline: 0px;
+        row-gap: 2ch;
+        column-gap: 2ch;
+        margin-block: 2rem;
+    }
+    margin-top: 1rem;
+}

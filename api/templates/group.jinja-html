@@ -1,0 +1,8 @@
+<!-- multiple groups viewed by a tribe -->
+{{ define "group/tribe" }}
+    <ul>
+    {{ range . }}
+        <li>{{ .Short }} - {{ .Name }} --- id {{ .ID }} tribeID {{ .TribeID }} grouping {{ .GroupingID }}</li>
+    {{ end }}
+    </ul>
+{{ end }}

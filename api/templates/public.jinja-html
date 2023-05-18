@@ -1,0 +1,12 @@
+<!-- info page viewed by the public -->
+{{ define "public" }}
+    <ul>
+    {{ range .stations }}
+        <li>{{ .Short }} - {{ .Tribe.Name }}</li>
+    {{ end }}
+    </ul>
+{{ end }}
+
+{{ define "public/notice" }}
+    {{ .message }}
+{{ end }}

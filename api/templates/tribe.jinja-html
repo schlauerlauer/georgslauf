@@ -1,0 +1,4 @@
+{{ define "tribe/info" }}
+    bei Fragen: <a href="{{ .slack }}">Slack Channel</a>
+    oder <a href="tel:{{ .tel }}">anrufen</a> / <a href="{{ .whatsapp }}">WhatsApp</a>
+{{ end }}
