@@ -20,4 +20,5 @@ type Login struct {
     Avatar      string      `json:"avatar"`
     Permissions string      `json:"permissions"`
     UpdatePW    bool        `json:"updatepw" gorm:"-"`
+    FeedViewed  time.Time
 }
