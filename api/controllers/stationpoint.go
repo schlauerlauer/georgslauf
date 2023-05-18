@@ -18,30 +18,6 @@ type UpdateStationPointInput struct {
     Value   uint    `json:"value"`
 }
 
-func GetStationTops(c *gin.Context) {
-    var stationtops []models.StationTop
-    _start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))
-    _end, _ := strconv.Atoi(c.DefaultQuery("_end", "10"))
-    _sortOrder := c.DefaultQuery("_sort", "id") + " " + c.DefaultQuery("_order", "ASC")
-    result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&stationtops)
-    if result.Error != nil {
-        c.AbortWithStatus(500)
-        log.Warn("Get stationtops failed.")
-    } else {
-        c.JSON(http.StatusOK, stationtops)
-    }
-}
-
-func GetStationTop(c *gin.Context) {
-    var stationtop models.StationTop
-    if err := models.DB.Where("id = ?", c.Param("id")).First(&stationtop).Error; err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-        log.Warn("Get stationtop failed.")
-        return
-    }
-    c.JSON(http.StatusOK, stationtop)
-}
-
 func GetStationPoints(c *gin.Context) {
     var stationpoints []models.StationPoint
     _start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))

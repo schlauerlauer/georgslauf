@@ -29,7 +29,12 @@ func ConnectDatabase(config SqlConfig) {
         &StationPoint{},
         &Tribe{},
         &Config{},
+        &Feed{},
+        &Image{},
     )
+
+    db.Preload("Image").Find(&Station{})
+    db.Preload("Image").Find(&Feed{})
 
     // TODO remove
     // data := Config{
