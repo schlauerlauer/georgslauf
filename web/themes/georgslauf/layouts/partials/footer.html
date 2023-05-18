@@ -1,0 +1,17 @@
+<footer>
+    <div class="footer-buttons">
+        <button
+            class="button-borderless"
+            hx-get="/modal/attributions"
+            hx-target="body"
+            hx-swap="beforeend">Über</button>
+    </div>
+    <div class="footer-links">
+        {{ replace .Site.Copyright "{year}" now.Year }}
+        <a target="_blank" rel="noreferrer noopener" href="{{ $.Site.Author.homepage.url }}">
+            <img src="/icons/github.svg"/>
+            {{ $.Site.Author.homepage.name }}
+        </a>
+        {{ .Site.Params.Version }}
+    </div>
+</footer>

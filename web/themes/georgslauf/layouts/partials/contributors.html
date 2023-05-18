@@ -1,0 +1,17 @@
+{{ $dataJ := getJSON "https://api.github.com/repos/" .Site.Params.Contributors "/contributors" }}
+{{ if $dataJ }}
+<div class="contributors-list">
+    <h3>Mitwirkende an georgslauf.de</h3>
+    <ul>
+        {{ range first 10 $dataJ }}
+        <li>
+            <a target="_blank" rel="noopener noreferrer" href="{{ .html_url }}" alt="{{ .login }}">
+                <img src="{{ .avatar_url }}"/>
+                <h4>{{ .login }}</h4>
+            </a>
+            <p>{{ .contributions }} contributions</p>
+        </li>
+        {{ end }}
+    </ul>
+</div>
+{{ end }}

@@ -1,6 +1,7 @@
 ---
 type: "home"
-title: "Georgslauf 2023 - Posten"
+title: "Posten"
+titleAlignCenter: true
 disableLastmod: true
 nav: 2
 query:

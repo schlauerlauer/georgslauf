@@ -13,7 +13,6 @@ type CreateStationInput struct {
     Short   string  `json:"short" binding:"required"`
     TribeID uint    `json:"TribeID" binding:"required"`
     Size    uint    `json:"size" binding:"required"`
-    // LoginID uint    `json:"LoginID" binding:"required"`
 }
 
 type UpdateStationInput struct {
@@ -21,7 +20,6 @@ type UpdateStationInput struct {
     Short   string  `json:"short"`
     TribeID uint    `json:"TribeID"`
     Size    uint    `json:"size"`
-    // LoginID uint    `json:"LoginID"`
 }
 
 func GetStationsByTribe(c *gin.Context) {
@@ -85,7 +83,6 @@ func PostStation(c *gin.Context) {
         Short: input.Short,
         TribeID: input.TribeID,
         Size: input.Size,
-        // LoginID: input.LoginID,
     }
     models.DB.Create(&station)
     c.JSON(http.StatusOK, station)

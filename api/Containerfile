@@ -7,7 +7,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api .
 
 FROM scratch
 WORKDIR /app/
-COPY uploads ./uploads
 COPY keymatch_model.conf .
 COPY config_default.yaml config.yaml
 COPY --from=builder /app/api .

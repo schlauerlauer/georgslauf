@@ -1,4 +1,4 @@
-/uploads/*
+/media/*
 !.gitkeep
 config.yaml
 test.go

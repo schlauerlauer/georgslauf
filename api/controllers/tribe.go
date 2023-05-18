@@ -13,7 +13,6 @@ type CreateTribeInput struct {
     Short   string  `json:"short" binding:"required"`
     DPSG    string  `json:"dpsg" binding:"required"`
     Address string  `json:"address" binding:"required"`
-    // LoginID uint    `json:"LoginID" binding:"required"`
     URL     string  `json:"url"`
 }
 
@@ -22,7 +21,6 @@ type UpdateTribeInput struct {
     Short   string  `json:"short"`
     DPSG    string  `json:"dpsg"`
     Address string  `json:"address"`
-    // LoginID uint    `json:"LoginID"`
     URL     string  `json:"url"`
 }
 
@@ -76,7 +74,6 @@ func PostTribe(c *gin.Context) {
         Short: input.Short,
         DPSG: input.DPSG,
         Address: input.Address,
-        // LoginID: input.LoginID,
     }
     models.DB.Create(&tribe)
     c.JSON(http.StatusOK, tribe)

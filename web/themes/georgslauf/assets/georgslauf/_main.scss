@@ -12,10 +12,9 @@ button {
     margin-left: 0.8rem;
     border-radius: 0.8rem;
     padding-inline: 2em;
-    padding-block: 0.25em;
+    padding-block: 0.3em;
     font-size: 0.8rem;
     color: $button-color;
-    border: none;
     text-align: center;
     color: $font-color;
     text-decoration: none;
@@ -38,6 +37,10 @@ button:active {
     box-shadow: 0px 0px 2px 3px $button-focus-shadow-color;
 }
 
+.button-borderless {
+    border: none !important;
+}
+
 // .button-signup {
     // border: none;
     // box-shadow: 0px 0px 2px 3px red;
@@ -48,8 +51,9 @@ button:active {
 header {
     display: flex;
     justify-content: space-between;
-    margin-block: 0.5rem;
+    margin-top: 0.5rem;
     margin-inline: 1rem;
+    margin-bottom: 2rem;
     div {
         display: flex;
         align-items: center; /* align vertical */
@@ -69,8 +73,6 @@ header {
         font-size: 1.3rem;
         display: none;
     }
-    button {
-    }
 }
 
 .main {
@@ -81,12 +83,14 @@ header {
     border-bottom-right-radius: 0.8rem;
     border-top-left-radius: 0.8rem;
     border-top-right-radius: 0.8rem;
+    box-shadow: $main-box-shadow;
 }
 
 .main-nav {
     border-top-left-radius: 0.8rem;
     border-top-right-radius: 0.8rem;
     background-color: $menu-background-color;
+    border-bottom: solid 1px rgba(156, 164, 178, 0.3);
     ul {
         padding-left: 0;
         display: grid;
@@ -104,13 +108,15 @@ header {
     }
     a {
         text-decoration: none;
-        color: $font-color;
+        color: $menu-deselected-color;
         padding-block: 1.3rem;
         padding-inline: 1em;
         width: 100%;
         display: inline-block;
-        font-weight: bold;
-        transition: color 150ms ease-in-out, background 150ms ease-in-out;
+        font-weight: normal;
+        transition: color 150ms ease-in-out, background 150ms ease-in-out, border-bottom 150ms ease-in-out;
+        font-size: 0.9rem;
+        border-bottom: solid 2px $menu-background-color;
     }
     li:first-child>a {
         border-top-left-radius: 0.8rem;
@@ -121,17 +127,18 @@ header {
     a:hover {
         background-color: $font-color;
         color: $font-color-contrast !important;
-        box-shadow: 0px 0px 1px 1px $font-color;
+        border-bottom: solid 2px $font-color;
     }
 }
 
 .main-nav-selected {
     color: $font-color !important;
-    box-shadow: 0px 0px 1px 1px $font-color;
-    // background-color: $menu-selected-color;
+    border-bottom: solid 2px rgba(156, 164, 178, 1) !important;
+    font-weight: bold !important;
 }
 
 .main-tab {
+    text-align: start;
     img {
         max-height: 240px;
         border-radius: 0.3rem;
@@ -140,29 +147,65 @@ header {
         object-position: 50% 35%; // don't zoom main to the top a bit
         margin-bottom: 0.6rem;
     }
-    span {
-        font-size: 0.8rem;
-        color: $menu-deselected-color;
-    }
     padding: 0.6rem;
+    h2 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    h3 {
+        font-size: 1rem;
+    }
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.last-mod {
+    font-size: 0.8rem;
+    color: $menu-deselected-color;
+    text-align: end !important;
 }
 
 footer {
     margin-block: 4rem;
     color: $menu-deselected-color;
+    font-size: 0.75rem;
+}
+
+.footer-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-around;
+}
+
+.footer-links {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 1.5ch;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-between;
+    column-gap: 0px;
+    align-content: center;
     a {
+        display: flex;
+        column-gap: 0.2rem;
+        align-items: center;
+        justify-content: center;
         color: $menu-deselected-color;
         text-decoration: none;
+        font-size: 0.8rem;
         font-weight: bold;
+        img {
+            max-width: 1.5rem;
+        }
     }
-    div {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        align-items: center;
-        justify-items: center;
-        justify-content: space-between;
-        column-gap: 0px;
-        align-content: center;
+    a:hover {
+        text-decoration: underline;
     }
 }
 
@@ -171,10 +214,21 @@ footer {
     background-color: $menu-background-color;
 }
 
+.htmx-indicator {
+    max-width: 2rem;
+    margin-block: 10rem !important;
+    margin-inline: auto;
+    transition: opacity 150ms ease-in-out;
+}
+
+
 @media (min-width: 500px) {
     header {
         h1 {
             display: block;
         }
+    }
+    .footer-links {
+        grid-template-columns: 1fr 1fr 1fr;
     }
 }

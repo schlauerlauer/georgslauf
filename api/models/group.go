@@ -8,6 +8,7 @@ type Group struct {
     ID          uint        `json:"id" gorm:"primary_key"`
     CreatedAt   time.Time   `json:"CreatedAt"`
     UpdatedAt   time.Time   `json:"UpdatedAt"`
+    DeletedAt   time.Time   `json:"DeletedAt"`
     Short       string      `json:"short" binding:"required" gorm:"unique"`
     Name        string      `json:"name" binding:"required"  gorm:"unique;not null"`
     Size        uint        `json:"size" binding:"required"`
