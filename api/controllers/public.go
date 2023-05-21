@@ -13,11 +13,10 @@ func GetPublic(c *gin.Context) {
 	if stationResult.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get public info failed.")
-	} else {
-		c.HTML(http.StatusOK, "public", gin.H{
-			"stations": stations,
-		})
 	}
+	c.HTML(http.StatusOK, "public", gin.H{
+		"stations": stations,
+	})
 }
 
 func GetNotice(c *gin.Context) {
@@ -27,7 +26,6 @@ func GetNotice(c *gin.Context) {
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Warn("Get public info failed.")
-	} else {
-		c.HTML(http.StatusOK, "public/notice", config.Value)
 	}
+	c.HTML(http.StatusOK, "public/notice", config.Value)
 }

@@ -22,7 +22,7 @@
 
   - name: "Start loadbalancer container"
     containers.podman.podman_container:
-      name: "andugo-lb"
+      name: "georgslauf-lb"
       image: "localhost/georgslauf-lb:latest"
       state: "started"
       restart_policy: "on-failure"

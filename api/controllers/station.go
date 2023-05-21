@@ -28,9 +28,8 @@ func GetStationsByTribe(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
-    } else {
-        c.HTML(http.StatusOK, "station/tribe", stations)
     }
+    c.HTML(http.StatusOK, "station/tribe", stations)
 }
 
 func GetStationsPublic(c *gin.Context) {
@@ -39,9 +38,8 @@ func GetStationsPublic(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get public stations failed.")
-    } else {
-        c.HTML(http.StatusOK, "station/public", stations)
     }
+    c.HTML(http.StatusOK, "station/public", stations)
 }
 
 func GetStations(c *gin.Context) {
@@ -53,20 +51,27 @@ func GetStations(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stations failed.")
-    } else {
-        c.JSON(http.StatusOK, stations)
     }
+    c.JSON(http.StatusOK, stations)
 }
 
-func GetStation(c *gin.Context) {
+func GetStation(c *gin.Context) models.Station {
     // Get model if exist
     var station models.Station
     if err := models.DB.Where("id = ?", c.Param("id")).First(&station).Error; err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
         log.Warn("Get station failed.")
-        return
     }
-    c.JSON(http.StatusOK, station)
+    return station
+}
+
+func GetStationByID(id string) models.Station {
+    var station models.Station
+    if err := models.DB.Where("id = ?", id).First(&station).Error; err != nil {
+        log.Warn("Get station failed.")
+        // TODO return error and data
+    }
+    return station
 }
 
 func PostStation(c *gin.Context) {

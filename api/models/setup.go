@@ -47,9 +47,11 @@ func ConnectDatabase(config SqlConfig) {
     //     },
     // }
 
-    var cfg Config
-    db.Where("name = 'test'").Find(&cfg)
-    log.Info(cfg.Value)
+    /* TODO remove
+    // var cfg Config
+    // db.Where("name = 'test'").Find(&cfg)
+    // log.Info(cfg.Value)
+    */
 
     log.Info("Database migration sucessful.")
 
