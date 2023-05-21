@@ -1,10 +1,10 @@
 ---
 type: "home"
-title: "Posten"
+title: "Einstellungen"
 titleAlignCenter: true
+disableNav: true
 disableLastmod: true
 hideMessage: true
-nav: 2
 query:
-  posten: true
+  settings: true
 ---

@@ -5,6 +5,7 @@ import (
     "github.com/gin-gonic/gin"
     "georgslauf/models"
     "strconv"
+    "errors"
     log "github.com/sirupsen/logrus"
 )
 
@@ -65,13 +66,13 @@ func GetStation(c *gin.Context) models.Station {
     return station
 }
 
-func GetStationByID(id string) models.Station {
+func GetStationByID(id string) (models.Station, error) {
     var station models.Station
-    if err := models.DB.Where("id = ?", id).First(&station).Error; err != nil {
+    if err := models.DB.Where("stations.id = ?", id).Joins("Tribe").First(&station).Error; err != nil {
         log.Warn("Get station failed.")
-        // TODO return error and data
+        return models.Station{}, errors.New("station not found")
     }
-    return station
+    return station, nil
 }
 
 func PostStation(c *gin.Context) {

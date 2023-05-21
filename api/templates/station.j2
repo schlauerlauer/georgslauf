@@ -11,15 +11,32 @@
 {{ define "station/points" }}
     <h2>Posten {{ .station.Name }}</h2>
     <h2>Gruppenbewertungen</h2>
+    {{ if not .enableEdit }}
+    <p>Die Punktevergabe ist ausgeschaltet</p>
+    {{ end }}
     <ul>
     {{ range .groups }}
         <li>
-            {{ .Name }}
-            {{ if .Value }}
-            {{ .Value }}
-            <span>Geändert {{ (.UpdatedAt).Format "15:04" }} Uhr</span>
+            <h3>{{ .Name }}</h3>
+            <p>{{ .Value }} Punkte</p>
+            <p>{{ index $.groupings .GroupingID }}</p>
+            {{ if $.enableEdit }}
+            <input
+                type="number"
+                name="value"
+                hx-put="/api/home/group/{{ .ID }}"
+                hx-trigger="keyup changed delay:250ms"
+                hx-target="previous p"
+                value="{{ .Value }}"
+            />
             {{ end }}
         </li>
     {{ end }}
+    <div id="test">testing</div>
     </ul>
+{{ end }}
+
+
+{{ define "station/putpoint" }}
+{{ .Value }}
 {{ end }}

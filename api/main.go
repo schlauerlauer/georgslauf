@@ -1,67 +1,91 @@
 package main
 
 import (
-    "net/http"
-    "georgslauf/controllers"
-    "georgslauf/models"
-    "github.com/gin-gonic/gin"
-    log "github.com/sirupsen/logrus"
-    "gopkg.in/yaml.v2"
-    "os"
+	"net/http"
+	"georgslauf/controllers"
+	"georgslauf/models"
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
+	"os"
+	ory "github.com/ory/client-go"
+	"errors"
+	"context"
 )
 
 var (
-    cfg = newConfig("./config.yaml")
+	cfg = newConfig("./config.yaml")
+	systemCfg = &models.Config{}
 )
 
 func init() {
-    log.SetLevel(log.DebugLevel)
-    log.Print("Log level ", log.GetLevel(), ".")
-    checkConfig()
+	log.SetLevel(log.DebugLevel)
+	log.Print("Log level ", log.GetLevel(), ".")
+	checkConfig()
 }
 
 func checkConfig() {
-    checkEmptyString(cfg.Server.Port, "api port")
-    checkEmptyString(cfg.Server.Secret, "api secret")
-    checkEmptyString(cfg.Database.Postgresql.Hostname, "DB hostname")
-    checkEmptyString(cfg.Database.Postgresql.Port, "DB port")
-    checkEmptyString(cfg.Database.Postgresql.Database, "DB database name")
-    checkEmptyString(cfg.Database.Postgresql.Username, "DB username")
-    checkEmptyString(cfg.Database.Postgresql.Password, "DB password")
+	checkEmptyString(cfg.Server.Port, "api port")
+	checkEmptyString(cfg.Server.Secret, "api secret")
+	checkEmptyString(cfg.Database.Postgresql.Hostname, "DB hostname")
+	checkEmptyString(cfg.Database.Postgresql.Port, "DB port")
+	checkEmptyString(cfg.Database.Postgresql.Database, "DB database name")
+	checkEmptyString(cfg.Database.Postgresql.Username, "DB username")
+	checkEmptyString(cfg.Database.Postgresql.Password, "DB password")
 }
 
 func checkEmptyString(checkThis string, description string) {
-    if checkThis == "" {
-        log.Fatal("needed config var ", description, " is empty.")
-    }
+	if checkThis == "" {
+		log.Fatal("needed config var ", description, " is empty.")
+	}
 }
 
 func newConfig(configPath string) (*models.APIConfig) {
-    config := &models.APIConfig{}
-    file, err := os.Open(configPath)
-    if err != nil {
-        log.Error(err)
-    }
-    defer func(file *os.File) {
-        err := file.Close()
-        if err != nil {
-            log.Error(err)
-        }
-    }(file)
-    d := yaml.NewDecoder(file)
-    if err := d.Decode(&config); err != nil {
-        log.Error(err)
-    }
-    return config
+	config := &models.APIConfig{}
+	file, err := os.Open(configPath)
+	if err != nil {
+		log.Error(err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Error(err)
+		}
+	}(file)
+	d := yaml.NewDecoder(file)
+	if err := d.Decode(&config); err != nil {
+		log.Error(err)
+	}
+	return config
+}
+
+type kratosMiddleware struct {
+	ory *ory.APIClient
+}
+
+
+func (k *kratosMiddleware) validateSession(request *http.Request) (*ory.Session, error) {
+	cookie, err := request.Cookie("ory_kratos_session")
+	if err != nil {
+		return nil, err
+	}
+	if cookie == nil {
+		return nil, errors.New("no session found in cookie")
+	}
+	resp, _, err := k.ory.FrontendApi.ToSession(context.Background()).Cookie(cookie.String()).Execute()
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func CORS() gin.HandlerFunc {
     return func(c *gin.Context) {
-        c.Writer.Header().Set("Access-Control-Allow-Origin", "https://admin.georgslauf.de")
-        //c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-        c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Range, X-Total-Count")
-        c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With, X-Total-Count")
-        c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+        c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost")
+        c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+        // c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Range, X-Total-Count")
+        // c.Writer.Header().Set("Access-Control-Allow-Headers", "HX-Request, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+        // c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
 
         if c.Request.Method == "OPTIONS" {
             c.AbortWithStatus(204)
@@ -71,227 +95,216 @@ func CORS() gin.HandlerFunc {
     }
 }
 
+
+func KratosMiddleware() *kratosMiddleware {
+	configuration := ory.NewConfiguration()
+	configuration.Servers = []ory.ServerConfiguration{
+		{
+			URL: "http://127.0.0.1:11433", // Kratos Public API
+		},
+	}
+	return &kratosMiddleware{
+		ory: ory.NewAPIClient(configuration),
+	}
+}
+
+
+func (k *kratosMiddleware) Session() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session, err := k.validateSession(c.Request)
+		if err != nil {
+			c.Redirect(http.StatusTemporaryRedirect, "http://localhost:11455/login") // TODO
+			c.AbortWithStatus(307)
+			log.Warn("error", err)
+			return
+		}
+		if !*session.Active {
+			log.Warn("Session inactive!")
+			c.Redirect(http.StatusTemporaryRedirect, "http://localhost:11455/login") // TODO
+			return
+		}
+
+		c.Set("station", session.Identity.MetadataPublic["station"])
+		c.Set("tribe", session.Identity.MetadataPublic["tribe"])
+		c.Set("identity", session.Identity.Id)
+
+		c.Next()
+	}
+}
+
+
+func BooleanPermission(permission bool) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if (!permission) {
+			c.AbortWithStatus(http.StatusForbidden)
+		}
+		c.Next()
+	}
+}
+
+
+func updateSystemConfig() {
+	newSystemCfg, _ := controllers.GetConfig()
+	systemCfg = &newSystemCfg
+	log.Info("Updated system config")
+}
+
+
 func main() {
-    models.ConnectDatabase(cfg.Database.Postgresql)
-    // controllers.InitTotal()
+	models.ConnectDatabase(cfg.Database.Postgresql)
+	gin.SetMode(gin.ReleaseMode)
+	updateSystemConfig()
 
-    gin.SetMode(gin.ReleaseMode)
-    r := gin.New()
-    r.Use(gin.Logger())
-    r.Use(gin.Recovery())
-    r.Use(CORS())
+	router := gin.Default()
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+	
+	k := KratosMiddleware()
+	router.Use(CORS())
 
-    r.GET("/", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "api.georgslauf.de",
-            "version": "23.2.0-alpha",
-        })
-    })
-    r.GET("/ping", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "pong",
-        })
-    })
+	router.LoadHTMLGlob("templates/*")
 
-    // authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-    //     Realm:       "georgslauf.de",
-    //     Key:         []byte(cfg.Server.Secret),
-    //     Timeout:     time.Hour,
-    //     MaxRefresh:  time.Hour,
-    //     IdentityKey: identityKey,
-    //     PayloadFunc: func(data interface{}) jwt.MapClaims {
-    //         if v, ok := data.(*models.Login); ok {
-    //             return jwt.MapClaims{
-    //                 identityKey: v.Username,
-    //                 emailKey: v.Email,
-    //                 avatarKey: v.Avatar,
-    //                 permissionKey: v.Permissions,
-    //                 loginKey: v.ID,
-    //             }
-    //         }
-    //         return jwt.MapClaims{}
-    //     },
-    //     IdentityHandler: func(c *gin.Context) interface{} {
-    //         claims := jwt.ExtractClaims(c)
-    //         return &models.Login{
-    //             Username: claims[identityKey].(string),
-    //         }
-    //     },
-    //     Authenticator: controllers.Login,
-    //     Authorizator: func(data interface{}, c *gin.Context) bool {
-    //         if v, ok := data.(*models.Login); ok {
-    //             //sub := v.Username
-    //             //obj := c.Request.URL.RequestURI()
-    //             //act := c.Request.Method
-    //             en, _ := models.EN.Enforce(v.Username, c.Request.URL.RequestURI(), c.Request.Method)
-    //             // log.Debug("Enforce(\"", sub, "\",\"", obj, "\",\"", act, "\") is ", en)
-    //             // log.Debug("Reason: ", reason)
-    //             if en {
-    //                 //log.Debug("Enforcer passed.")
-    //                 return true
-    //             }
-    //         }
-    //         log.Debug("Enforcer blocked.")
-    //         return false
-    //     },
-    //     Unauthorized: func(c *gin.Context, code int, message string) {
-    //         c.JSON(code, gin.H{
-    //             "code":    code,
-    //             "message": message,
-    //         })
-    //     },
-    //     TokenLookup: "header: Authorization, query: token, cookie: jwt",
-    //     TokenHeadName: "Bearer",
-    //     TimeFunc: time.Now,
-    // })
-    // if err != nil {
-    //     log.Fatal("JWT Error:" + err.Error())
-    // }
-    public := r.Group("/public")
-    {
-        public.Static("/media", "uploads")
-        public.GET("/content/:ct", controllers.GetPublicContent)
-        public.GET("/stations", controllers.GetPublicStations)
-        public.GET("/stations/:id", controllers.GetPublicStation)
-        public.GET("/groups", controllers.GetPublicGroups)
-        public.GET("/groups/:id", controllers.GetPublicGroup)
-    }
-    // auth := r.Group("/auth")
-    // {
-    //     auth.POST("/login", authMiddleware.LoginHandler)
-    //     auth.GET("/refresh", authMiddleware.RefreshHandler)
-    //     auth.GET("/logout", authMiddleware.LogoutHandler)
-    // }
-    login := r.Group("/logins")
-    // login.Use(authMiddleware.MiddlewareFunc())
-    {
-        login.GET("", controllers.GetLogins)
-        login.GET(":id", controllers.GetLogin)
-        login.POST("", controllers.PostLogin)
-        login.PUT(":id", controllers.PutLogin)
-        login.DELETE(":id", controllers.DeleteLogin)
-        login.PATCH(":id", controllers.PatchLogin)
-    }
-    group := r.Group("/groups")
-    // group.Use(authMiddleware.MiddlewareFunc())
-    {
-        group.GET("", controllers.GetGroups)
-        group.GET(":id", controllers.GetGroup)
-        group.POST("", controllers.PostGroup)
-        group.PUT(":id", controllers.PutGroup)
-        group.DELETE(":id", controllers.DeleteGroup)
-        group.PATCH(":id", controllers.PatchGroup)
-    }
-    tribe := r.Group("/tribes")
-    // tribe.Use(authMiddleware.MiddlewareFunc())
-    {
-        tribe.GET("", controllers.GetTribes)
-        tribe.GET(":id", controllers.GetTribe)
-        tribe.POST("", controllers.PostTribe)
-        tribe.PUT(":id", controllers.PutTribe)
-        tribe.DELETE(":id", controllers.DeleteTribe)
-        tribe.PATCH(":id", controllers.PatchTribe)
-        tribe.GET("/stations:loginid", controllers.GetStationsByLogin)
-        tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
-    }
-    station := r.Group("/stations")
-    // station.Use(authMiddleware.MiddlewareFunc())
-    {
-        station.GET("", controllers.GetStations)
-        station.GET(":id", controllers.GetStation)
-        station.POST("", controllers.PostStation)
-        station.PUT(":id", controllers.PutStation)
-        station.DELETE(":id", controllers.DeleteStation)
-        station.PATCH(":id", controllers.PatchStation)
-    }
-    grouppoint := r.Group("/grouppoints")
-    // grouppoint.Use(authMiddleware.MiddlewareFunc())
-    {
-        grouppoint.GET("", controllers.GetGroupPoints)
-        grouppoint.GET(":id", controllers.GetGroupPoint)
-        grouppoint.POST("", controllers.PostGroupPoint)
-        grouppoint.PUT(":id", controllers.PutGroupPoint)
-        grouppoint.DELETE(":id", controllers.DeleteGroupPoint)
-        grouppoint.PATCH(":id", controllers.PatchGroupPoint)
-    }
-    grouptop := r.Group("/grouptops")
-    // grouptop.Use(authMiddleware.MiddlewareFunc())
-    {
-        grouptop.GET("", controllers.GetGroupTops)
-        grouptop.GET(":id", controllers.GetGroupTop)
-    }
-    stationpoint := r.Group("/stationpoints")
-    // stationpoint.Use(authMiddleware.MiddlewareFunc())
-    {
-        stationpoint.GET("", controllers.GetStationPoints)
-        stationpoint.GET(":id", controllers.GetStationPoint)
-        stationpoint.POST("", controllers.PostStationPoint)
-        stationpoint.PUT(":id", controllers.PutStationPoint)
-        stationpoint.DELETE(":id", controllers.DeleteStationPoint)
-        stationpoint.PATCH(":id", controllers.PatchStationPoint)
-    }
-    stationtop := r.Group("/stationtops")
-    // stationtop.Use(authMiddleware.MiddlewareFunc())
-    {
-        stationtop.GET("", controllers.GetStationTops)
-        stationtop.GET(":id", controllers.GetStationTop)
-    }
-    grouping := r.Group("/groupings")
-    // grouping.Use(authMiddleware.MiddlewareFunc())
-    {
-        grouping.GET("", controllers.GetGroupings)
-        grouping.GET(":id", controllers.GetGrouping)
-        grouping.POST("", controllers.PostGrouping)
-        grouping.PUT(":id", controllers.PutGrouping)
-        grouping.DELETE(":id", controllers.DeleteGrouping)
-        grouping.PATCH(":id", controllers.PatchGrouping)
-    }
-    content := r.Group("/content")
-    // content.Use(authMiddleware.MiddlewareFunc())
-    {
-        content.GET("", controllers.GetContents)
-        content.GET(":id", controllers.GetContent)
-        content.POST("", controllers.PostContent)
-        content.PUT(":id", controllers.PutContent)
-        content.DELETE(":id", controllers.DeleteContent)
-        content.PATCH(":id", controllers.PatchContent)
-    }
-    contenttype := r.Group("/contenttypes")
-    // contenttype.Use(authMiddleware.MiddlewareFunc())
-    {
-        contenttype.GET("", controllers.GetContentTypes)
-        contenttype.GET(":id", controllers.GetContentType)
-        contenttype.POST("", controllers.PostContentType)
-        contenttype.PUT(":id", controllers.PutContentType)
-        contenttype.DELETE(":id", controllers.DeleteContentType)
-        contenttype.PATCH(":id", controllers.PatchContentType)
-    }
-    run := r.Group("/runs")
-    // run.Use(authMiddleware.MiddlewareFunc())
-    {
-        run.GET("", controllers.GetRuns)
-        run.GET(":id", controllers.GetRun)
-        run.POST("", controllers.PostRun)
-        run.PUT(":id", controllers.PutRun)
-        run.DELETE(":id", controllers.DeleteRun)
-        run.PATCH(":id", controllers.PatchRun)
-    }
-    config := r.Group("/config")
-    // config.Use(authMiddleware.MiddlewareFunc())
-    {
-        config.GET("", controllers.GetConfigs)
-        config.GET(":id", controllers.GetConfig)
-        config.POST("", controllers.PostConfig)
-        config.PUT(":id", controllers.PutConfig)
-        config.DELETE(":id", controllers.DeleteConfig)
-        config.PATCH(":id", controllers.PatchConfig)
-    }
-    r.GET("/metrics", gin.BasicAuth(gin.Accounts{
-        cfg.Server.Metrics.Username: cfg.Server.Metrics.Password,
-    }), controllers.MetricsHandler())
-    
-    log.Info("Listening on ", cfg.Server.Host, ":", cfg.Server.Port)
-    if err := http.ListenAndServe(":"+cfg.Server.Port, r); err != nil {
-        log.Fatal(err)
-    }
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusTemporaryRedirect, "https://georgslauf.de/")
+	})
+	router.GET("/ping", func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
+	})
+	router.GET("/version", func(c *gin.Context) {
+		c.String(http.StatusOK, "23.5.0-alpha")
+	})
+
+	// TODO nginx restrict instead of basicauth
+	router.GET("/metrics", gin.BasicAuth(gin.Accounts{
+		cfg.Server.Metrics.Username: cfg.Server.Metrics.Password,
+	}), controllers.MetricsHandler())
+
+	public := router.Group("/public")
+	{
+		public.Static("/media", "media")
+		public.
+			Use(BooleanPermission(systemCfg.System.PublicStations)).
+			GET("", controllers.GetPublic)
+		public.GET("/message", func(c *gin.Context) {
+			c.String(http.StatusOK, systemCfg.Notice)
+		})
+	}
+
+	// group := router.Group("/group")
+	// group.Use(k.Session())
+	// {
+	// 	group.GET("", controllers.GetGroups)
+	// 	group.GET(":id", controllers.GetGroup)
+	// 	group.POST("", controllers.PostGroup)
+	// 	group.PUT(":id", controllers.PutGroup)
+	// 	group.DELETE(":id", controllers.DeleteGroup)
+	// 	group.PATCH(":id", controllers.PatchGroup)
+	// }
+
+	// TODO check context for station / tribe / none
+	home := router.Group("/home")
+	home.Use(k.Session())
+	{
+		home.GET("", func(c *gin.Context) {
+			// TODO tribe / admin / both / all
+			stationID := c.GetString("station")
+			// tribeID := c.GetString("tribe")
+
+			// logged in as station
+			if (stationID != "") {
+				groups := controllers.GetGroupsWithPointsByStationID(c)
+				station, _ := controllers.GetStationByID(stationID)
+
+				c.HTML(http.StatusOK, "station/points", gin.H{
+					"station": station,
+					"groups": groups,
+					"groupings": systemCfg.Groupings,
+					"enableEdit": systemCfg.System.AllowGroupPoints,
+				})
+			}
+		})
+		home.
+			Use(BooleanPermission(systemCfg.System.AllowGroupPoints)).
+			PUT("group/:id", controllers.PutGroupPointByStationID)
+	}
+
+	settings := router.Group("/settings")
+	settings.Use(k.Session())
+	{
+		settings.GET("", func(c *gin.Context) {
+			// TODO tribe / admin / both / all
+			// if settings allow chaning posten settings (size usw)
+			stationID := c.GetString("station")
+			station, _ := controllers.GetStationByID(stationID)
+			c.HTML(http.StatusOK, "settings", gin.H{
+				"station": station,
+			})
+		})
+	}
+
+
+
+	tribe := router.Group("/tribe")
+	tribe.Use(k.Session())
+	{
+		tribe.GET("/info", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "tribe/info", systemCfg.Contact)
+		})
+		tribe.GET("/stations/:tribeid", controllers.GetStationsByTribe)
+		tribe.GET("/groups/:tribeid", controllers.GetGroupsByTribe)
+	// tribe.GET("", controllers.GetTribes)
+	// 	tribe.GET(":id", controllers.GetTribe)
+	// 	tribe.POST("", controllers.PostTribe)
+	// 	tribe.PUT(":id", controllers.PutTribe)
+	// 	tribe.DELETE(":id", controllers.DeleteTribe)
+	// 	tribe.PATCH(":id", controllers.PatchTribe)
+	// 	tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
+	}
+
+	// station := router.Group("/station")
+	// station.Use(k.Session())
+	// {
+	// 	station.GET("", controllers.GetStations)
+	// 	station.GET(":id", controllers.GetStation)
+	// 	station.POST("", controllers.PostStation)
+	// 	station.PUT(":id", controllers.PutStation)
+	// 	station.DELETE(":id", controllers.DeleteStation)
+	// 	station.PATCH(":id", controllers.PatchStation)
+	// }
+
+	// grouppoint := router.Group("/grouppoint")
+	// grouppoint.Use(k.Session())
+	// {
+	// 	grouppoint.GET("", controllers.GetGroupPoints)
+	// 	grouppoint.GET(":id", controllers.GetGroupPoint)
+	// 	grouppoint.POST("", controllers.PostGroupPoint)
+	// 	grouppoint.PUT(":id", controllers.PutGroupPoint)
+	// 	grouppoint.DELETE(":id", controllers.DeleteGroupPoint)
+	// 	grouppoint.PATCH(":id", controllers.PatchGroupPoint)
+	// }
+
+	// stationpoint := router.Group("/stationpoint")
+	// stationpoint.Use(k.Session())
+	// {
+	// 	stationpoint.GET("", controllers.GetStationPoints)
+	// 	stationpoint.GET(":id", controllers.GetStationPoint)
+	// 	stationpoint.POST("", controllers.PostStationPoint)
+	// 	stationpoint.PUT(":id", controllers.PutStationPoint)
+	// 	stationpoint.DELETE(":id", controllers.DeleteStationPoint)
+	// 	stationpoint.PATCH(":id", controllers.PatchStationPoint)
+	// }
+
+	// config := router.Group("/config")
+	// config.Use(k.Session())
+	// {
+	// 	config.POST("", controllers.PostConfig)
+	// 	config.PUT(":id", controllers.PutConfig)
+	// 	config.DELETE(":id", controllers.DeleteConfig)
+	// 	config.PATCH(":id", controllers.PatchConfig)
+	// }
+
+	log.Info("Listening on ", cfg.Server.Host, ":", cfg.Server.Port)
+	if err := http.ListenAndServe(":"+cfg.Server.Port, router); err != nil {
+		log.Fatal(err)
+	}
 }

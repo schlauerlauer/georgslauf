@@ -5,7 +5,6 @@ import (
 	"georgslauf/models"
 	"net/http"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
@@ -72,7 +71,11 @@ func GetGroupsWithPointsByStationID(c *gin.Context) []models.GroupWithStationPoi
 	// TODO use a view here
 	// soft delete is not automatically applied here
 	var groups []models.GroupWithStationPoints
-	result := models.DB.Table("groups").Select("groups.name, gp.value, gp.updated_at").Joins("left join group_points gp on gp.group_id = groups.id and gp.station_id = ?", c.MustGet("station")).Where("groups.deleted_at is null").Scan(&groups)
+	result := models.DB.Table("groups").
+		Select("groups.name, gp.value, groups.id, groups.grouping_id").
+		Joins("left join group_points gp on gp.group_id = groups.id and gp.station_id = ?", c.MustGet("station")).
+		Where("groups.deleted_at is null").
+		Scan(&groups)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
 		log.Error(result.Error)

@@ -1,4 +1,34 @@
-baseURL: "https://georgslauf.de/"
 languageCode: "de-DE"
-title: "Georgslauf"
+defaultContentLanguage: "de"
+baseURL: "https://georgslauf.de"
+title: "georgslauf.de"
 theme: "georgslauf"
+disablePathToLower: false
+enableGitInfo: true
+frontmatter:
+  date:
+  - "date"
+  - "publishDate"
+  - "lastmod"
+  expiryDate:
+  - "expiryDate"
+  lastmod:
+  - ":git"
+  - "lastmod"
+  - "date"
+  - "publishDate"
+  publishDate:
+  - "publishDate"
+  - "date"
+disableHugoGeneratorInject: true
+copyright: "© {year} georgslauf.de"
+params:
+  version: "23.5.0-alpha"
+  api: "/api"
+  header:
+    image: "images/2023.png" # relative to assets/
+  contributors: "schlauerlauer/georgslauf"
+author:
+  homepage:
+    url: "https://github.com/schlauerlauer/georgslauf"
+    name: "georgslauf"
