@@ -30,9 +30,8 @@ func GetTribeInfo(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get tribes failed.")
-    } else {
-        c.HTML(http.StatusOK, "tribe/info", config.Value)
     }
+    c.HTML(http.StatusOK, "tribe/info", config.Value)
 }
 
 func GetTribes(c *gin.Context) {
@@ -44,9 +43,8 @@ func GetTribes(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get tribes failed.")
-    } else {
-        c.JSON(http.StatusOK, tribes)
     }
+    c.JSON(http.StatusOK, tribes)
 }
 
 func GetTribe(c *gin.Context) {

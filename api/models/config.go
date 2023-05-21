@@ -1,16 +1,17 @@
 package models
 
 import (
-    "time"
+	"time"
+	"gorm.io/gorm"
 )
 
 type Config struct {
-    ID          uint                    `json:"id" gorm:"primary_key"`
-    CreatedAt   time.Time
-    UpdatedAt   time.Time
-    DeletedAt   time.Time
-    Name        string                  `json:"name" gorm:"uniqueIndex"`
-    Value       map[string]interface{}  `gorm:"serializer:json"`
+	ID			uint					`json:"id" gorm:"primary_key"`
+	CreatedAt	time.Time
+	UpdatedAt	time.Time
+	DeletedAt	gorm.DeletedAt
+	Name		string					`json:"name" gorm:"uniqueIndex"`
+	Value		map[string]interface{}	`gorm:"serializer:json"`
 }
 
 /*

@@ -27,10 +27,10 @@ func GetGroupPoints(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get grouppoints failed.")
-    } else {
-        c.JSON(http.StatusOK, grouppoints)
     }
+    c.JSON(http.StatusOK, grouppoints)
 }
+
 
 func GetGroupPoint(c *gin.Context) {
     var grouppoint models.GroupPoint

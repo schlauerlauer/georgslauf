@@ -27,9 +27,8 @@ func GetStationPoints(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get stationpoints failed.")
-    } else {
-        c.JSON(http.StatusOK, stationpoints)
     }
+    c.JSON(http.StatusOK, stationpoints)
 }
 
 func GetStationPoint(c *gin.Context) {

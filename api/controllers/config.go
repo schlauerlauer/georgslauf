@@ -27,9 +27,8 @@ func GetConfigs(c *gin.Context) {
     if result.Error != nil {
         c.AbortWithStatus(500)
         log.Warn("Get configs failed.")
-    } else {
-        c.JSON(http.StatusOK, configs)
     }
+    c.JSON(http.StatusOK, configs)
 }
 
 func GetConfig(c *gin.Context) {
