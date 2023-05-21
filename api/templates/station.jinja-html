@@ -1,8 +1,0 @@
-<!-- multiple stations viewed by a tribe -->
-{{ define "station/tribe" }}
-    <ul>
-    {{ range . }}
-        <li>{{ .Size }} {{ .Short }} - {{ .Name }} --- id {{ .ID }}</li>
-    {{ end }}
-    </ul>
-{{ end }}

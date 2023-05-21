@@ -10,7 +10,7 @@
   - name: "Build loadbalancer image"
     containers.podman.podman_image:
       name: "localhost/georgslauf-lb"
-      path: "./"
+      path: "./haproxy/"
       build:
         extra_args: "-f Containerfile.lb_local"
       force: yes
@@ -53,7 +53,7 @@
       recreate: no
       pod: "georgslauf-api-pod"
       volume:
-      - "./db:/var/lib/postgresql/data:Z"
+      - "./api/db:/var/lib/postgresql/data:Z"
       env:
         POSTGRES_USER: "georgslauf"
         POSTGRES_PASSWORD: "{{ georgslauf_api_db.password }}"
