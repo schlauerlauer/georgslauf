@@ -21,6 +21,7 @@ button {
     background-color: $button-background-color;
     cursor: pointer;
     transition: color 150ms ease-in-out, background 150ms ease-in-out;
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     border: solid 1px $button-color;

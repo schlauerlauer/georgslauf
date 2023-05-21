@@ -1,7 +1,7 @@
 ---
 type: "home"
 title: "Georgslauf 2023 - Bezirkenstock"
-image: "/images/ansgar-min.jpg"
+image: "images/ansgar-min.jpg" # relative to assets/
 imageAlt: "Kirche Sankt Ansgar"
 nav: 1
 ---

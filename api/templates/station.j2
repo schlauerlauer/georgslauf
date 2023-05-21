@@ -1,0 +1,25 @@
+<!-- multiple stations viewed by a tribe -->
+{{ define "station/tribe" }}
+    <ul>
+    {{ range . }}
+        <li>{{ .Size }} {{ .Short }} - {{ .Name }} --- id {{ .ID }}</li>
+    {{ end }}
+    </ul>
+{{ end }}
+
+<!-- punkte vergabe von posten an gruppen -->
+{{ define "station/points" }}
+    <h2>Posten {{ .station.Name }}</h2>
+    <h2>Gruppenbewertungen</h2>
+    <ul>
+    {{ range .groups }}
+        <li>
+            {{ .Name }}
+            {{ if .Value }}
+            {{ .Value }}
+            <span>Geändert {{ (.UpdatedAt).Format "15:04" }} Uhr</span>
+            {{ end }}
+        </li>
+    {{ end }}
+    </ul>
+{{ end }}
