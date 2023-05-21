@@ -1,0 +1,154 @@
+---
+- name: "georgslauf api playbook"
+  hosts: "localhost"
+  gather_facts: false
+  become: false
+  vars_files:
+    - "./vars/local.yml"
+  tasks:
+
+  - name: "Build loadbalancer image"
+    containers.podman.podman_image:
+      name: "localhost/georgslauf-lb"
+      path: "./haproxy/"
+      build:
+        extra_args: "-f Containerfile.lb_local"
+      force: yes
+      pull: no
+      tag: "latest"
+    tags:
+    - "lb"
+    - "recreate"
+
+  - name: "Start loadbalancer container"
+    containers.podman.podman_container:
+      name: "andugo-lb"
+      image: "localhost/georgslauf-lb:latest"
+      state: "started"
+      restart_policy: "on-failure"
+      recreate: yes
+      ports:
+      - "8081:8081"
+    tags:
+    - "lb"
+    - "recreate"
+
+  - name: "georglsauf api pod"
+    containers.podman.podman_pod:
+      name: "georgslauf-api-pod"
+      state: "created"
+      infra_name: "georgslauf-api-infra"
+      recreate: no
+      ports:
+      - "11432:5432" # postgresql
+    tags:
+    - "api"
+
+  - name: "georgslauf api db"
+    containers.podman.podman_container:
+      name: "georgslauf-db"
+      image: "docker.io/library/postgres:15.1-alpine3.17"
+      state: "started"
+      restart_policy: "on-failure"
+      recreate: no
+      pod: "georgslauf-api-pod"
+      volume:
+      - "./api/db:/var/lib/postgresql/data:Z"
+      env:
+        POSTGRES_USER: "georgslauf"
+        POSTGRES_PASSWORD: "{{ georgslauf_api_db.password }}"
+        POSTGRES_DB: "georgslauf"
+    tags:
+    - "api"
+
+  - name: "georgslauf auth pod"
+    containers.podman.podman_pod:
+      name: "georgslauf-auth-pod"
+      state: "created"
+      infra_name: "georgslauf-auth-infra"
+      recreate: no
+      ports:
+      - "11431:5432" # postgresql
+      - "11455:3000" # selfservice example
+      - "11433:4433" # kratos public
+      - "11434:4434" # kratos admin
+      - "11446:4446"  # mailslurper dashboard
+      - "4447:4447" # mailslurper api, FE expects this port
+    tags:
+    - "auth"
+
+  - name: "georgslauf auth db"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-db"
+      image: "docker.io/library/postgres:15.1-alpine3.17"
+      state: "started"
+      restart_policy: "on-failure"
+      recreate: no
+      pod: "georgslauf-auth-pod"
+      volume:
+      - "./auth/db:/var/lib/postgresql/data:Z"
+      env:
+        POSTGRES_USER: "kratos"
+        POSTGRES_PASSWORD: "{{ georgslauf_auth_db.password }}"
+        POSTGRES_DB: "kratos"
+    tags:
+    - "auth"
+
+  - name: "georgslauf auth migration"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-migrate"
+      image: "docker.io/oryd/kratos:v0.13.0"
+      state: "started"
+      restart_policy: "no"
+      rm: yes
+      pod: "georgslauf-auth-pod"
+      volume:
+      - "./auth/config:/etc/config/kratos:z"
+      env:
+        DSN: "postgres://kratos:{{ georgslauf_auth_db.password }}@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4"
+      command: "-c /etc/config/kratos/kratos.yml migrate sql -e --yes"
+    tags:
+    - "auth"
+
+  - name: "kratos"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-app"
+      image: "docker.io/oryd/kratos:v0.13.0"
+      state: "started"
+      restart_policy: "no"
+      rm: no
+      pod: "georgslauf-auth-pod"
+      volume:
+      - "./auth/config:/etc/config/kratos:z"
+      env:
+        DSN: "postgres://kratos:{{ georgslauf_auth_db.password }}@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4"
+      command: "serve -c /etc/config/kratos/kratos.yml --dev --watch-courier"
+    tags:
+    - "auth"
+
+  - name: "mailslurper"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-mailslurper"
+      image: "docker.io/oryd/mailslurper:smtps-latest"
+      state: "started"
+      restart_policy: "no"
+      recreate: yes
+      pod: "georgslauf-auth-pod"
+      volume:
+      - "./mailslurper.json:/go/src/github.com/mailslurper/mailslurper/cmd/mailslurper/config.json:ro,Z"
+    tags:
+    - "auth"
+
+  - name: "kratos-selfservice-example"
+    containers.podman.podman_container:
+      name: "georgslauf-auth-selfservice"
+      image: "docker.io/oryd/kratos-selfservice-ui-node:v0.13.0"
+      state: "started"
+      restart_policy: "no"
+      rm: no
+      pod: "georgslauf-auth-pod"
+      env:
+        KRATOS_PUBLIC_URL: "http://127.0.0.1:4433/"
+        KRATOS_BROWSER_URL: "http://localhost:11433/"
+    tags:
+    - "auth"
