@@ -1,0 +1,21 @@
+{{ define "main" }}
+<section class="main">
+    <h1>Stamm # TODO</h1>
+    <h2>{{ .Title }}</h2>
+    <h3>{{ .Params.Subtitle }}</h3>
+    <div hx-get="{{ .Site.Params.Api }}/tribe/info" hx-trigger="load once"></div>
+
+    <div>{{ .Content }}</div>
+
+    <h2>Angemeldete Gruppen</h2>
+    <div hx-get="{{ .Site.Params.Api }}/tribe/groups/1" hx-trigger="load once">
+        <img class="htmx-indicator" src="/icons/oval.svg"/>
+    </div>
+
+    <h2>Angemeldete Posten</h2>
+    <div hx-get="{{ .Site.Params.Api }}/tribe/stations/1" hx-trigger="load once">
+        <img class="htmx-indicator" src="/icons/oval.svg"/>
+    </div>
+
+</section>
+{{ end }}

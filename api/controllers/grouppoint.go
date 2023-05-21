@@ -42,6 +42,20 @@ func GetGroupPoint(c *gin.Context) {
     c.JSON(http.StatusOK, grouppoint)
 }
 
+func PutGroupPointByStationID(c *gin.Context) {
+    var input models.PutPoint
+    if err := c.Bind(&input); err != nil {
+        c.AbortWithStatus(http.StatusBadRequest)
+    }
+    if (input.Value > 100) {
+        c.String(http.StatusBadRequest, "Falsche Eingabe")
+    }
+    models.DB.Model(&models.GroupPoint{}).
+        Where("station_id = ? and group_id = ?", c.GetString("station"), c.Param("id")).
+        Update("value", input.Value)
+    c.HTML(http.StatusOK, "station/putpoint", input)
+}
+
 func PostGroupPoint(c *gin.Context) {
     // Validate input
     var input CreateGroupPointInput

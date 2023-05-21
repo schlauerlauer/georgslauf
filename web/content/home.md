@@ -4,5 +4,6 @@ type: "home"
 # TODO enableLastUpdate: true
 disableLastmod: true
 disableNav: true
-enableHomeQuery: true
+query:
+  home: true
 ---

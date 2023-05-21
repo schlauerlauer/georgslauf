@@ -21,5 +21,6 @@ type Group struct {
 type GroupWithStationPoints struct {
 	Name		string
 	Value		uint
-	UpdatedAt	time.Time
+	ID			uint
+	GroupingID	uint
 }

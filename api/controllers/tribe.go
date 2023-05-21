@@ -24,16 +24,6 @@ type UpdateTribeInput struct {
     URL     string  `json:"url"`
 }
 
-func GetTribeInfo(c *gin.Context) {
-    var config models.Config
-    result := models.DB.Where("name = 'contact'").Take(&config)
-    if result.Error != nil {
-        c.AbortWithStatus(500)
-        log.Warn("Get tribes failed.")
-    }
-    c.HTML(http.StatusOK, "tribe/info", config.Value)
-}
-
 func GetTribes(c *gin.Context) {
     var tribes []models.Tribe
     _start, _ := strconv.Atoi(c.DefaultQuery("_start", "0"))

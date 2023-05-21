@@ -24,7 +24,6 @@ func ConnectDatabase(config SqlConfig) {
     db.AutoMigrate(
         &Group{},
         &GroupPoint{},
-        &Login{},
         &Station{},
         &StationPoint{},
         &Tribe{},
@@ -33,25 +32,8 @@ func ConnectDatabase(config SqlConfig) {
         &Image{},
     )
 
-    db.Preload("Image").Find(&Station{})
+    db.Preload("Tribe").Preload("Image").Find(&Station{})
     db.Preload("Image").Find(&Feed{})
-
-    // TODO remove
-    // data := Config{
-    //     Name: "test",
-    //     Value: false,
-    //     JobInfo: Job{
-    //         Title: "test",
-    //         Location: "test",
-    //         IsIntern: false,
-    //     },
-    // }
-
-    /* TODO remove
-    // var cfg Config
-    // db.Where("name = 'test'").Find(&cfg)
-    // log.Info(cfg.Value)
-    */
 
     log.Info("Database migration sucessful.")
 

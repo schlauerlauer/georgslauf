@@ -1,4 +1,10 @@
 {{ define "tribe/info" }}
-    bei Fragen: <a href="{{ .slack }}">Slack Channel</a>
-    oder <a href="tel:{{ .tel }}">anrufen</a> / <a href="{{ .whatsapp }}">WhatsApp</a>
+    bei Fragen: <a href="{{ .Slack }}">Slack Channel</a>
+
+    oder <a href="tel:{{ .Tel }}">anrufen</a> / <a href="{{ .Whatsapp }}">WhatsApp</a>
+
+    Für die Postenaufteilung haben wir uns folgendes gedacht:
+
+    Stamm Admin, bitte {{ .StationAmount }} Posten anmelden
+
 {{ end }}

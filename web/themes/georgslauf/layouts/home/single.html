@@ -1,0 +1,72 @@
+{{ define "main" }}
+<section class="main">
+    {{ if ne .Params.DisableNav true }}
+    <div class="main-nav">
+        <ul hx-boost="true">
+            {{ if eq .Params.Nav 1 }}
+            <li><a class="main-nav-selected" href="/info">Info</a></li>
+            <li><a href="/posten">Posten</a></li>
+            <li><a href="/feed">Feed</a></li>
+            {{ end }}
+            {{ if eq .Params.Nav 2}}
+            <li><a href="/info">Info</a></li>
+            <li><a class="main-nav-selected" href="/posten">Posten</a></li>
+            <li><a href="/feed">Feed</a></li>
+            {{ end }}
+            {{ if eq .Params.Nav 3}}
+            <li><a href="/info">Info</a></li>
+            <li><a href="/posten">Posten</a></li>
+            <li><a class="main-nav-selected" href="/feed">Feed</a></li>
+            {{ end }}
+        </ul>
+    </div>
+    {{ end }}
+    <div class="main-tab">
+        {{ if .Params.Image }}
+        {{ $image := resources.Get .Params.Image }}
+        {{ $image = $image.Resize "732x webp q80" }}
+        <img src="{{ $image.Permalink }}" alt="{{ .Params.ImageAlt }}"/>
+        {{ end }}
+
+        {{ if .Title }}
+        {{ if .Params.TitleAlignCenter }}
+        <h2 class="text-align-center">{{ .Title }}</h2>
+        {{ else }}
+        <h2>{{ .Title }}</h2>
+        {{ end }}
+        {{ end }}
+
+        {{ if ne .Params.HideMessage true }}
+        <div class="notice" hx-get="{{ .Site.Params.Api }}/public/message" hx-trigger="load"></div>
+        {{ end }}
+
+        {{ if .Params.Query.Home }}
+        <div hx-get="{{ .Site.Params.Api }}/home" hx-trigger="load">
+            <img class="htmx-indicator" src="/icons/oval.svg"/>
+        </div>
+        {{ end }}
+
+        {{ if .Params.Query.Settings }}
+        <div hx-get="{{ .Site.Params.Api }}/settings" hx-trigger="load">
+            <img class="htmx-indicator" src="/icons/oval.svg"/>
+        </div>
+        {{ end }}
+
+        <div>
+            {{ .Content }}
+            {{ if .Params.Query.Posten }}
+            <div
+                class="posten-list"
+                hx-get="{{ .Site.Params.Api }}/public"
+                hx-trigger="load"
+            >
+                <img class="htmx-indicator" src="/icons/oval.svg"/>
+            </div>
+            {{ end }}
+        </div>
+        {{ if ne .Params.DisableLastmod true }}
+        <div class="last-mod">Letzte Änderung {{ .Lastmod.Format "02.01.06 15:04" }}</span>
+        {{ end }}
+    </div>
+</section>
+{{ end }}

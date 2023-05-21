@@ -6,16 +6,26 @@ import (
 )
 
 type Config struct {
-	ID			uint					`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time
-	UpdatedAt	time.Time
-	DeletedAt	gorm.DeletedAt
-	Name		string					`json:"name" gorm:"uniqueIndex"`
-	Value		map[string]interface{}	`gorm:"serializer:json"`
+	ID					uint					`json:"id" gorm:"primary_key"`
+	CreatedAt			time.Time
+	UpdatedAt			time.Time
+	DeletedAt			gorm.DeletedAt
+	Notice				string
+	System				SystemConfig			`gorm:"serializer:json"`
+	Contact				ContactConfig			`gorm:"serializer:json"`
+	Groupings			[]string				`gorm:"serializer:json"`
 }
 
-/*
-config names:
-- notice: message
-- contact: slack, tel, whatsapp
-*/
+type SystemConfig struct {
+	// Stations can edit points
+	AllowGroupPoints	bool					`json:"allowGroupPoints"`
+	// Public can view stations
+	PublicStations		bool					`json:"publicStations"`
+}
+
+type ContactConfig struct {
+	Slack				string					`json:"slack"`
+	Tel					string					`json:"tel"`
+	Whatsapp			string					`json:"whatsapp"`
+	StationAmount		uint					`json:"stationAmount"`
+}

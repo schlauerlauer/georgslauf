@@ -222,6 +222,24 @@ footer {
     transition: opacity 150ms ease-in-out;
 }
 
+// Hide up / down buttons in input number field
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none !important;
+    margin: 0 !important; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield !important; /* Firefox */
+}
+
+.notice {
+    color: $accent-color !important;
+    margin-block: 2rem;
+    font-weight: bold;
+    font-size: 1rem;
+}
 
 @media (min-width: 500px) {
     header {

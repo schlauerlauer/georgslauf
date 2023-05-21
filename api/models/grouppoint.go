@@ -12,3 +12,7 @@ type GroupPoint struct { // Points given to a group
 	GroupID		uint		`json:"GroupID" gorm:"foreignKey:GroupID;index:idx_gp,unique"`
 	Value		uint		`json:"value"`
 }
+
+type PutPoint struct {
+	Value		uint		`form:"value"`
+}

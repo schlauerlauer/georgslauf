@@ -18,14 +18,3 @@ func GetPublic(c *gin.Context) {
 		"stations": stations,
 	})
 }
-
-func GetNotice(c *gin.Context) {
-	var config models.Config
-	result := models.DB.Where("name = 'notice'").Find(&config)
-
-	if result.Error != nil {
-		c.AbortWithStatus(500)
-		log.Warn("Get public info failed.")
-	}
-	c.HTML(http.StatusOK, "public/notice", config.Value)
-}
