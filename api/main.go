@@ -11,6 +11,7 @@ import (
 	ory "github.com/ory/client-go"
 	"errors"
 	"context"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -113,14 +114,11 @@ func (k *kratosMiddleware) Session() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := k.validateSession(c.Request)
 		if err != nil {
-			c.Redirect(http.StatusTemporaryRedirect, "http://localhost:11455/login") // TODO
-			c.AbortWithStatus(307)
-			log.Warn("error", err)
+			c.AbortWithStatus(http.StatusUnauthorized) // not logged in
 			return
 		}
 		if !*session.Active {
-			log.Warn("Session inactive!")
-			c.Redirect(http.StatusTemporaryRedirect, "http://localhost:11455/login") // TODO
+			c.AbortWithStatus(http.StatusUnauthorized) // session not active
 			return
 		}
 
@@ -133,10 +131,10 @@ func (k *kratosMiddleware) Session() gin.HandlerFunc {
 }
 
 
-func BooleanPermission(permission bool) gin.HandlerFunc {
+func BooleanPermission(permission bool, code int) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if (!permission) {
-			c.AbortWithStatus(http.StatusForbidden)
+			c.AbortWithStatus(code)
 		}
 		c.Next()
 	}
@@ -156,13 +154,11 @@ func main() {
 	updateSystemConfig()
 
 	router := gin.Default()
-	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	
-	k := KratosMiddleware()
 	router.Use(CORS())
-
 	router.LoadHTMLGlob("templates/*")
+
+	k := KratosMiddleware()
 
 	router.GET("/", func(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, "https://georgslauf.de/")
@@ -174,24 +170,18 @@ func main() {
 		c.String(http.StatusOK, "23.5.0-alpha")
 	})
 
-	// TODO nginx restrict instead of basicauth
-	router.GET("/metrics", gin.BasicAuth(gin.Accounts{
-		cfg.Server.Metrics.Username: cfg.Server.Metrics.Password,
-	}), controllers.MetricsHandler())
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	public := router.Group("/public")
 	{
 		public.Static("/media", "media")
-		public.
-			Use(BooleanPermission(systemCfg.System.PublicStations)).
-			GET("", controllers.GetPublic)
+		public.GET("", BooleanPermission(systemCfg.System.PublicStations, http.StatusNoContent), controllers.GetPublic)
 		public.GET("/message", func(c *gin.Context) {
 			c.String(http.StatusOK, systemCfg.Notice)
 		})
 	}
 
-	// group := router.Group("/group")
-	// group.Use(k.Session())
+	// group := router.Group("/group", k.Session())
 	// {
 	// 	group.GET("", controllers.GetGroups)
 	// 	group.GET(":id", controllers.GetGroup)
@@ -202,8 +192,7 @@ func main() {
 	// }
 
 	// TODO check context for station / tribe / none
-	home := router.Group("/home")
-	home.Use(k.Session())
+	home := router.Group("/home", k.Session())
 	{
 		home.GET("", func(c *gin.Context) {
 			// TODO tribe / admin / both / all
@@ -224,12 +213,10 @@ func main() {
 			}
 		})
 		home.
-			Use(BooleanPermission(systemCfg.System.AllowGroupPoints)).
-			PUT("group/:id", controllers.PutGroupPointByStationID)
+			PUT("group/:id", BooleanPermission(systemCfg.System.AllowGroupPoints, http.StatusNoContent), controllers.PutGroupPointByStationID)
 	}
 
-	settings := router.Group("/settings")
-	settings.Use(k.Session())
+	settings := router.Group("/settings", k.Session())
 	{
 		settings.GET("", func(c *gin.Context) {
 			// TODO tribe / admin / both / all
@@ -242,10 +229,7 @@ func main() {
 		})
 	}
 
-
-
-	tribe := router.Group("/tribe")
-	tribe.Use(k.Session())
+	tribe := router.Group("/tribe", k.Session())
 	{
 		tribe.GET("/info", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "tribe/info", systemCfg.Contact)
@@ -261,8 +245,7 @@ func main() {
 	// 	tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
 	}
 
-	// station := router.Group("/station")
-	// station.Use(k.Session())
+	// station := router.Group("/station", k.Session())
 	// {
 	// 	station.GET("", controllers.GetStations)
 	// 	station.GET(":id", controllers.GetStation)
@@ -272,8 +255,7 @@ func main() {
 	// 	station.PATCH(":id", controllers.PatchStation)
 	// }
 
-	// grouppoint := router.Group("/grouppoint")
-	// grouppoint.Use(k.Session())
+	// grouppoint := router.Group("/grouppoint", k.Session())
 	// {
 	// 	grouppoint.GET("", controllers.GetGroupPoints)
 	// 	grouppoint.GET(":id", controllers.GetGroupPoint)
@@ -283,8 +265,7 @@ func main() {
 	// 	grouppoint.PATCH(":id", controllers.PatchGroupPoint)
 	// }
 
-	// stationpoint := router.Group("/stationpoint")
-	// stationpoint.Use(k.Session())
+	// stationpoint := router.Group("/stationpoint", k.Session()))
 	// {
 	// 	stationpoint.GET("", controllers.GetStationPoints)
 	// 	stationpoint.GET(":id", controllers.GetStationPoint)
@@ -294,8 +275,7 @@ func main() {
 	// 	stationpoint.PATCH(":id", controllers.PatchStationPoint)
 	// }
 
-	// config := router.Group("/config")
-	// config.Use(k.Session())
+	// config := router.Group("/config", k.Session())
 	// {
 	// 	config.POST("", controllers.PostConfig)
 	// 	config.PUT(":id", controllers.PutConfig)
