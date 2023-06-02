@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	ID					uint					`json:"id" gorm:"primary_key"`
+	ID					int64					`json:"id" gorm:"primary_key"`
 	CreatedAt			time.Time
 	UpdatedAt			time.Time
 	DeletedAt			gorm.DeletedAt
@@ -27,5 +27,5 @@ type ContactConfig struct {
 	Slack				string					`json:"slack"`
 	Tel					string					`json:"tel"`
 	Whatsapp			string					`json:"whatsapp"`
-	StationAmount		uint					`json:"stationAmount"`
+	StationAmount		int64					`json:"stationAmount"`
 }

@@ -4,15 +4,16 @@ import (
 	"time"
 )
 
-type GroupPoint struct { // Points given to a group
-	ID			uint		`json:"id" gorm:"primary_key"`
+// Points given to a group
+type GroupPoint struct {
+	ID			int64		`json:"id" gorm:"primary_key"`
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
-	StationID	uint		`json:"StationID" gorm:"foreignKey:StationID;index:idx_gp,unique"`
-	GroupID		uint		`json:"GroupID" gorm:"foreignKey:GroupID;index:idx_gp,unique"`
-	Value		uint		`json:"value"`
+	StationID	int64		`json:"StationID" gorm:"foreignKey:StationID;index:idx_gp,unique"`
+	GroupID		int64		`json:"GroupID" gorm:"foreignKey:GroupID;index:idx_gp,unique"`
+	Value		int64		`json:"value"`
 }
 
 type PutPoint struct {
-	Value		uint		`form:"value"`
+	Value		int64		`form:"value"`
 }

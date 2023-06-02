@@ -7,14 +7,14 @@ import (
 )
 
 type Station struct {
-	ID			uint			`json:"id" gorm:"primary_key"`
+	ID			int64			`json:"id" gorm:"primary_key"`
 	CreatedAt	time.Time
 	UpdatedAt	time.Time
 	DeletedAt	gorm.DeletedAt
 	Name		string			`json:"name" gorm:"unique"`
 	Short		string			`json:"short" gorm:"unique"`
-	Size		uint			`json:"size"`
-	TribeID		uint			`json:"TribeID" gorm:"foreignKey:TribeID,index;not null"`
+	Size		int64			`json:"size"`
+	TribeID		int64			`json:"TribeID" gorm:"foreignKey:TribeID,index;not null"`
 	Tribe		Tribe
 	ImageID		uuid.UUID		`gorm:"foreignKey:ImageID"`
 	Image		Image
