@@ -13,17 +13,17 @@ import (
 type CreateGroupInput struct {
 	Short		string	`json:"short" binding:"required"`
 	Name		string	`json:"name" binding:"required"`
-	Size		uint	`json:"size" binding:"required"`
-	GroupingID	uint	`json:"groupingID" binding:"required"`
-	TribeID		uint	`json:"TribeID" binding:"required"`
+	Size		int64	`json:"size" binding:"required"`
+	GroupingID	int64	`json:"groupingID" binding:"required"`
+	TribeID		int64	`json:"TribeID" binding:"required"`
 }
 
 
 type UpdateGroupInput struct {
 	Name		string	`json:"name"`
-	Size		uint	`json:"size"`
+	Size		int64	`json:"size"`
 	Short		string	`json:"short"`
-	TribeID		uint	`json:"TribeID"`
+	TribeID		int64	`json:"TribeID"`
 	// Grouping?
 }
 

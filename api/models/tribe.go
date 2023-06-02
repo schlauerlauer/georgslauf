@@ -7,7 +7,7 @@ import (
 )
 
 type Tribe struct {
-	ID			uint			`json:"id" gorm:"primary_key"`
+	ID			int64			`json:"id" gorm:"primary_key"`
 	CreatedAt	time.Time		`json:"CreatedAt"`
 	UpdatedAt	time.Time		`json:"UpdatedAt"`
 	DeletedAt	gorm.DeletedAt	`json:"DeletedAt"`
