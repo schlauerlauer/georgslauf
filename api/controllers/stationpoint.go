@@ -4,18 +4,19 @@ import (
 	"georgslauf/models"
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
 type CreateStationPointInput struct {
-	GroupID     int64    `json:"GroupID" binding:"required"`
-	StationID   int64    `json:"StationID" binding:"required"`
-	Value       int64    `json:"value" binding:"required"`
+	GroupID		int64	`json:"GroupID" binding:"required"`
+	StationID	int64	`json:"StationID" binding:"required"`
+	Value		int64	`json:"value" binding:"required"`
 }
 
 type UpdateStationPointInput struct {
-	Value   int64    `json:"value"`
+	Value		int64	`json:"value"`
 }
 
 func GetStationPoints(c *gin.Context) {

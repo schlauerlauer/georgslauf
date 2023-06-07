@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
 	"georgslauf/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
