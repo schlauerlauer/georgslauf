@@ -175,7 +175,7 @@ func main() {
 	public := router.Group("/public")
 	{
 		public.Static("/media", "media")
-		public.GET("", BooleanPermission(systemCfg.System.PublicStations, http.StatusNoContent), controllers.GetPublic)
+		public.GET("", BooleanPermission(systemCfg.System.PublicStationsVisible, http.StatusNoContent), controllers.GetPublic)
 		public.GET("/message", func(c *gin.Context) {
 			c.String(http.StatusOK, systemCfg.Notice)
 		})
@@ -240,7 +240,6 @@ func main() {
 	// 	tribe.GET(":id", controllers.GetTribe)
 	// 	tribe.POST("", controllers.PostTribe)
 	// 	tribe.PUT(":id", controllers.PutTribe)
-	// 	tribe.DELETE(":id", controllers.DeleteTribe)
 	// 	tribe.PATCH(":id", controllers.PatchTribe)
 	// 	tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
 	}
@@ -261,7 +260,6 @@ func main() {
 	// 	grouppoint.GET(":id", controllers.GetGroupPoint)
 	// 	grouppoint.POST("", controllers.PostGroupPoint)
 	// 	grouppoint.PUT(":id", controllers.PutGroupPoint)
-	// 	grouppoint.DELETE(":id", controllers.DeleteGroupPoint)
 	// 	grouppoint.PATCH(":id", controllers.PatchGroupPoint)
 	// }
 
@@ -271,7 +269,6 @@ func main() {
 	// 	stationpoint.GET(":id", controllers.GetStationPoint)
 	// 	stationpoint.POST("", controllers.PostStationPoint)
 	// 	stationpoint.PUT(":id", controllers.PutStationPoint)
-	// 	stationpoint.DELETE(":id", controllers.DeleteStationPoint)
 	// 	stationpoint.PATCH(":id", controllers.PatchStationPoint)
 	// }
 
@@ -279,7 +276,6 @@ func main() {
 	// {
 	// 	config.POST("", controllers.PostConfig)
 	// 	config.PUT(":id", controllers.PutConfig)
-	// 	config.DELETE(":id", controllers.DeleteConfig)
 	// 	config.PATCH(":id", controllers.PatchConfig)
 	// }
 

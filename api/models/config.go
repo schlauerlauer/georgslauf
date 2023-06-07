@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -18,9 +19,13 @@ type Config struct {
 
 type SystemConfig struct {
 	// Stations can edit points
-	AllowGroupPoints	bool					`json:"allowGroupPoints"`
+	AllowGroupPoints		bool				`json:"allowGroupPoints"`
 	// Public can view stations
-	PublicStations		bool					`json:"publicStations"`
+	PublicStationsVisible	bool				`json:"publicStations"`
+	// The run has started
+	RunStarted				bool				`json:"runStarted"`
+	// The run has finished
+	RunEnded				bool				`json:"runEnded"`
 }
 
 type ContactConfig struct {
