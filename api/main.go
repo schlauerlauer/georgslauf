@@ -154,7 +154,6 @@ func main() {
 	updateSystemConfig()
 
 	router := gin.Default()
-	router.Use(gin.Recovery())
 	router.Use(CORS())
 	router.LoadHTMLGlob("templates/*")
 
@@ -280,7 +279,7 @@ func main() {
 	// }
 
 	log.Info("Listening on ", cfg.Server.Host, ":", cfg.Server.Port)
-	if err := http.ListenAndServe(":"+cfg.Server.Port, router); err != nil {
+	if err := router.Run(":"+cfg.Server.Port); err != nil {
 		log.Fatal(err)
 	}
 }

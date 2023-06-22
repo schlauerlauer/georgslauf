@@ -9,8 +9,8 @@ import (
 
 type Tribe struct {
 	ID			int64			`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time		`json:"CreatedAt"`
-	UpdatedAt	time.Time		`json:"UpdatedAt"`
+	CreatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;" json:"CreatedAt"`
+	UpdatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;" json:"UpdatedAt"`
 	DeletedAt	gorm.DeletedAt	`json:"DeletedAt"`
 	Name		string			`json:"name" gorm:"unique;not null"`
 	Short		string			`json:"short" gorm:"unique; not null"`

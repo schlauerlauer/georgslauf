@@ -7,14 +7,14 @@ import (
 )
 
 type Config struct {
-	ID					int64					`json:"id" gorm:"primary_key"`
-	CreatedAt			time.Time
-	UpdatedAt			time.Time
+	ID					int64					`json:"id" gorm:"primary_key;"`
+	CreatedAt			time.Time				`gorm:"default:CURRENT_TIMESTAMP;"`
+	UpdatedAt			time.Time				`gorm:"default:CURRENT_TIMESTAMP;"`
 	DeletedAt			gorm.DeletedAt
 	Notice				string
-	System				SystemConfig			`gorm:"serializer:json"`
-	Contact				ContactConfig			`gorm:"serializer:json"`
-	Groupings			[]string				`gorm:"serializer:json"`
+	System				SystemConfig			`gorm:"serializer:json;"`
+	Contact				ContactConfig			`gorm:"serializer:json;"`
+	Groupings			[]string				`gorm:"serializer:json;"`
 }
 
 type SystemConfig struct {

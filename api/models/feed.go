@@ -9,8 +9,8 @@ import (
 
 type Feed struct {
 	ID			int64			`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time		`json:"CreatedAt"`
-	UpdatedAt	time.Time		`json:"UpdatedAt"`
+	CreatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;" json:"CreatedAt"`
+	UpdatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;" json:"UpdatedAt"`
 	DeletedAt	gorm.DeletedAt	`json:"DeletedAt"`
 	TribeID		int64			`json:"TribeID" gorm:"foreignKey:TribeID;"`
 	Tribe		Tribe
@@ -25,6 +25,6 @@ type Feed struct {
 }
 
 type FeedViewTS struct {
-	ID			uuid.UUID		`gorm:"uniqueIndex"`
+	ID			uuid.UUID		`gorm:"primary_key;type:uuid;default:uuid_generate_v4();"`
 	FeedViewed	time.Time
 }
