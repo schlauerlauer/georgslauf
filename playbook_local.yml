@@ -53,7 +53,7 @@
       recreate: no
       pod: "georgslauf-api-pod"
       volume:
-      - "./api/db:/var/lib/postgresql/data:Z"
+      - "{{ playbook_dir }}/api/db:/var/lib/postgresql/data:Z"
       env:
         POSTGRES_USER: "georgslauf"
         POSTGRES_PASSWORD: "{{ georgslauf_api_db.password }}"
@@ -86,7 +86,7 @@
       recreate: no
       pod: "georgslauf-auth-pod"
       volume:
-      - "./auth/db:/var/lib/postgresql/data:Z"
+      - "{{ playbook_dir }}/auth/db:/var/lib/postgresql/data:Z"
       env:
         POSTGRES_USER: "kratos"
         POSTGRES_PASSWORD: "{{ georgslauf_auth_db.password }}"
@@ -103,7 +103,7 @@
       rm: yes
       pod: "georgslauf-auth-pod"
       volume:
-      - "./auth/config:/etc/config/kratos:z"
+      - "{{ playbook_dir }}/auth/config:/etc/config/kratos:z"
       env:
         DSN: "postgres://kratos:{{ georgslauf_auth_db.password }}@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4"
       command: "-c /etc/config/kratos/kratos.yml migrate sql -e --yes"
@@ -119,7 +119,7 @@
       rm: no
       pod: "georgslauf-auth-pod"
       volume:
-      - "./auth/config:/etc/config/kratos:z"
+      - "{{ playbook_dir }}/auth/config:/etc/config/kratos:z"
       env:
         DSN: "postgres://kratos:{{ georgslauf_auth_db.password }}@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4"
       command: "serve -c /etc/config/kratos/kratos.yml --dev --watch-courier"
@@ -135,7 +135,7 @@
       recreate: yes
       pod: "georgslauf-auth-pod"
       volume:
-      - "./mailslurper.json:/go/src/github.com/mailslurper/mailslurper/cmd/mailslurper/config.json:ro,Z"
+      - "{{ playbook_dir }}/mailslurper.json:/go/src/github.com/mailslurper/mailslurper/cmd/mailslurper/config.json:ro,Z"
     tags:
     - "auth"
 
