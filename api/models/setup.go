@@ -33,9 +33,6 @@ func ConnectDatabase(config SqlConfig) {
 		&Image{},
 	)
 
-	db.Preload("Tribe").Preload("Image").Find(&Station{})
-	db.Preload("Image").Find(&Feed{})
-
 	log.Info("Database migration sucessful.")
 
 	// db.Exec(`

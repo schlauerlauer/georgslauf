@@ -9,8 +9,8 @@ import (
 
 type Station struct {
 	ID			int64			`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time
-	UpdatedAt	time.Time
+	CreatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;"`
+	UpdatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;"`
 	DeletedAt	gorm.DeletedAt
 	Name		string			`json:"name" gorm:"unique"`
 	Short		string			`json:"short" gorm:"unique"`

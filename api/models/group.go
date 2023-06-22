@@ -8,8 +8,8 @@ import (
 
 type Group struct {
 	ID			int64			`json:"id" gorm:"primary_key"`
-	CreatedAt	time.Time		`json:"CreatedAt"`
-	UpdatedAt	time.Time		`json:"UpdatedAt"`
+	CreatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;" json:"CreatedAt"`
+	UpdatedAt	time.Time		`gorm:"default:CURRENT_TIMESTAMP;" json:"UpdatedAt"`
 	DeletedAt	gorm.DeletedAt	`json:"DeletedAt"`
 	Short		string			`json:"short" binding:"required" gorm:"unique"`
 	Name		string			`json:"name" binding:"required"  gorm:"unique;not null"`
