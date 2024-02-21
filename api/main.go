@@ -1,27 +1,25 @@
 package main
 
 import (
-	"net/http"
+	"context"
+	"errors"
 	"georgslauf/controllers"
 	"georgslauf/models"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
-	"os"
 	ory "github.com/ory/client-go"
-	"errors"
-	"context"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gopkg.in/yaml.v2"
+	"log/slog"
+	"net/http"
+	"os"
 )
 
 var (
-	cfg = newConfig("./config.yaml")
+	cfg       = newConfig("./config.yaml")
 	systemCfg = &models.Config{}
 )
 
 func init() {
-	log.SetLevel(log.DebugLevel)
-	log.Print("Log level ", log.GetLevel(), ".")
 	checkConfig()
 }
 
@@ -37,25 +35,26 @@ func checkConfig() {
 
 func checkEmptyString(checkThis string, description string) {
 	if checkThis == "" {
-		log.Fatal("needed config var ", description, " is empty.")
+		slog.Error("missing config variable", "description", description)
+		os.Exit(1)
 	}
 }
 
-func newConfig(configPath string) (*models.APIConfig) {
+func newConfig(configPath string) *models.APIConfig {
 	config := &models.APIConfig{}
 	file, err := os.Open(configPath)
 	if err != nil {
-		log.Error(err)
+		slog.Error("err", err)
 	}
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			log.Error(err)
+			slog.Error("err", err)
 		}
 	}(file)
 	d := yaml.NewDecoder(file)
 	if err := d.Decode(&config); err != nil {
-		log.Error(err)
+		slog.Error("err", err)
 	}
 	return config
 }
@@ -63,7 +62,6 @@ func newConfig(configPath string) (*models.APIConfig) {
 type kratosMiddleware struct {
 	ory *ory.APIClient
 }
-
 
 func (k *kratosMiddleware) validateSession(request *http.Request) (*ory.Session, error) {
 	cookie, err := request.Cookie("ory_kratos_session")
@@ -81,21 +79,18 @@ func (k *kratosMiddleware) validateSession(request *http.Request) (*ory.Session,
 }
 
 func CORS() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost")
-        c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-        // c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Range, X-Total-Count")
-        // c.Writer.Header().Set("Access-Control-Allow-Headers", "HX-Request, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-        // c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+	return func(c *gin.Context) {
+		// TODO haproxy
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
-        if c.Request.Method == "OPTIONS" {
-            c.AbortWithStatus(204)
-            return
-        }
-        c.Next()
-    }
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	}
 }
-
 
 func KratosMiddleware() *kratosMiddleware {
 	configuration := ory.NewConfiguration()
@@ -108,7 +103,6 @@ func KratosMiddleware() *kratosMiddleware {
 		ory: ory.NewAPIClient(configuration),
 	}
 }
-
 
 func (k *kratosMiddleware) Session() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -130,23 +124,20 @@ func (k *kratosMiddleware) Session() gin.HandlerFunc {
 	}
 }
 
-
 func BooleanPermission(permission bool, code int) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if (!permission) {
+		if !permission {
 			c.AbortWithStatus(code)
 		}
 		c.Next()
 	}
 }
 
-
 func updateSystemConfig() {
 	newSystemCfg, _ := controllers.GetConfig()
 	systemCfg = &newSystemCfg
-	log.Info("Updated system config")
+	slog.Info("Updated system config")
 }
-
 
 func main() {
 	models.ConnectDatabase(cfg.Database.Postgresql)
@@ -199,14 +190,14 @@ func main() {
 			// tribeID := c.GetString("tribe")
 
 			// logged in as station
-			if (stationID != "") {
+			if stationID != "" {
 				groups := controllers.GetGroupsWithPointsByStationID(c)
 				station, _ := controllers.GetStationByID(stationID)
 
 				c.HTML(http.StatusOK, "station/points", gin.H{
-					"station": station,
-					"groups": groups,
-					"groupings": systemCfg.Groupings,
+					"station":    station,
+					"groups":     groups,
+					"groupings":  systemCfg.Groupings,
 					"enableEdit": systemCfg.System.AllowGroupPoints,
 				})
 			}
@@ -235,12 +226,12 @@ func main() {
 		})
 		tribe.GET("/stations/:tribeid", controllers.GetStationsByTribe)
 		tribe.GET("/groups/:tribeid", controllers.GetGroupsByTribe)
-	// tribe.GET("", controllers.GetTribes)
-	// 	tribe.GET(":id", controllers.GetTribe)
-	// 	tribe.POST("", controllers.PostTribe)
-	// 	tribe.PUT(":id", controllers.PutTribe)
-	// 	tribe.PATCH(":id", controllers.PatchTribe)
-	// 	tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
+		// tribe.GET("", controllers.GetTribes)
+		// 	tribe.GET(":id", controllers.GetTribe)
+		// 	tribe.POST("", controllers.PostTribe)
+		// 	tribe.PUT(":id", controllers.PutTribe)
+		// 	tribe.PATCH(":id", controllers.PatchTribe)
+		// 	tribe.GET("/groups:loginid", controllers.GetGroupsByLogin)
 	}
 
 	// station := router.Group("/station", k.Session())
@@ -278,8 +269,9 @@ func main() {
 	// 	config.PATCH(":id", controllers.PatchConfig)
 	// }
 
-	log.Info("Listening on ", cfg.Server.Host, ":", cfg.Server.Port)
-	if err := router.Run(":"+cfg.Server.Port); err != nil {
-		log.Fatal(err)
+	slog.Info("server starting", "host", cfg.Server.Host, "port", cfg.Server.Port)
+	if err := router.Run(":" + cfg.Server.Port); err != nil {
+		slog.Error("err", err)
+		os.Exit(1)
 	}
 }
