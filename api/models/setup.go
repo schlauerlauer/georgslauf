@@ -2,8 +2,9 @@ package models
 
 import (
 	"fmt"
+	"log/slog"
+	"os"
 
-	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -19,7 +20,8 @@ func ConnectDatabase(config SqlConfig) {
 	})
 
 	if err != nil {
-		log.Fatal("Failed to connect to database!")
+		slog.Error("Failed to connect to database!")
+		os.Exit(1)
 	}
 
 	db.AutoMigrate(
@@ -33,7 +35,7 @@ func ConnectDatabase(config SqlConfig) {
 		&Image{},
 	)
 
-	log.Info("Database migration sucessful.")
+	slog.Info("Database migration sucessful.")
 
 	// db.Exec(`
 	//     CREATE OR REPLACE VIEW group_top AS
