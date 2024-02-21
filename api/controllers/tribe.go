@@ -2,27 +2,27 @@ package controllers
 
 import (
 	"georgslauf/models"
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 )
 
 type CreateTribeInput struct {
-	Name	string	`json:"name" binding:"required"`
-	Short	string	`json:"short" binding:"required"`
-	DPSG	string	`json:"dpsg" binding:"required"`
-	Address	string	`json:"address" binding:"required"`
-	URL		string	`json:"url"`
+	Name    string `json:"name" binding:"required"`
+	Short   string `json:"short" binding:"required"`
+	DPSG    string `json:"dpsg" binding:"required"`
+	Address string `json:"address" binding:"required"`
+	URL     string `json:"url"`
 }
 
 type UpdateTribeInput struct {
-	Name	string	`json:"name"`
-	Short	string	`json:"short"`
-	DPSG	string	`json:"dpsg"`
-	Address	string	`json:"address"`
-	URL		string	`json:"url"`
+	Name    string `json:"name"`
+	Short   string `json:"short"`
+	DPSG    string `json:"dpsg"`
+	Address string `json:"address"`
+	URL     string `json:"url"`
 }
 
 func GetTribes(c *gin.Context) {
@@ -33,7 +33,7 @@ func GetTribes(c *gin.Context) {
 	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&tribes)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
-		log.Warn("Get tribes failed.")
+		slog.Warn("Get tribes failed.")
 	}
 	c.JSON(http.StatusOK, tribes)
 }
@@ -43,7 +43,7 @@ func GetTribe(c *gin.Context) {
 	var tribe models.Tribe
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&tribe).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		log.Warn("Get tribe failed.")
+		slog.Warn("Get tribe failed.")
 		return
 	}
 	c.JSON(http.StatusOK, tribe)
@@ -54,14 +54,14 @@ func PostTribe(c *gin.Context) {
 	var input CreateTribeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		log.Warn("Post tribe failed.")
+		slog.Warn("Post tribe failed.")
 		return
 	}
 	// Create tribe
 	tribe := models.Tribe{
-		Name: input.Name,
-		Short: input.Short,
-		DPSG: input.DPSG,
+		Name:    input.Name,
+		Short:   input.Short,
+		DPSG:    input.DPSG,
 		Address: input.Address,
 	}
 	models.DB.Create(&tribe)
@@ -73,7 +73,7 @@ func PutTribe(c *gin.Context) {
 	var input models.Tribe
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		log.Warn("Put tribe failed.")
+		slog.Warn("Put tribe failed.")
 		return
 	}
 	// Put Tribe
@@ -86,14 +86,14 @@ func PatchTribe(c *gin.Context) {
 	var tribe models.Tribe
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&tribe).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		log.Warn("Patch tribe failed.")
+		slog.Warn("Patch tribe failed.")
 		return
 	}
 	// Validate input
 	var input UpdateTribeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		log.Warn("Patch tribe failed.")
+		slog.Warn("Patch tribe failed.")
 		return
 	}
 	models.DB.Model(&tribe).Updates(input)

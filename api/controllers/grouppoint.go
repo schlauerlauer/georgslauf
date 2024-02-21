@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"georgslauf/models"
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm/clause"
 )
 
@@ -18,7 +18,7 @@ func GetGroupPoints(c *gin.Context) {
 	result := models.DB.Limit(_end - _start).Offset(_start).Order(_sortOrder).Find(&grouppoints)
 	if result.Error != nil {
 		c.AbortWithStatus(500)
-		log.Warn("Get grouppoints failed.")
+		slog.Warn("Get grouppoints failed.")
 	}
 	c.JSON(http.StatusOK, grouppoints)
 }
@@ -27,7 +27,7 @@ func GetGroupPoint(c *gin.Context) {
 	var grouppoint models.GroupPoint
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&grouppoint).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		log.Warn("Get grouppoint failed.")
+		slog.Warn("Get grouppoint failed.")
 		return
 	}
 	c.JSON(http.StatusOK, grouppoint)
@@ -39,34 +39,33 @@ func PutGroupPointByStationID(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
-	if (input.Value > 100) {
+	if input.Value > 100 {
 		input.Value = 100
 	}
-	if (input.Value < 0) {
+	if input.Value < 0 {
 		input.Value = 0
 	}
 
 	groupID, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if (err != nil) {
+	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
 	stationID, err := strconv.ParseInt(c.GetString("station"), 10, 64)
-	if (err != nil) {
+	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
 	grouppoint := models.GroupPoint{
 		StationID: stationID,
-		GroupID: groupID,
-		Value: input.Value,
+		GroupID:   groupID,
+		Value:     input.Value,
 	}
 
 	models.DB.Clauses(clause.OnConflict{
-		Columns: []clause.Column{{Name: "station_id"}, {Name: "group_id"}},
+		Columns:   []clause.Column{{Name: "station_id"}, {Name: "group_id"}},
 		DoUpdates: clause.AssignmentColumns([]string{"value", "updated_at"}),
 	}).Create(&grouppoint)
 
 	c.HTML(http.StatusOK, "station/putpoint", input)
 }
-
