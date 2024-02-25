@@ -1,0 +1,18 @@
+generate:
+	sqlc generate
+
+migrate:
+	GOOSE_MIGRATION_DIR=migrations \
+		goose sqlite3 ./data.db up
+
+add_migration name="migration":
+	GOOSE_MIGRATION_DIR=migrations \
+		goose sqlite3 ./data.db create {{ name }} sql
+
+install:
+	go install github.com/pressly/goose/v3/cmd/goose@latest
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	go install github.com/a-h/templ/cmd/templ@latest
+	go install github.com/cosmtrek/air@latest
+	npm i
+	pipx install bumpver

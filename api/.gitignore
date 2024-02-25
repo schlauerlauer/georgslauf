@@ -1,8 +1,0 @@
-/media/*
-!.gitkeep
-config.yaml
-test.go
-georgslauf
-db/
-.idea/*
-tmp/
