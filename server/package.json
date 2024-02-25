@@ -1,0 +1,27 @@
+{
+  "name": "de.georgslauf",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "js": "node_modules/.bin/esbuild --bundle --minify --outdir=dist --platform=browser --format=esm ./scripts/main.js",
+    "js-watch": "node_modules/.bin/esbuild --bundle --minify --outdir=dist --platform=browser --format=esm --watch=forever ./scripts/main.js",
+    "css": "node_modules/.bin/tailwindcss --input ./styles/main.scss --output dist/main.css --config ./tailwind.config.js",
+    "css-watch": "node_modules/.bin/tailwindcss --input ./styles/main.scss --output dist/main.css --config ./tailwind.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/schlauerlauer/georgslauf"
+  },
+  "author": "Janek Lauer",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "@iconify/json": "^2.2.186",
+    "@iconify/tailwind": "^0.1.4",
+    "@tailwindcss/forms": "^0.5.7",
+    "daisyui": "^4.7.2",
+    "esbuild": "^0.20.1",
+    "htmx.org": "^1.9.10",
+    "tailwindcss": "^3.4.1"
+  }
+}
