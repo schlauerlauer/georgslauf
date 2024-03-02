@@ -1,5 +1,5 @@
 .gitignore
 .git
 README.md
-test.go
+*_test.go
 .gitkeep

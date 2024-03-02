@@ -4,3 +4,5 @@ server:
   metrics:
     username: "prometheus"
     password: "Shock-Playable-Drippy1-Caboose-Slideshow-Hardcopy-Gratuity-Twitter-Slicing-Deceiving"
+database:
+  path: "file:///home/exampleUser/georgslauf/data.db"
