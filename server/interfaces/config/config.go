@@ -15,9 +15,14 @@ type ConfigService struct {
 
 type ConfigData struct {
 	Server struct {
-		Host   string `yaml:"host" binding:"required"`
-		Port   string `yaml:"port" binding:"required"`
+		Host string `yaml:"host" binding:"required"`
+		Port string `yaml:"port" binding:"required"`
 	} `yaml:"server"`
+	Database DatabaseConfig `yaml:"database"`
+}
+
+type DatabaseConfig struct {
+	Path string `yaml:"path"`
 }
 
 var _ ConfigInterface = &ConfigData{}
