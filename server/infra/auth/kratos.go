@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"georgslauf/infra/persistence"
+
 	ory "github.com/ory/client-go"
 )
 
@@ -9,7 +11,7 @@ type AuthService struct {
 	Auth   AuthInterface
 }
 
-func NewKratosClient(publicUrl string) *AuthService {
+func NewKratosClient(publicUrl string, repository *persistence.Repository) *AuthService {
 	config := ory.NewConfiguration()
 	config.Servers = ory.ServerConfigurations{
 		{
@@ -18,7 +20,7 @@ func NewKratosClient(publicUrl string) *AuthService {
 	}
 	oryClient := ory.NewAPIClient(config)
 	return &AuthService{
-		Auth:   NewAuth(oryClient),
+		Auth:   NewAuth(oryClient, repository),
 		Client: oryClient,
 	}
 }
