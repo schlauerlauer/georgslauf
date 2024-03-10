@@ -6,15 +6,22 @@ import (
 	"georgslauf/interfaces/config"
 	"log/slog"
 	"os"
+	"time"
 
 	_ "github.com/libsql/go-libsql"
 )
 
 type Repository struct {
-	Queries *db.Queries
+	Queries  *db.Queries
+	Location *time.Location
 }
 
 func NewRepository(config *config.DatabaseConfig) (*Repository, error) {
+	location, err := time.LoadLocation(config.Timezone)
+	if err != nil {
+		slog.Error("error parsing timezone", "err", err)
+	}
+
 	sqlDb, err := sql.Open("libsql", config.Path)
 	if err != nil {
 		slog.Error("error opening database", "err", err)
@@ -31,6 +38,7 @@ func NewRepository(config *config.DatabaseConfig) (*Repository, error) {
 	}
 
 	return &Repository{
-		Queries: queries,
+		Queries:  queries,
+		Location: location,
 	}, nil
 }

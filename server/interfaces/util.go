@@ -1,8 +1,8 @@
 package interfaces
 
 import (
-	"net/http"
 	"log/slog"
+	"net/http"
 )
 
 func LogHandler(handler http.Handler) http.Handler {

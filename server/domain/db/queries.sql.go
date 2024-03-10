@@ -55,6 +55,41 @@ func (q *Queries) GetGroup(ctx context.Context, id int64) (Group, error) {
 	return i, err
 }
 
+const getSchedule = `-- name: GetSchedule :many
+select id, start, "end", name, about
+from schedule
+order by "start" asc
+`
+
+func (q *Queries) GetSchedule(ctx context.Context) ([]Schedule, error) {
+	rows, err := q.db.QueryContext(ctx, getSchedule)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Schedule
+	for rows.Next() {
+		var i Schedule
+		if err := rows.Scan(
+			&i.ID,
+			&i.Start,
+			&i.End,
+			&i.Name,
+			&i.About,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTribe = `-- name: GetTribe :one
 select id, updated_at, name, short, dpsg, image_id, email_domain, stavo_email
 from tribes
