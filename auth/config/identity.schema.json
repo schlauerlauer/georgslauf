@@ -64,18 +64,6 @@
       ],
       "additionalProperties": false
     },
-    "metadata_public": {
-      "type": "object",
-      "properties": {
-        "station": {
-          "type": "string",
-          "title": "Station ID"
-        },
-        "tribe": {
-          "type": "string",
-          "title": "Tribe ID"
-        }
-      }
-    }
+    "metadata_public": {}
   }
 }

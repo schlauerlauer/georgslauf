@@ -1,2 +1,2 @@
-FROM docker.io/library/haproxy:2.7.8-alpine3.17
+FROM docker.io/library/haproxy:2.9.6-alpine3.19
 COPY haproxy_local.cfg /usr/local/etc/haproxy/haproxy.cfg
