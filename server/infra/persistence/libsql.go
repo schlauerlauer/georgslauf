@@ -20,7 +20,7 @@ func NewRepository(config *config.DatabaseConfig) (*Repository, error) {
 		slog.Error("error opening database", "err", err)
 		os.Exit(1)
 	}
-	defer sqlDb.Close()
+	// defer sqlDb.Close() // TODO
 
 	queries := db.New(sqlDb)
 
