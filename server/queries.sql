@@ -13,8 +13,10 @@ delete from tribes
 where id = ?
 limit 1;
 
-
-
+-- name: GetSchedule :many
+select *
+from schedule
+order by "start" asc;
 
 -- name: ListGroups :many
 select *
