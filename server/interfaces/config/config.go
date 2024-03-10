@@ -23,7 +23,8 @@ type ConfigData struct {
 }
 
 type DatabaseConfig struct {
-	Path string `yaml:"path"`
+	Path     string `yaml:"path"`
+	Timezone string `yaml:"timezone"`
 }
 
 type AuthConfig struct {

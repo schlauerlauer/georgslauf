@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/google/uuid"
 	ory "github.com/ory/client-go"
 )
 
@@ -40,6 +41,24 @@ func (cd *ClientData) validateSession(request *http.Request) (*ory.Session, erro
 	return resp, nil
 }
 
+type IdentityData struct {
+	ID     uuid.UUID
+	Traits identityTraits
+}
+
+type identityTraits struct {
+	Email string
+	Name  identityNames
+}
+
+type identityNames struct {
+	First string
+	Last  string
+}
+
+type contextKey string
+var IdentityKey = contextKey("identity")
+
 func (cd *ClientData) SessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := cd.validateSession(r)
@@ -54,8 +73,39 @@ func (cd *ClientData) SessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		slog.Info("context", "rq", r.Context())
+		id, err := uuid.Parse(session.Identity.Id)
+		if err != nil {
+			slog.Warn("invalid uuid identity id")
+		}
+		traits := (session.Identity.Traits).(map[string]interface{})
+		email, ok := traits["email"].(string)
+		if !ok {
+			slog.Warn("no email in context")
+		}
+		names, ok := traits["name"].(map[string]interface{})
+		if !ok {
+			slog.Warn("no name map in context")
+		}
+		first, ok := names["first"].(string)
+		if !ok {
+			slog.Warn("no first name in context")
+		}
+		last, ok := names["last"].(string)
+		if !ok {
+			slog.Warn("no last name in context")
+		}
 
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(r.Context(), IdentityKey, IdentityData{
+			ID: id,
+			Traits: identityTraits{
+				Email: email,
+				Name: identityNames{
+					First: first,
+					Last:  last,
+				},
+			},
+		})
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

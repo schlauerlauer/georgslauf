@@ -38,6 +38,14 @@ type PointsToStation struct {
 	Value     int64
 }
 
+type Schedule struct {
+	ID    int64
+	Start int64
+	End   sql.NullInt64
+	Name  string
+	About bool
+}
+
 type Station struct {
 	ID        int64
 	CreatedAt int64
