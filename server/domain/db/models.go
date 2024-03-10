@@ -20,6 +20,15 @@ type Group struct {
 	ImageID   sql.NullString
 }
 
+type Identity struct {
+	ID        int64
+	KratosID  string
+	Email     string
+	CreatedAt int64
+	TribeID   int64
+	Role      int64
+}
+
 type PointsToGroup struct {
 	ID        int64
 	CreatedAt int64
