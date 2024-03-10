@@ -19,10 +19,16 @@ type ConfigData struct {
 		Port string `yaml:"port" binding:"required"`
 	} `yaml:"server"`
 	Database DatabaseConfig `yaml:"database"`
+	Auth     AuthConfig     `yaml:"auth"`
 }
 
 type DatabaseConfig struct {
 	Path string `yaml:"path"`
+}
+
+type AuthConfig struct {
+	KratosLocalURL  string `yaml:"kratosLocal"`
+	KratosPublicURL string `yaml:"kratosPublic"`
 }
 
 var _ ConfigInterface = &ConfigData{}
