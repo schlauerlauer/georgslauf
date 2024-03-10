@@ -13,6 +13,16 @@ delete from tribes
 where id = ?
 limit 1;
 
+-- name: GetIdentities :many
+select *
+from identities;
+
+-- name: GetIdentityByKratosId :one
+select *
+from identities
+where kratos_id = ?
+limit 1;
+
 -- name: GetSchedule :many
 select *
 from schedule

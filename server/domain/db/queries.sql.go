@@ -55,6 +55,62 @@ func (q *Queries) GetGroup(ctx context.Context, id int64) (Group, error) {
 	return i, err
 }
 
+const getIdentities = `-- name: GetIdentities :many
+select id, kratos_id, email, created_at, tribe_id, role
+from identities
+`
+
+func (q *Queries) GetIdentities(ctx context.Context) ([]Identity, error) {
+	rows, err := q.db.QueryContext(ctx, getIdentities)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Identity
+	for rows.Next() {
+		var i Identity
+		if err := rows.Scan(
+			&i.ID,
+			&i.KratosID,
+			&i.Email,
+			&i.CreatedAt,
+			&i.TribeID,
+			&i.Role,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getIdentityByKratosId = `-- name: GetIdentityByKratosId :one
+select id, kratos_id, email, created_at, tribe_id, role
+from identities
+where kratos_id = ?
+limit 1
+`
+
+func (q *Queries) GetIdentityByKratosId(ctx context.Context, kratosID string) (Identity, error) {
+	row := q.db.QueryRowContext(ctx, getIdentityByKratosId, kratosID)
+	var i Identity
+	err := row.Scan(
+		&i.ID,
+		&i.KratosID,
+		&i.Email,
+		&i.CreatedAt,
+		&i.TribeID,
+		&i.Role,
+	)
+	return i, err
+}
+
 const getSchedule = `-- name: GetSchedule :many
 select id, start, "end", name, about
 from schedule

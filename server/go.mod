@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/a-h/templ v0.2.543
+	github.com/google/uuid v1.6.0
 	github.com/libsql/go-libsql v0.0.0-20240219083324-cbcdf96c10a5
 	github.com/lmittmann/tint v1.0.4
 	github.com/ory/client-go v1.8.1
