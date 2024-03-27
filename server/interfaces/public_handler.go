@@ -38,7 +38,6 @@ func (p *Public) GetHome(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("error in GetSchedule query", "err", err)
 	}
 
-	w.WriteHeader(http.StatusOK)
 	err = public.Home(schedule, p.repository.Location).Render(ctx, w)
 	if err != nil {
 		slog.Warn("err rendering home", "err", err)
