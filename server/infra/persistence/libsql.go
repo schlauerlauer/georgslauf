@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/libsql/go-libsql"
+	_ "github.com/tursodatabase/go-libsql"
 )
 
 type Repository struct {
@@ -31,11 +31,7 @@ func NewRepository(config *config.DatabaseConfig) (*Repository, error) {
 
 	queries := db.New(sqlDb)
 
-	_, err = sqlDb.Exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = on;")
-	if err != nil {
-		slog.Error("error setting pragma", "err", err)
-		os.Exit(1)
-	}
+	_ = sqlDb.QueryRow("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = on;")
 
 	return &Repository{
 		Queries:  queries,
