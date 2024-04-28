@@ -1,6 +1,6 @@
 [bumpver]
-current_version = "24.2.0-alpha"
-version_pattern = "YY.MM.PATCH[-TAG]"
+current_version = "1.0.0-alpha"
+version_pattern = "MAJOR.MINOR.PATCH[-TAGNUM]"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
 tag = true
@@ -9,10 +9,4 @@ push = true
 [bumpver.file_patterns]
 "bumpver.toml" = [
     'current_version = "{version}"',
-]
-"server/main.go" = [
-    'version = "{version}" // bumpver',
-]
-"server/view/layout/footer.templ" = [
-    '<p>v{version}</p>',
 ]

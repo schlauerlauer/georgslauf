@@ -1,5 +1,13 @@
 package layout
 
+var (
+	version = "n/a"
+)
+
+func SetVersion(v string) {
+	version = v
+}
+
 templ Footer() {
 	<footer class="md:fixed md:bottom-0 footer footer-center mt-48 p-4 bg-base-300 text-base-content">
 		<aside class="flex justify-around w-full">
@@ -9,7 +17,7 @@ templ Footer() {
 					<span>georgslauf</span>
 				</a>
 			</div>
-			<p>v24.2.0-alpha</p>
+			<p>{ version }</p>
 		</aside>
 	</footer>
 }
