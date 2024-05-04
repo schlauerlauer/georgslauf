@@ -17,10 +17,10 @@ limit 1;
 select *
 from identities;
 
--- name: GetIdentityByKratosId :one
+-- name: GetIdentityByIdpId :one
 select *
 from identities
-where kratos_id = ?
+where idp_id = ?
 limit 1;
 
 -- name: GetSchedule :many

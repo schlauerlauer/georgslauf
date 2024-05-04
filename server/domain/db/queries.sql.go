@@ -56,7 +56,7 @@ func (q *Queries) GetGroup(ctx context.Context, id int64) (Group, error) {
 }
 
 const getIdentities = `-- name: GetIdentities :many
-select id, kratos_id, email, created_at, tribe_id, role
+select id, idp_id, email, created_at, tribe_id, role
 from identities
 `
 
@@ -71,7 +71,7 @@ func (q *Queries) GetIdentities(ctx context.Context) ([]Identity, error) {
 		var i Identity
 		if err := rows.Scan(
 			&i.ID,
-			&i.KratosID,
+			&i.IdpID,
 			&i.Email,
 			&i.CreatedAt,
 			&i.TribeID,
@@ -90,19 +90,19 @@ func (q *Queries) GetIdentities(ctx context.Context) ([]Identity, error) {
 	return items, nil
 }
 
-const getIdentityByKratosId = `-- name: GetIdentityByKratosId :one
-select id, kratos_id, email, created_at, tribe_id, role
+const getIdentityByIdpId = `-- name: GetIdentityByIdpId :one
+select id, idp_id, email, created_at, tribe_id, role
 from identities
-where kratos_id = ?
+where idp_id = ?
 limit 1
 `
 
-func (q *Queries) GetIdentityByKratosId(ctx context.Context, kratosID string) (Identity, error) {
-	row := q.db.QueryRowContext(ctx, getIdentityByKratosId, kratosID)
+func (q *Queries) GetIdentityByIdpId(ctx context.Context, idpID string) (Identity, error) {
+	row := q.db.QueryRowContext(ctx, getIdentityByIdpId, idpID)
 	var i Identity
 	err := row.Scan(
 		&i.ID,
-		&i.KratosID,
+		&i.IdpID,
 		&i.Email,
 		&i.CreatedAt,
 		&i.TribeID,

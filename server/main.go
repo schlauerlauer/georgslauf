@@ -61,7 +61,7 @@ func main() {
 		authInterceptor,
 	)
 
-	hostService := interfaces.NewHost(
+	privateService := interfaces.NewHost(
 		repository,
 		authInterceptor,
 	)
@@ -86,14 +86,14 @@ func main() {
 	// router.Handle("GET /metrics", promhttp.Handler())
 	router.Handle("/", optionalAuthStack(publicService.GetHome()))
 
-	hostRouter := http.NewServeMux()
-	hostRouter.Handle("GET /", hostService.GetHostHome())
+	privateRouter := http.NewServeMux()
+	privateRouter.Handle("GET /", privateService.GetHostHome())
 
 	requiredAuthStack := middleware.CreateStack(
 		authInterceptor.RequireAuthentication(),
 	)
 
-	router.Handle("/host/", http.StripPrefix("/host", requiredAuthStack(hostRouter)))
+	router.Handle("/dash/", http.StripPrefix("/dash", requiredAuthStack(privateRouter)))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
