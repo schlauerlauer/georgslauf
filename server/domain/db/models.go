@@ -22,10 +22,10 @@ type Group struct {
 
 type Identity struct {
 	ID        int64
-	KratosID  string
-	Email     string
+	IdpID     string
+	Email     sql.NullString
 	CreatedAt int64
-	TribeID   int64
+	TribeID   sql.NullInt64
 	Role      int64
 }
 
