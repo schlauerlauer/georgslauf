@@ -3,6 +3,12 @@ server:
   port: "8080"
   metrics:
     username: "prometheus"
-    password: "Shock-Playable-Drippy1-Caboose-Slideshow-Hardcopy-Gratuity-Twitter-Slicing-Deceiving"
+    password: "CHANGE_ME"
 database:
-  path: "file:///home/exampleUser/georgslauf/data.db"
+  path: "data.db"
+  remote: "http://127.0.0.1:8954"
+auth:
+  domain: "id.georgslauf.de"
+  clientID: "CHANGE_ME"
+  key: "CHANGE_ME"
+  callback: "https://georgslauf.de/auth/callback"
