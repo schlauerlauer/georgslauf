@@ -1,6 +1,0 @@
-    {{- $scss := resources.Get "style.scss" }}
-    {{ $style := $scss | resources.ToCSS | resources.Minify -}}
-    <link rel="stylesheet" href="{{ $style.Permalink }}">
-    <script src="/htmx.min.js"></script>
-    <script src="/_hyperscript.min.js"></script>
-    <meta name="htmx-config" content='{"withCredentials":true}'>

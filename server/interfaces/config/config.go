@@ -25,11 +25,14 @@ type ConfigData struct {
 type DatabaseConfig struct {
 	Path     string `yaml:"path"`
 	Timezone string `yaml:"timezone"`
+	Remote   string `yaml:"remote"`
 }
 
 type AuthConfig struct {
-	KratosLocalURL  string `yaml:"kratosLocal"`
-	KratosPublicURL string `yaml:"kratosPublic"`
+	Domain      string `yaml:"domain"`
+	ClientID    string `yaml:"clientID"`
+	Key         string `yaml:"key"`
+	CallbackURL string `yaml:"callback"`
 }
 
 var _ ConfigInterface = &ConfigData{}
