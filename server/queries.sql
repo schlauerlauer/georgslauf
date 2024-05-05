@@ -1,6 +1,11 @@
--- name: ListTribes :many
+-- name: GetTribes :many
 select *
 from tribes;
+
+-- name: CreateTribe :one
+insert into tribes (updated_at, "name")
+values (?, ?)
+returning *;
 
 -- name: GetTribe :one
 select *
@@ -13,22 +18,12 @@ delete from tribes
 where id = ?
 limit 1;
 
--- name: GetIdentities :many
-select *
-from identities;
-
--- name: GetIdentityByIdpId :one
-select *
-from identities
-where idp_id = ?
-limit 1;
-
 -- name: GetSchedule :many
 select *
 from schedule
 order by "start" asc;
 
--- name: ListGroups :many
+-- name: GetGroups :many
 select *
 from groups;
 
@@ -43,7 +38,7 @@ delete from groups
 where id = ?
 limit 1;
 
--- name: ListGroupsByTribe :many
+-- name: GetGroupsByTribe :many
 select *
 from groups
 where tribe_id = ?;

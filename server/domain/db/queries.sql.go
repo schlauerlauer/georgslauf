@@ -9,6 +9,33 @@ import (
 	"context"
 )
 
+const createTribe = `-- name: CreateTribe :one
+insert into tribes (updated_at, "name")
+values (?, ?)
+returning id, updated_at, name, short, dpsg, image_id, email_domain, stavo_email
+`
+
+type CreateTribeParams struct {
+	UpdatedAt int64
+	Name      string
+}
+
+func (q *Queries) CreateTribe(ctx context.Context, arg CreateTribeParams) (Tribe, error) {
+	row := q.db.QueryRowContext(ctx, createTribe, arg.UpdatedAt, arg.Name)
+	var i Tribe
+	err := row.Scan(
+		&i.ID,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.Short,
+		&i.Dpsg,
+		&i.ImageID,
+		&i.EmailDomain,
+		&i.StavoEmail,
+	)
+	return i, err
+}
+
 const deleteGroup = `-- name: DeleteGroup :exec
 delete from groups
 where id = ?
@@ -55,27 +82,30 @@ func (q *Queries) GetGroup(ctx context.Context, id int64) (Group, error) {
 	return i, err
 }
 
-const getIdentities = `-- name: GetIdentities :many
-select id, idp_id, email, created_at, tribe_id, role
-from identities
+const getGroups = `-- name: GetGroups :many
+select id, created_at, updated_at, name, short, size, grouping, tribe_id, image_id
+from groups
 `
 
-func (q *Queries) GetIdentities(ctx context.Context) ([]Identity, error) {
-	rows, err := q.db.QueryContext(ctx, getIdentities)
+func (q *Queries) GetGroups(ctx context.Context) ([]Group, error) {
+	rows, err := q.db.QueryContext(ctx, getGroups)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Identity
+	var items []Group
 	for rows.Next() {
-		var i Identity
+		var i Group
 		if err := rows.Scan(
 			&i.ID,
-			&i.IdpID,
-			&i.Email,
 			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+			&i.Short,
+			&i.Size,
+			&i.Grouping,
 			&i.TribeID,
-			&i.Role,
+			&i.ImageID,
 		); err != nil {
 			return nil, err
 		}
@@ -90,25 +120,43 @@ func (q *Queries) GetIdentities(ctx context.Context) ([]Identity, error) {
 	return items, nil
 }
 
-const getIdentityByIdpId = `-- name: GetIdentityByIdpId :one
-select id, idp_id, email, created_at, tribe_id, role
-from identities
-where idp_id = ?
-limit 1
+const getGroupsByTribe = `-- name: GetGroupsByTribe :many
+select id, created_at, updated_at, name, short, size, grouping, tribe_id, image_id
+from groups
+where tribe_id = ?
 `
 
-func (q *Queries) GetIdentityByIdpId(ctx context.Context, idpID string) (Identity, error) {
-	row := q.db.QueryRowContext(ctx, getIdentityByIdpId, idpID)
-	var i Identity
-	err := row.Scan(
-		&i.ID,
-		&i.IdpID,
-		&i.Email,
-		&i.CreatedAt,
-		&i.TribeID,
-		&i.Role,
-	)
-	return i, err
+func (q *Queries) GetGroupsByTribe(ctx context.Context, tribeID int64) ([]Group, error) {
+	rows, err := q.db.QueryContext(ctx, getGroupsByTribe, tribeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Group
+	for rows.Next() {
+		var i Group
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+			&i.Short,
+			&i.Size,
+			&i.Grouping,
+			&i.TribeID,
+			&i.ImageID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getSchedule = `-- name: GetSchedule :many
@@ -169,90 +217,13 @@ func (q *Queries) GetTribe(ctx context.Context, id int64) (Tribe, error) {
 	return i, err
 }
 
-const listGroups = `-- name: ListGroups :many
-select id, created_at, updated_at, name, short, size, grouping, tribe_id, image_id
-from groups
-`
-
-func (q *Queries) ListGroups(ctx context.Context) ([]Group, error) {
-	rows, err := q.db.QueryContext(ctx, listGroups)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Group
-	for rows.Next() {
-		var i Group
-		if err := rows.Scan(
-			&i.ID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Name,
-			&i.Short,
-			&i.Size,
-			&i.Grouping,
-			&i.TribeID,
-			&i.ImageID,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listGroupsByTribe = `-- name: ListGroupsByTribe :many
-select id, created_at, updated_at, name, short, size, grouping, tribe_id, image_id
-from groups
-where tribe_id = ?
-`
-
-func (q *Queries) ListGroupsByTribe(ctx context.Context, tribeID int64) ([]Group, error) {
-	rows, err := q.db.QueryContext(ctx, listGroupsByTribe, tribeID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Group
-	for rows.Next() {
-		var i Group
-		if err := rows.Scan(
-			&i.ID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Name,
-			&i.Short,
-			&i.Size,
-			&i.Grouping,
-			&i.TribeID,
-			&i.ImageID,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listTribes = `-- name: ListTribes :many
+const getTribes = `-- name: GetTribes :many
 select id, updated_at, name, short, dpsg, image_id, email_domain, stavo_email
 from tribes
 `
 
-func (q *Queries) ListTribes(ctx context.Context) ([]Tribe, error) {
-	rows, err := q.db.QueryContext(ctx, listTribes)
+func (q *Queries) GetTribes(ctx context.Context) ([]Tribe, error) {
+	rows, err := q.db.QueryContext(ctx, getTribes)
 	if err != nil {
 		return nil, err
 	}

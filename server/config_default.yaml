@@ -5,8 +5,11 @@ server:
     username: "prometheus"
     password: "CHANGE_ME"
 database:
+  replication: false
   path: "data.db"
   remote: "http://127.0.0.1:8954"
+  # encryption: "CHANGE_ME"
+  # token: "base64_encoded_CHANGE_ME"
 auth:
   domain: "id.georgslauf.de"
   clientID: "CHANGE_ME"
