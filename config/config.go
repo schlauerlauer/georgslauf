@@ -1,6 +1,7 @@
 package config
 
 import (
+	"georgslauf/auth"
 	"log/slog"
 	"os"
 
@@ -12,7 +13,8 @@ type ConfigData struct {
 		Host string `yaml:"host" binding:"required"`
 		Port int64  `yaml:"port" binding:"required"`
 	} `yaml:"server"`
-	Database DatabaseConfig `yaml:"database"`
+	Database DatabaseConfig   `yaml:"database"`
+	OAuth    auth.OAuthConfig `yaml:"oauth"`
 }
 
 type DatabaseConfig struct {

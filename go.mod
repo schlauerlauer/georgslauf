@@ -8,6 +8,7 @@ require (
 	github.com/a-h/templ v0.3.833
 	github.com/lmittmann/tint v1.0.4
 	github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92
+	golang.org/x/oauth2 v0.26.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
