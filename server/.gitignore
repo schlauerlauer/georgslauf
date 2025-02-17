@@ -1,9 +1,0 @@
-/config.yaml
-/.idea/*
-/tmp/
-/dist/*
-/node_modules/
-*_templ.go
-/data.db*
-
-!.gitkeep

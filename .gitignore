@@ -1,3 +1,9 @@
-vars/local.yml
-auth/db
-.vscode/
+/.vscode/
+/*.code-workspace
+/tmp
+/config.yaml
+/georgslauf.db*
+/node_modules
+*_templ.go
+/dist
+/db
