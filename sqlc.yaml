@@ -7,3 +7,38 @@ sql:
       go:
         package: "db"
         out: "db"
+        sql_package: "database/sql"
+        # all possible overrides https://github.com/sqlc-dev/sqlc/blob/main/internal/codegen/golang/postgresql_type.go
+        overrides:
+          - column: "groups.short"
+            go_type: "database/sql.NullString"
+          - column: "groups.size"
+            go_type: "database/sql.NullInt64"
+          - column: "groups.image_id"
+            go_type: "database/sql.NullString"
+
+          - column: "schedule.end"
+            go_type: "database/sql.NullInt64"
+
+          - column: "stations.short"
+            go_type: "database/sql.NullString"
+          - column: "stations.lati"
+            go_type: "database/sql.NullFloat64"
+          - column: "stations.long"
+            go_type: "database/sql.NullFloat64"
+          - column: "stations.image_id"
+            go_type: "database/sql.NullString"
+
+          - column: "tribes.short"
+            go_type: "database/sql.NullString"
+          - column: "tribes.dpsg"
+            go_type: "database/sql.NullString"
+          - column: "tribes.image_id"
+            go_type: "database/sql.NullString"
+          - column: "tribes.email_domain"
+            go_type: "database/sql.NullString"
+          - column: "tribes.stavo_email"
+            go_type: "database/sql.NullString"
+
+          - column: "users.last_login"
+            go_type: "database/sql.NullInt64"

@@ -26,10 +26,18 @@ js:
 
 # database
 
-migrate:
-	GOOSE_MIGRATION_DIR=migrations \
-		goose sqlite3 ./data.db up
+migration_status:
+	@atlas migrate status \
+		--dir "file://migrations" \
+		--url "sqlite://georgslauf.db"
 
-add_migration name="migration":
-	GOOSE_MIGRATION_DIR=migrations \
-		goose sqlite3 ./data.db create {{ name }} sql
+migration_generate migration_name="migration":
+	@atlas migrate diff {{ migration_name }} \
+		--dir "file://migrations" \
+		--to "file://schema.hcl" \
+		--dev-url "sqlite://file?mode=memory"
+
+migration_apply:
+	@atlas migrate apply \
+		--dir "file://migrations" \
+		--url "sqlite://georgslauf.db"
