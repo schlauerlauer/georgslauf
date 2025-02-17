@@ -1,0 +1,17 @@
+package templates
+
+templ Base() {
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<link rel="stylesheet" href="/dist/main.css"/>
+			<script type="module" src="/dist/main.js"></script>
+		</head>
+		<body>
+			// FIXME remove id
+			<main id="main">
+				{ children... }
+			</main>
+		</body>
+	</html>
+}

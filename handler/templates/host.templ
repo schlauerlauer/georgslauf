@@ -1,0 +1,63 @@
+package templates
+
+import (
+	"georgslauf/auth"
+	"georgslauf/db"
+	"strconv"
+)
+
+templ HostHome(user *auth.UserInfo) {
+	@Base() {
+		@Navbar(user)
+		<main>
+			TEST { user.Name }
+			<section>
+				<h2>Zeitplan</h2>
+				<div
+					hx-get="/api/schedule"
+					hx-trigger="load"
+					hx-target="this"
+					hx-swap="outerHTML"
+				></div>
+			</section>
+			<section>
+				<h2>Stämme</h2>
+				<div
+					hx-get="/api/tribes"
+					hx-trigger="load"
+					hx-target="this"
+					hx-swap="outerHTML"
+				></div>
+			</section>
+			<form></form>
+		</main>
+		@Footer()
+	}
+}
+
+templ HostSchedule(schedule []db.Schedule) {
+	<ul>
+		for _, scheduleEntry := range schedule {
+			<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
+		}
+	</ul>
+}
+
+templ HostTribes(tribes []db.Tribe) {
+	<ul id="tribes-list">
+		for _, tribe := range tribes {
+			<li>{ strconv.FormatInt(tribe.ID, 10) } { tribe.Name }</li>
+		}
+	</ul>
+	<form
+		hx-post="/api/tribes"
+		hx-target="#tribes-list"
+		hx-swap="beforeend"
+	>
+		<input name="name" type="text" placeholder="Name"/>
+	</form>
+}
+
+templ HostTribe(tribe db.Tribe) {
+	<li>{ strconv.FormatInt(tribe.ID, 10) } { tribe.Name }</li>
+}
