@@ -39,12 +39,6 @@ table "schedule" {
 		type = text
 	}
 
-	column "about" {
-		null = false
-		type = integer
-		default = 0
-	}
-
 	primary_key {
 		columns = [column.id]
 	}
@@ -101,6 +95,13 @@ table "tribes" {
 
 	primary_key {
 		columns = [column.id]
+	}
+
+	foreign_key "image_id" {
+		columns     = [column.image_id]
+		ref_columns = [table.images.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
 	}
 
 	index "idx_tribes_name" {
@@ -164,11 +165,28 @@ table "stations" {
 		type = text
 	}
 
+	column "description" {
+		null = true
+		type = text
+	}
+
+	column "requirements" {
+		null = true
+		type = text
+	}
+
 	foreign_key "tribe_id" {
 		columns     = [column.tribe_id]
 		ref_columns = [table.tribes.column.id]
 		on_update   = NO_ACTION
 		on_delete   = CASCADE
+	}
+
+	foreign_key "image_id" {
+		columns     = [column.image_id]
+		ref_columns = [table.images.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
 	}
 
 	primary_key {
@@ -233,8 +251,54 @@ table "groups" {
 		on_delete   = CASCADE
 	}
 
+	foreign_key "image_id" {
+		columns     = [column.image_id]
+		ref_columns = [table.images.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
 	primary_key {
 		columns = [column.id]
+	}
+}
+
+table "images" {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "created_at" {
+		null = false
+		type = integer
+	}
+
+	column "filepath" {
+		null = false
+		type = text
+	}
+
+	column "tribe_id" {
+		null = true
+		type = integer
+	}
+
+	column "station_id" {
+		null = true
+		type = integer
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	index "idx_image_filepath" {
+		columns = [column.filepath]
+		unique  = true
 	}
 }
 

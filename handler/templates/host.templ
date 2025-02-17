@@ -1,37 +1,31 @@
 package templates
 
 import (
-	"georgslauf/auth"
 	"georgslauf/db"
 	"strconv"
 )
 
-templ HostHome(user *auth.UserInfo) {
-	@Base() {
-		@Navbar(user)
-		<main>
-			TEST { user.Name }
-			<section>
-				<h2>Zeitplan</h2>
-				<div
-					hx-get="/api/schedule"
-					hx-trigger="load"
-					hx-target="this"
-					hx-swap="outerHTML"
-				></div>
-			</section>
-			<section>
-				<h2>Stämme</h2>
-				<div
-					hx-get="/api/tribes"
-					hx-trigger="load"
-					hx-target="this"
-					hx-swap="outerHTML"
-				></div>
-			</section>
-			<form></form>
-		</main>
-		@Footer()
+templ HostHome(htmxRequest bool, navParams *navbarParams) {
+	@base(htmxRequest, navParams) {
+		<section>
+			<h2>Zeitplan</h2>
+			<div
+				hx-get="/api/schedule"
+				hx-trigger="load"
+				hx-target="this"
+				hx-swap="outerHTML"
+			></div>
+		</section>
+		<section>
+			<h2>Stämme</h2>
+			<div
+				hx-get="/api/tribes"
+				hx-trigger="load"
+				hx-target="this"
+				hx-swap="outerHTML"
+			></div>
+		</section>
+		<form></form>
 	}
 }
 
