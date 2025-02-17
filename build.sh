@@ -11,4 +11,4 @@ LDFLAGS=(
   "-X '${PACKAGE}/handler.buildTime=${BUILD_TIMESTAMP}'"
 )
 
-CGO_ENABLED=0 go build -ldflags="${LDFLAGS[*]}" -o ./tmp/georgslauf .
+CGO_ENABLED=1 go build -ldflags="${LDFLAGS[*]}" -o ./tmp/georgslauf .

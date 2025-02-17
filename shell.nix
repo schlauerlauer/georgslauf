@@ -3,23 +3,24 @@
 with pkgs;
 
 mkShell {
-  buildInputs = [
-    go
-    gotools
-    gopls
-    go-outline
-    gopkgs
-    gocode-gomod
-    godef
-    golint
+	buildInputs = [
+		go
+		gotools
+		gopls
+		go-outline
+		gopkgs
+		gocode-gomod
+		godef
+		golint
 
-    air
-    sqlc
-    templ
+		air
+		sqlc
+		templ
+		atlas
 
-    nodejs_23
+		nodejs_23
 
-    sqlite
-  ];
+		sqlite
+	];
 }
 
