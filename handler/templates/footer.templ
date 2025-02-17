@@ -1,0 +1,23 @@
+package templates
+
+var (
+	version = "n/a"
+)
+
+func SetVersion(v string) {
+	version = v
+}
+
+templ Footer() {
+	<footer class="md:fixed md:bottom-0 footer footer-center mt-48 p-4 bg-base-300 text-base-content">
+		<aside class="flex justify-around w-full">
+			<div>
+				<span class="align-middle text-lg icon-[mdi--github]"></span>
+				<a class="link" href="https://github.com/schlauerlauer/georgslauf">
+					<span>georgslauf</span>
+				</a>
+			</div>
+			<p>{ version }</p>
+		</aside>
+	</footer>
+}
