@@ -1,8 +1,19 @@
 default:
 	@air -c .air.toml
 
-generate:
-	@sqlc generate
+restart: sqlc templ css js
+
+sqlc:
+	@sqlc generate -f sqlc.yaml
+
+templ:
+	@templ generate -path handler/templates
+
+css:
+	@node_modules/.bin/tailwindcss \
+		--input ./styles/main.scss \
+		--output dist/main.css \
+		--config ./tailwind.config.js
 
 js:
 	@node_modules/.bin/esbuild \
@@ -12,12 +23,6 @@ js:
 		--platform=browser \
 		--format=esm \
 		./scripts/main.js
-
-css:
-	@node_modules/.bin/tailwindcss \
-		--input ./styles/main.scss \
-		--output dist/main.css \
-		--config ./tailwind.config.js
 
 # database
 
