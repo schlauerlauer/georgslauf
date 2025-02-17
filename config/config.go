@@ -10,7 +10,7 @@ import (
 type ConfigData struct {
 	Server struct {
 		Host string `yaml:"host" binding:"required"`
-		Port string `yaml:"port" binding:"required"`
+		Port int64  `yaml:"port" binding:"required"`
 	} `yaml:"server"`
 	Database DatabaseConfig `yaml:"database"`
 }

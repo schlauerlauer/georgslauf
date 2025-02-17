@@ -1,14 +1,12 @@
 package templates
 
 import (
-	"georgslauf/auth"
 	"georgslauf/db"
 	"time"
 )
 
-templ Home(user *auth.UserInfo, schedule []db.Schedule) {
-	@Base() {
-		@Navbar(user)
+templ Home(htmxRequest bool, navParams *navbarParams, schedule []db.Schedule) {
+	@base(htmxRequest, navParams) {
 		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
 			<h1 class="text-xl">GEORGSLAUF 2024 - Tribute von München-Isar</h1>
 			<h2>Liebe Bewohner*innen des Bezirks München-Isar,</h2>
@@ -18,31 +16,19 @@ templ Home(user *auth.UserInfo, schedule []db.Schedule) {
 			</p>
 			// <span class="align-middle text-lg icon-[mdi--checkbox-marked-circle]"></span>
 			if len(schedule) > 0 {
-				<ul class="mt-16 timeline timeline-vertical">
+				// FIXME lines not connecting
+				<ul class="my-16 timeline timeline-vertical">
 					for _, scheduleEntry := range schedule {
 						<li>
-							if scheduleEntry.About {
-								if scheduleEntry.End.Valid {
-									<div class="timeline-start">
-										ca. { time.Unix(scheduleEntry.Start, 0).Format("15:04") }
-										- { time.Unix(scheduleEntry.End.Int64, 0).Format("15:04") }
-									</div>
-								} else {
-									<div class="timeline-start">
-										ca. { time.Unix(scheduleEntry.Start, 0).Format("15:04") }
-									</div>
-								}
+							if scheduleEntry.End.Valid {
+								<div class="timeline-start">
+									{ time.Unix(scheduleEntry.Start, 0).Format("15:04") }
+									- { time.Unix(scheduleEntry.End.Int64, 0).Format("15:04") }
+								</div>
 							} else {
-								if scheduleEntry.End.Valid {
-									<div class="timeline-start">
-										{ time.Unix(scheduleEntry.Start, 0).Format("15:04") }
-										- { time.Unix(scheduleEntry.End.Int64, 0).Format("15:04") }
-									</div>
-								} else {
-									<div class="timeline-start">
-										{ time.Unix(scheduleEntry.Start, 0).Format("15:04") }
-									</div>
-								}
+								<div class="timeline-start">
+									{ time.Unix(scheduleEntry.Start, 0).Format("15:04") }
+								</div>
 							}
 							<div class="timeline-middle">
 								<span class="align-middle text-lg icon-[mdi--checkbox-blank-circle]"></span>
@@ -56,6 +42,5 @@ templ Home(user *auth.UserInfo, schedule []db.Schedule) {
 				<strong>MÖGEN DIE SPIELE BEGINNEN!</strong>
 			}
 		</div>
-		@Footer()
 	}
 }

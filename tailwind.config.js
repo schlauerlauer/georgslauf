@@ -1,10 +1,10 @@
-const { addDynamicIconSelectors } = require('@iconify/tailwind');
-
 /** @type {import('tailwindcss').Config} */
+
+const { addDynamicIconSelectors } = require('@iconify/tailwind');
 
 module.exports = {
 	content: [
-		"view/**/*.templ",
+		"handler/templates/*.templ",
 	],
 	theme: {
 		extend: {
@@ -13,7 +13,6 @@ module.exports = {
 			},
 		},
 	},
-	variants: {},
 	plugins: [
 		addDynamicIconSelectors(),
 		require('@tailwindcss/forms')({

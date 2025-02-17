@@ -41,11 +41,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	publicService := handler.NewPublic(
-		repository,
-	)
-
-	privateService := handler.NewHost(
+	handlers := handler.NewHandler(
 		repository,
 	)
 
@@ -60,24 +56,24 @@ func main() {
 	router.Handle("GET /dist", http.NotFoundHandler())
 	router.Handle("GET /dist/", http.StripPrefix("/dist", distServer))
 
-	router.HandleFunc("GET /ping", publicService.Ping)
-	router.HandleFunc("GET /version", publicService.Version)
-	router.HandleFunc("GET /robots.txt", publicService.Robots)
-	router.HandleFunc("GET /.well-known/security.txt", publicService.Security)
+	router.HandleFunc("GET /ping", handlers.Ping)
+	router.HandleFunc("GET /version", handlers.Version)
+	router.HandleFunc("GET /robots.txt", handlers.Robots)
+	router.HandleFunc("GET /.well-known/security.txt", handlers.Security)
 
 	// router.Handle("GET /metrics", promhttp.Handler())
-	router.Handle("/", publicService.GetHome()) // TODO optional auth
+	router.HandleFunc("/", handlers.GetHome) // TODO optional auth
 
 	// DASH ROUTES
 	privateRouter := http.NewServeMux()
-	privateRouter.Handle("GET /", privateService.GetHostHome())
+	privateRouter.HandleFunc("GET /", handlers.GetHostHome)
 	router.Handle("/dash/", http.StripPrefix("/dash", privateRouter)) // TODO authenticated
 
 	// HTMX ROUTES
 	apiRouter := http.NewServeMux()
-	apiRouter.Handle("GET /schedule", privateService.GetSchedule())
-	apiRouter.Handle("GET /tribes", privateService.GetTribes())
-	apiRouter.Handle("POST /tribes", privateService.CreateTribe())
+	apiRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
+	apiRouter.HandleFunc("GET /tribes", handlers.GetTribes)
+	apiRouter.HandleFunc("POST /tribes", handlers.CreateTribe)
 	router.Handle("/api/", http.StripPrefix("/api", apiRouter)) // TODO authenticated
 
 	stack := middleware.CreateStack(

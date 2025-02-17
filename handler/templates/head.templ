@@ -1,17 +1,26 @@
 package templates
 
-templ Base() {
-	<!DOCTYPE html>
-	<html>
-		<head>
-			<link rel="stylesheet" href="/dist/main.css"/>
-			<script type="module" src="/dist/main.js"></script>
-		</head>
-		<body>
-			// FIXME remove id
-			<main id="main">
-				{ children... }
-			</main>
-		</body>
-	</html>
+templ base(htmxRequest bool, navParams *navbarParams) {
+	if !htmxRequest {
+		<!DOCTYPE html>
+		<html>
+			<head>
+				<link rel="stylesheet" href="/dist/main.css"/>
+				<script type="module" src="/dist/main.js"></script>
+				<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			</head>
+			<body>
+				<main>
+					@navbar(navParams)
+					{ children... }
+					@footer()
+				</main>
+			</body>
+		</html>
+	} else {
+		@navbar(navParams)
+		{ children... }
+		@footer()
+	}
 }
