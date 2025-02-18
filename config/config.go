@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"georgslauf/auth"
 	"log/slog"
 	"os"
@@ -15,11 +16,20 @@ type ConfigData struct {
 	} `yaml:"server"`
 	Database DatabaseConfig   `yaml:"database"`
 	OAuth    auth.OAuthConfig `yaml:"oauth"`
+	Security SecurityConfig   `yaml:"security"`
 }
 
 type DatabaseConfig struct {
 	Path string `yaml:"path"`
 }
+
+type SecurityConfig struct {
+	CSRFAuthKey []byte `yaml:"csrfAuthKey"`
+}
+
+var (
+	ErrorValidation = errors.New("config validation failed")
+)
 
 func NewConfig(path string) (*ConfigData, error) {
 	var cfg ConfigData
@@ -36,6 +46,10 @@ func NewConfig(path string) (*ConfigData, error) {
 	if err = yaml.Unmarshal(fileContent, &cfg); err != nil {
 		slog.Error("error parsing config", "err", err)
 		os.Exit(1)
+	}
+
+	if len(cfg.Security.CSRFAuthKey) != 32 {
+		return nil, ErrorValidation
 	}
 
 	return &cfg, nil

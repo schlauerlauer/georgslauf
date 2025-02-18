@@ -2,6 +2,7 @@
 /*.code-workspace
 /tmp
 /config.yaml
+/config_live.yaml
 /georgslauf.db*
 /node_modules
 *_templ.go
