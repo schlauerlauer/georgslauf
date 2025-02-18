@@ -5,6 +5,8 @@ import (
 	"georgslauf/persistence"
 	"log/slog"
 	"time"
+
+	"github.com/schlauerlauer/go-forms"
 )
 
 var (
@@ -15,12 +17,13 @@ var (
 )
 
 type Handler struct {
-	repository *persistence.Repository
+	repository    *persistence.Repository
+	formProcessor *forms.FormProcessor
 }
 
 func NewHandler(
 	repository *persistence.Repository,
-) *Handler {
+) (*Handler, error) {
 	parsedBuildTime, err := time.Parse("2006-01-02T15:04:05", buildTime)
 	if err != nil {
 		slog.Error("could not parse build time", "err", err)
@@ -30,7 +33,15 @@ func NewHandler(
 	templates.SetVersion(version) // not sure why ldflags don't work for this
 	templates.SetYear(parsedBuildTime.Format("2006"))
 
-	return &Handler{
-		repository: repository,
+	// FormProcessor
+	formProcessor, err := forms.NewFormProcessor()
+	if err != nil {
+		slog.Error("NewFormProcessor", "err", err)
+		return nil, err
 	}
+
+	return &Handler{
+		repository:    repository,
+		formProcessor: formProcessor,
+	}, nil
 }

@@ -2,5 +2,11 @@ server:
   host: "10.88.0.1"
   port: 14348
 database:
-  replication: false
   path: "data.db"
+oauth:
+  baseUrl: "https://..."
+  endpoint: "https://..."
+  clientID: "..."
+  clientSecret: "..."
+security:
+  csrfAuthKey: [...]
