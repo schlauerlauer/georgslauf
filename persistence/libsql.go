@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"database/sql"
-	"georgslauf/config"
 	"georgslauf/db"
 
 	_ "github.com/tursodatabase/go-libsql"
@@ -12,7 +11,11 @@ type Repository struct {
 	Queries *db.Queries
 }
 
-func NewRepository(config *config.DatabaseConfig) (*Repository, error) {
+type DatabaseConfig struct {
+	Path string `yaml:"path"`
+}
+
+func NewRepository(config *DatabaseConfig) (*Repository, error) {
 	sqlDb, err := sql.Open("libsql", "file:"+config.Path)
 	if err != nil {
 		return nil, err

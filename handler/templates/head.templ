@@ -1,25 +1,29 @@
 package templates
 
-templ base(htmxRequest bool, navParams *navbarParams) {
+import "georgslauf/session"
+
+templ base(htmxRequest bool, user *session.UserData) {
 	if !htmxRequest {
 		<!DOCTYPE html>
 		<html>
 			<head>
-				<link rel="stylesheet" href="/dist/main.css"/>
-				<script type="module" src="/dist/main.js"></script>
+				<title>Georgslauf</title>
+				<link rel="stylesheet" href={ "/dist/main.css?v=" + version }/>
+				<script type="module" src={ "/dist/main.js?=" + version }></script>
+				<link rel="icon" type="image/png" sizes="192x192" href="/res/icon.png"/>
 				<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
 				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			</head>
 			<body>
 				<main>
-					@navbar(navParams)
+					@navbar(user)
 					{ children... }
 					@footer()
 				</main>
 			</body>
 		</html>
 	} else {
-		@navbar(navParams)
+		@navbar(user)
 		{ children... }
 		@footer()
 	}

@@ -6,7 +6,7 @@ sql:
     gen:
       go:
         package: "db"
-        out: "db"
+        out: "internal/db"
         sql_package: "database/sql"
         # all possible overrides https://github.com/sqlc-dev/sqlc/blob/main/internal/codegen/golang/postgresql_type.go
         overrides:
@@ -28,6 +28,10 @@ sql:
             go_type: "database/sql.NullFloat64"
           - column: "stations.image_id"
             go_type: "database/sql.NullString"
+          - column: "stations.description"
+            go_type: "database/sql.NullString"
+          - column: "stations.requirements"
+            go_type: "database/sql.NullString"
 
           - column: "tribes.short"
             go_type: "database/sql.NullString"
@@ -40,5 +44,12 @@ sql:
           - column: "tribes.stavo_email"
             go_type: "database/sql.NullString"
 
-          - column: "users.last_login"
+          - column: "users.oauth"
+            go_type: "database/sql.NullString"
+          - column: "users.ext_id"
+            go_type: "database/sql.NullString"
+
+          - column: "images.tribe_id"
+            go_type: "database/sql.NullInt64"
+          - column: "images.station_id"
             go_type: "database/sql.NullInt64"

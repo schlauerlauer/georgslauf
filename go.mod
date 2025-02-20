@@ -5,6 +5,7 @@ go 1.23.5
 require (
 	github.com/a-h/templ v0.3.833
 	github.com/gorilla/csrf v1.7.2
+	github.com/gorilla/sessions v1.4.0
 	github.com/lmittmann/tint v1.0.4
 	github.com/schlauerlauer/go-forms v1.0.1
 	github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92
