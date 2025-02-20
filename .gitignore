@@ -8,5 +8,7 @@
 *_templ.go
 /resources/main.js
 /resources/main.css
-/internal/db
+/internal/db/db.go
+/internal/db/models.go
+/internal/db/queries.sql.go
 /uploads

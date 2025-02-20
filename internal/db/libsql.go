@@ -1,14 +1,13 @@
-package persistence
+package db
 
 import (
 	"database/sql"
-	"georgslauf/db"
 
 	_ "github.com/tursodatabase/go-libsql"
 )
 
 type Repository struct {
-	Queries *db.Queries
+	Queries *Queries
 }
 
 type DatabaseConfig struct {
@@ -23,7 +22,7 @@ func NewRepository(config *DatabaseConfig) (*Repository, error) {
 
 	// defer sqlDb.Close() // TODO
 
-	queries := db.New(sqlDb)
+	queries := New(sqlDb)
 
 	if row := sqlDb.QueryRow("PRAGMA foreign_keys = on;"); row.Err() != nil {
 		return nil, err

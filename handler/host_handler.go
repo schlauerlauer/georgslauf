@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"georgslauf/db"
 	"georgslauf/handler/templates"
 	"georgslauf/htmx"
+	"georgslauf/internal/db"
 	"log/slog"
 	"net/http"
 	"time"
