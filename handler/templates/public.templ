@@ -2,11 +2,12 @@ package templates
 
 import (
 	"georgslauf/db"
+	"georgslauf/session"
 	"time"
 )
 
-templ Home(htmxRequest bool, navParams *navbarParams, schedule []db.Schedule) {
-	@base(htmxRequest, navParams) {
+templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule) {
+	@base(htmxRequest, user) {
 		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
 			<h1 class="text-xl">GEORGSLAUF 2024 - Tribute von München-Isar</h1>
 			<h2>Liebe Bewohner*innen des Bezirks München-Isar,</h2>

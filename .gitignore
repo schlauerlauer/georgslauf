@@ -6,5 +6,7 @@
 /georgslauf.db*
 /node_modules
 *_templ.go
-/dist
-/db
+/resources/main.js
+/resources/main.css
+/internal/db
+/uploads

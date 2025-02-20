@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"georgslauf/auth"
+	"georgslauf/persistence"
 	"log/slog"
 	"os"
 
@@ -14,17 +15,15 @@ type ConfigData struct {
 		Host string `yaml:"host" binding:"required"`
 		Port int64  `yaml:"port" binding:"required"`
 	} `yaml:"server"`
-	Database DatabaseConfig   `yaml:"database"`
-	OAuth    auth.OAuthConfig `yaml:"oauth"`
-	Security SecurityConfig   `yaml:"security"`
-}
-
-type DatabaseConfig struct {
-	Path string `yaml:"path"`
+	UploadDir string                     `yaml:"uploadDir"`
+	Database  persistence.DatabaseConfig `yaml:"database"`
+	OAuth     auth.OAuthConfig           `yaml:"oauth"`
+	Security  SecurityConfig             `yaml:"security"`
 }
 
 type SecurityConfig struct {
 	CSRFAuthKey []byte `yaml:"csrfAuthKey"`
+	SessionKey  []byte `yaml:"sessionKey"`
 }
 
 var (
