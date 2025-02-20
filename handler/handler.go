@@ -2,7 +2,7 @@ package handler
 
 import (
 	"georgslauf/handler/templates"
-	"georgslauf/persistence"
+	"georgslauf/internal/db"
 	"log/slog"
 	"time"
 
@@ -17,12 +17,12 @@ var (
 )
 
 type Handler struct {
-	repository    *persistence.Repository
+	repository    *db.Repository
 	formProcessor *forms.FormProcessor
 }
 
 func NewHandler(
-	repository *persistence.Repository,
+	repository *db.Repository,
 ) (*Handler, error) {
 	parsedBuildTime, err := time.Parse("2006-01-02T15:04:05", buildTime)
 	if err != nil {
