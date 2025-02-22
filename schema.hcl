@@ -417,13 +417,23 @@ table "users" {
 		auto_increment = true
 	}
 
+	column "ext_id" {
+		null = true
+		type = text
+	}
+
+	column "username" {
+		null = false
+		type = text
+	}
+
 	column "email" {
 		null = false
 		type = text
 	}
 
 	column "last_login" {
-		null = true
+		null = false
 		type = integer
 	}
 
@@ -452,8 +462,44 @@ table "users" {
 		columns = [column.id]
 	}
 
-	index "idx_auth_email" {
+	index "idx_users_email" {
 		columns = [column.email]
 		unique  = true
+	}
+
+	index "idx_users_ext_id" {
+		columns = [column.ext_id]
+		unique  = true
+		where   = "ext_id is not null"
+	}
+}
+
+table user_icons {
+	schema = schema.main
+
+	column "id" {
+		null = false
+		type = integer
+	}
+
+	column "created_at" {
+		null = false
+		type = integer
+	}
+
+	column "image" {
+		null = false
+		type = blob
+	} 
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	foreign_key "id" {
+		columns     = [column.id]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
 	}
 }
