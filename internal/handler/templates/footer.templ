@@ -5,12 +5,9 @@ var (
 	year    = ""
 )
 
-func SetVersion(v string) {
-	version = v
-}
-
-func SetYear(s string) {
-	year = s
+func SetVars(versionStr, yearStr string) {
+	version = versionStr
+	year = yearStr
 }
 
 templ footer() {

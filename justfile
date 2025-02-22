@@ -7,7 +7,7 @@ sqlc:
 	@sqlc generate -f sqlc.yaml
 
 templ:
-	@templ generate -path handler/templates
+	@templ generate -path internal/handler/templates
 
 css:
 	@node_modules/.bin/tailwindcss \
