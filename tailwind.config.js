@@ -4,7 +4,7 @@ const { addDynamicIconSelectors } = require('@iconify/tailwind');
 
 module.exports = {
 	content: [
-		"handler/templates/*.templ",
+		"internal/handler/templates/*.templ",
 	],
 	theme: {
 		extend: {

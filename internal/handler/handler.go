@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"georgslauf/handler/templates"
 	"georgslauf/internal/db"
+	"georgslauf/internal/handler/templates"
+	"georgslauf/session"
 	"log/slog"
 	"time"
 
@@ -10,8 +11,8 @@ import (
 )
 
 var (
-	version   = "n/a" // set by ldflags
-	buildTime = "n/a" // set by ldflags
+	version   = "n/a"                 // set by ldflags
+	buildTime = "2006-01-02T15:04:05" // set by ldflags
 
 	expirationTime = time.Time{}
 )
@@ -19,10 +20,12 @@ var (
 type Handler struct {
 	repository    *db.Repository
 	formProcessor *forms.FormProcessor
+	session       *session.Session
 }
 
 func NewHandler(
 	repository *db.Repository,
+	session *session.Session,
 ) (*Handler, error) {
 	parsedBuildTime, err := time.Parse("2006-01-02T15:04:05", buildTime)
 	if err != nil {
@@ -30,8 +33,7 @@ func NewHandler(
 	}
 	expirationTime = parsedBuildTime.AddDate(2, 0, 0)
 
-	templates.SetVersion(version) // not sure why ldflags don't work for this
-	templates.SetYear(parsedBuildTime.Format("2006"))
+	templates.SetVars(version, parsedBuildTime.Format("2006"))
 
 	// FormProcessor
 	formProcessor, err := forms.NewFormProcessor()
@@ -43,5 +45,6 @@ func NewHandler(
 	return &Handler{
 		repository:    repository,
 		formProcessor: formProcessor,
+		session:       session,
 	}, nil
 }

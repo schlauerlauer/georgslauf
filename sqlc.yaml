@@ -53,3 +53,21 @@ sql:
             go_type: "database/sql.NullInt64"
           - column: "images.station_id"
             go_type: "database/sql.NullInt64"
+          - column: "images.created_by"
+            go_type: "database/sql.NullInt64"
+
+          - column: "users.tribe_id"
+            go_type: "database/sql.NullInt64"
+          - column: "users.station_id"
+            go_type: "database/sql.NullInt64"
+          - column: "users.role"
+            go_type: "georgslauf/session.Role"
+
+          - column: "tribe_roles.tribe_role"
+            go_type: "georgslauf/acl.ACL"
+
+          - column: "station_roles.station_role"
+            go_type: "georgslauf/acl.ACL"
+
+          - column: "group_roles.group_role"
+            go_type: "georgslauf/acl.ACL"

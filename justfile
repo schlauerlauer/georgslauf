@@ -7,22 +7,22 @@ sqlc:
 	@sqlc generate -f sqlc.yaml
 
 templ:
-	@templ generate -path handler/templates
+	@templ generate -path internal/handler/templates
 
 css:
 	@node_modules/.bin/tailwindcss \
-		--input ./styles/main.scss \
-		--output dist/main.css \
+		--input ./dist/main.scss \
+		--output resources/main.css \
 		--config ./tailwind.config.js
 
 js:
 	@node_modules/.bin/esbuild \
 		--bundle \
 		--minify \
-		--outdir=dist \
+		--outdir=resources \
 		--platform=browser \
 		--format=esm \
-		./scripts/main.js
+		./dist/main.js
 
 # database
 

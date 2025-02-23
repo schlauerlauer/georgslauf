@@ -62,6 +62,8 @@ github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDN
 github.com/rogpeppe/go-internal v1.11.0/go.mod h1:ddIwULY96R17DhadqLgMfk9H9tvdUzkipdSkR5nkCZA=
 github.com/schlauerlauer/go-forms v1.0.1 h1:gwb6imKCOszsFFSFKznTJmprAySykEvV0pogi0Wvp9E=
 github.com/schlauerlauer/go-forms v1.0.1/go.mod h1:s5fNirRUSOLpcIg+cxcujabnzvAEly8UW5Wqzr0yyFY=
+github.com/schlauerlauer/go-middleware v1.0.0 h1:lS6aBidChEhrjLedrAlqtltz+q5GPoZlsV0KqE774WI=
+github.com/schlauerlauer/go-middleware v1.0.0/go.mod h1:naC8ys6DKtQYk9+4MuGbMls93RqsmqRMNHZNIMwXAWA=
 github.com/segmentio/go-camelcase v0.0.0-20160726192923-7085f1e3c734 h1:Cpx2WLIv6fuPvaJAHNhYOgYzk/8RcJXu/8+mOrxf2KM=
 github.com/segmentio/go-camelcase v0.0.0-20160726192923-7085f1e3c734/go.mod h1:hqVOMAwu+ekffC3Tvq5N1ljnXRrFKcaSjbCmQ8JgYaI=
 github.com/segmentio/go-snakecase v1.2.0 h1:4cTmEjPGi03WmyAHWBjX53viTpBkn/z+4DO++fqYvpw=
