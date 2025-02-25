@@ -11,7 +11,7 @@ func SetVars(versionStr, yearStr string) {
 }
 
 templ footer() {
-	<footer class="md:fixed md:bottom-0 footer footer-center mt-48 p-4 bg-base-300 text-base-content">
+	<footer class="md:fixed md:bottom-0 footer footer-center mt-12 px-4 py-0.5 bg-base-300 text-base-content">
 		<aside class="flex justify-around w-full">
 			<div>
 				<span class="align-middle text-lg icon-[mdi--github]"></span>
@@ -21,6 +21,17 @@ templ footer() {
 				<span class="font-light">v{ version }</span>
 			</div>
 			<p>{ year }</p>
+			<div class="dropdown">
+				<div tabindex="0" role="button" class="btn btn-ghost">
+					<span class="h-5 w-5 icon-[solar--palette-round-bold-duotone]"></span>
+				</div>
+				<ul tabindex="0" class="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box w-36 right-0 bottom-14">
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Pastel" value="pastel"/></li>
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cupcake" value="cupcake"/></li>
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dracula" value="dracula"/></li>
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Sunset" value="sunset"/></li>
+				</ul>
+			</div>
 		</aside>
 	</footer>
 }

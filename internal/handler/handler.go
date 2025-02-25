@@ -18,13 +18,13 @@ var (
 )
 
 type Handler struct {
-	repository    *db.Repository
+	queries       *db.Queries
 	formProcessor *forms.FormProcessor
 	session       *session.Session
 }
 
 func NewHandler(
-	repository *db.Repository,
+	queries *db.Queries,
 	session *session.Session,
 ) (*Handler, error) {
 	parsedBuildTime, err := time.Parse("2006-01-02T15:04:05", buildTime)
@@ -43,7 +43,7 @@ func NewHandler(
 	}
 
 	return &Handler{
-		repository:    repository,
+		queries:       queries,
 		formProcessor: formProcessor,
 		session:       session,
 	}, nil

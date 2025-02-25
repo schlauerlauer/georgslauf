@@ -19,7 +19,7 @@ type UserData struct {
 	Email      string
 	LastUpdate time.Time
 	Role       Role
-	// Picture       string // TODO HasPicture bool?
+	HasPicture bool
 }
 
 const (

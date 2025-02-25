@@ -44,7 +44,7 @@ func (h *Handler) GetHome(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("not ok") // TODO
 	}
 
-	schedule, err := h.repository.Queries.GetSchedule(ctx)
+	schedule, err := h.queries.GetSchedule(ctx)
 	if err != nil {
 		slog.Warn("GetSchedule", "err", err)
 	}
