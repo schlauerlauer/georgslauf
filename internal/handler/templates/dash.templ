@@ -1,0 +1,117 @@
+package templates
+
+import (
+	"georgslauf/internal/db"
+	"georgslauf/internal/settings"
+	"georgslauf/session"
+	"strconv"
+)
+
+templ DashStations(stations []db.GetStationsByTribeRow) {
+	<div>
+		<h2 class="text-lg mb-3">Angemeldete Posten</h2>
+		<div class="space-y-3">
+			for _, station := range stations {
+				// TODO tab animation, won't work with <details/> ?
+				<details class="collapse collapse-arrow bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">{ station.Name }</summary>
+					<div class="collapse-content">
+						<p>content</p>
+					</div>
+				</details>
+			}
+		</div>
+	</div>
+}
+
+func max(a, b int64) int64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, settings settings.Groups) {
+	<div>
+		<h2 class="text-lg mb-3">Angemeldete Gruppen</h2>
+		<div class="space-y-3">
+			for _, group := range groups {
+				<details class="collapse collapse-arrow bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">{ group.Name }</summary>
+					<div class="collapse-content">
+						<form
+							class="space-y-6"
+							hx-put={ "/" }
+						>
+							<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+							<input type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Name</span>
+								</div>
+								<input name="name" type="text" placeholder="Name" class="input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Name }/>
+							</label>
+							<label class="form-control w-full">
+								<div class="label">
+									<span class="label-text">Größe</span>
+								</div>
+								<input type="range" min={ strconv.FormatInt(settings.Min, 10) } max={ strconv.FormatInt(settings.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, settings.Min), 10) } class="range" step="1"/>
+								<div class="flex w-full justify-between px-2 pt-1 text-xs">
+									for num := range settings.Max - settings.Min + 1 {
+										<span>{ strconv.FormatInt(num + settings.Min, 10) }</span>
+									}
+								</div>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Stufe</span>
+								</div>
+								<select class="select select-bordered">
+									<option disabled selected>Auswählen</option>
+									<option>Wölflinge</option>
+									<option>Jupfis</option>
+									<option>Pfadis</option>
+									<option>Rover</option>
+								</select>
+							</label>
+							<p>Grouping { strconv.FormatInt(group.Grouping, 10) }</p>
+						</form>
+					</div>
+				</details>
+			}
+		</div>
+	</div>
+}
+
+templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, isEdit bool, isAdmin bool) {
+	@base(htmxRequest, user, tribeId) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			// TODO change active tab
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-trigger="load, change"
+				hx-swap="innerHTML"
+				hx-target="#dash-tab"
+				hx-include="#tribe-id"
+			>
+				if isEdit || isAdmin {
+					<a id="tab-stations" role="tab" class="tab tab-active" hx-get="/dash/stations">Posten</a>
+					<a id="tab-groups" role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
+				}
+				if isAdmin {
+					<a id="tab-users" role="tab" class="tab">Benutzer</a>
+					<a id="tab-tribe" role="tab" class="tab">Stamm</a>
+				}
+			</div>
+			<div id="dash-tab" class="pt-6"></div>
+		</div>
+	}
+}
+
+// TODO
+templ DashView(htmxRequest bool, user *session.UserData, tribeId int64) {
+	@base(htmxRequest, user, tribeId) {
+		Noch keine Rechte
+	}
+}

@@ -1,0 +1,45 @@
+package templates
+
+import "georgslauf/session"
+
+templ ErrorNotFound(htmxRequest bool, user *session.UserData) {
+	@base(htmxRequest, user, -1) {
+		<div class="text-center mt-20">
+			<p class="text-base font-semibold text-primary">404</p>
+			<h1 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">Nicht gefunden</h1>
+			<p class="mt-6 text-base leading-7"></p>
+			<div class="mt-10 flex items-center justify-center gap-x-6">
+				<div
+					class="btn"
+					hx-get="/"
+					hx-target="main"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Zurück zur Startseite
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ ErrorUnauthorized(htmxRequest bool, user *session.UserData) {
+	@base(htmxRequest, user, -1) {
+		<div class="text-center mt-20">
+			<p class="text-base font-semibold text-primary">401</p>
+			<h1 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">Keine Berechtigung</h1>
+			<p class="mt-6 text-base leading-7"></p>
+			<div class="mt-10 flex items-center justify-center gap-x-6">
+				<div
+					class="btn"
+					hx-get="/"
+					hx-target="main"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Zurück zur Startseite
+				</div>
+			</div>
+		</div>
+	}
+}
