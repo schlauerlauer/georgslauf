@@ -1,20 +1,5 @@
 schema "main" {}
 
-// TODO
-// table "events" {
-// 	schema = schema.main
-
-// 	column "id" {
-// 		null           = false
-// 		type           = integer
-// 		auto_increment = true
-// 	}
-
-// 	primary_key {
-// 		columns = [column.id]
-// 	}
-// }
-
 table "schedule" {
 	schema = schema.main
 
@@ -58,9 +43,16 @@ table "tribes" {
 		auto_increment = true
 	}
 
+	column "created_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
 	column "updated_at" {
-		null = false
-		type = integer
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
 	}
 
 	column "name" {
@@ -120,22 +112,29 @@ table "stations" {
 	}
 
 	column "created_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
 		type = integer
 	}
 
 	column "updated_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
 		type = integer
 	}
 
 	column "name" {
 		null = false
-		type = text
-	}
-
-	column "short" {
-		null = true
 		type = text
 	}
 
@@ -175,6 +174,10 @@ table "stations" {
 		type = text
 	}
 
+	primary_key {
+		columns = [column.id]
+	}
+
 	foreign_key "tribe_id" {
 		columns     = [column.tribe_id]
 		ref_columns = [table.tribes.column.id]
@@ -189,8 +192,18 @@ table "stations" {
 		on_delete   = SET_NULL
 	}
 
-	primary_key {
-		columns = [column.id]
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
 	}
 }
 
@@ -204,12 +217,24 @@ table "groups" {
 	}
 
 	column "created_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
 		type = integer
 	}
 
 	column "updated_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
 		type = integer
 	}
 
@@ -218,15 +243,15 @@ table "groups" {
 		type = text
 	}
 
-	column "short" {
-		null = true
-		type = text
-	}
-
 	column "size" {
-		null = true
+		null = false
 		type = integer
 		default = 0
+	}
+
+	column "comment" {
+		null = true
+		type = text
 	}
 
 	column "grouping" {
@@ -258,6 +283,20 @@ table "groups" {
 		on_delete   = SET_NULL
 	}
 
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
 	primary_key {
 		columns = [column.id]
 	}
@@ -273,7 +312,13 @@ table "images" {
 	}
 
 	column "created_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
 		type = integer
 	}
 
@@ -296,6 +341,27 @@ table "images" {
 		columns = [column.id]
 	}
 
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "tribe_id" {
+		columns     = [column.tribe_id]
+		ref_columns = [table.tribes.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "station_id" {
+		columns     = [column.station_id]
+		ref_columns = [table.stations.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
 	index "idx_image_filepath" {
 		columns = [column.filepath]
 		unique  = true
@@ -312,12 +378,24 @@ table "points_to_stations" {
 	}
 
 	column "created_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
 		type = integer
 	}
 
 	column "updated_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
 		type = integer
 	}
 
@@ -347,6 +425,20 @@ table "points_to_stations" {
 		ref_columns = [table.stations.column.id]
 		on_update   = NO_ACTION
 		on_delete   = CASCADE
+	}
+
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
 	}
 
 	index "idx_pts" {
@@ -365,12 +457,24 @@ table "points_to_groups" {
 	}
 
 	column "created_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
 		type = integer
 	}
 
 	column "updated_at" {
-		null = false
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
 		type = integer
 	}
 
@@ -402,9 +506,290 @@ table "points_to_groups" {
 		on_delete   = CASCADE
 	}
 
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
 	index "idx_ptg" {
 		columns = [column.station_id, column.group_id]
 		unique  = true
+	}
+}
+
+table "group_roles" {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "created_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
+		type = integer
+	}
+
+	column "updated_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
+		type = integer
+	}
+
+	column "user_id" {
+		null = false
+		type = integer
+	}
+
+	column "group_id" {
+		null = false
+		type = integer
+	}
+
+	column "group_role" {
+		null = false
+		type = integer
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	index "idx_group_roles_user" {
+		columns = [column.user_id]
+		unique  = false
+	}
+
+	index "idx_group_roles_user_group" {
+		columns = [column.user_id, column.group_id]
+		unique  = true
+	}
+
+	foreign_key "user_id" {
+		columns     = [column.user_id]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "group_id" {
+		columns     = [column.group_id]
+		ref_columns = [table.groups.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+}
+
+table "station_roles" {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "created_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
+		type = integer
+	}
+
+	column "updated_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
+		type = integer
+	}
+
+	column "user_id" {
+		null = false
+		type = integer
+	}
+
+	column "station_id" {
+		null = false
+		type = integer
+	}
+
+	column "station_role" {
+		null = false
+		type = integer
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	index "idx_station_roles_user" {
+		columns = [column.user_id]
+		unique  = false
+	}
+
+	index "idx_station_roles_user_station" {
+		columns = [column.user_id, column.station_id]
+		unique  = true
+	}
+
+	foreign_key "user_id" {
+		columns     = [column.user_id]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "station_id" {
+		columns     = [column.station_id]
+		ref_columns = [table.stations.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+}
+
+table "tribe_roles" {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "created_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
+		type = integer
+	}
+
+	column "updated_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
+		type = integer
+	}
+
+	column "user_id" {
+		null = false
+		type = integer
+	}
+
+	column "tribe_id" {
+		null = false
+		type = integer
+	}
+
+	column "tribe_role" {
+		null = false
+		type = integer
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	index "idx_tribe_roles_user" {
+		columns = [column.user_id]
+		unique  = false
+	}
+
+	index "idx_tribe_roles_user_tribe" {
+		columns = [column.user_id, column.tribe_id]
+		unique  = true
+	}
+
+	foreign_key "user_id" {
+		columns     = [column.user_id]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "tribe_id" {
+		columns     = [column.tribe_id]
+		ref_columns = [table.tribes.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
 	}
 }
 
@@ -433,13 +818,15 @@ table "users" {
 	}
 
 	column "last_login" {
-		null = false
-		type = integer
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
 	}
 
 	column "created_at" {
-		null = false
-		type = integer
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
 	}
 
 	column "role" {
@@ -474,17 +861,63 @@ table "users" {
 	}
 }
 
+table tribe_icons {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "created_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "created_by" {
+		null = true
+		type = integer
+	}
+
+	column "image" {
+		null = false
+		type = blob
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	foreign_key "id" {
+		columns     = [column.id]
+		ref_columns = [table.tribes.column.id]
+		on_update   = NO_ACTION
+		on_delete   = CASCADE
+	}
+
+	foreign_key "created_by" {
+		columns     = [column.created_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+}
+
 table user_icons {
 	schema = schema.main
 
 	column "id" {
-		null = false
-		type = integer
+		null           = false
+		type           = integer
+		auto_increment = true
 	}
 
 	column "created_at" {
-		null = false
-		type = integer
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
 	}
 
 	column "image" {
@@ -501,5 +934,42 @@ table user_icons {
 		ref_columns = [table.users.column.id]
 		on_update   = NO_ACTION
 		on_delete   = CASCADE
+	}
+}
+
+table settings {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "updated_at" {
+		null    = false
+		type    = integer
+		default = "(unixepoch())"
+	}
+
+	column "updated_by" {
+		null = true
+		type = integer
+	}
+
+	column "data" {
+		null = false
+		type = blob
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	foreign_key "updated_by" {
+		columns     = [column.updated_by]
+		ref_columns = [table.users.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
 	}
 }

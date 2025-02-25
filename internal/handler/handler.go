@@ -3,6 +3,7 @@ package handler
 import (
 	"georgslauf/internal/db"
 	"georgslauf/internal/handler/templates"
+	"georgslauf/internal/settings"
 	"georgslauf/session"
 	"log/slog"
 	"time"
@@ -21,11 +22,13 @@ type Handler struct {
 	queries       *db.Queries
 	formProcessor *forms.FormProcessor
 	session       *session.Session
+	settings      *settings.SettingsService
 }
 
 func NewHandler(
 	queries *db.Queries,
 	session *session.Session,
+	settings *settings.SettingsService,
 ) (*Handler, error) {
 	parsedBuildTime, err := time.Parse("2006-01-02T15:04:05", buildTime)
 	if err != nil {
@@ -46,5 +49,6 @@ func NewHandler(
 		queries:       queries,
 		formProcessor: formProcessor,
 		session:       session,
+		settings:      settings,
 	}, nil
 }

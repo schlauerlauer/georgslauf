@@ -24,6 +24,10 @@ func NewRepository(config *DatabaseConfig) (*Repository, error) {
 
 	queries := New(sqlDb)
 
+	if row := sqlDb.QueryRow("PRAGMA journal_mode=WAL;"); row.Err() != nil {
+		return nil, err
+	}
+
 	if row := sqlDb.QueryRow("PRAGMA foreign_keys = on;"); row.Err() != nil {
 		return nil, err
 	}

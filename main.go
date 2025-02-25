@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"fmt"
-	"georgslauf/config"
-	"georgslauf/handler"
-	"georgslauf/middleware"
-	"georgslauf/persistence"
+	"georgslauf/auth"
+	"georgslauf/authsession"
+	"georgslauf/internal/config"
+	"georgslauf/internal/db"
+	"georgslauf/internal/handler"
+	"georgslauf/internal/settings"
+	"georgslauf/session"
 	"io/fs"
 
 	"log/slog"
@@ -14,11 +18,17 @@ import (
 	"os"
 	"time"
 
+	"github.com/gorilla/csrf"
 	"github.com/lmittmann/tint"
+	"github.com/schlauerlauer/go-middleware"
 )
 
-//go:embed all:dist
-var embedDist embed.FS
+const (
+	csrfCookieName = "georgslauf.csrf"
+)
+
+//go:embed all:resources
+var embedRes embed.FS
 
 func main() {
 	slog.SetDefault(slog.New(
@@ -35,49 +45,95 @@ func main() {
 		os.Exit(1)
 	}
 
-	repository, err := persistence.NewRepository(&cfg.Database)
+	repository, err := db.NewRepository(&cfg.Database)
 	if err != nil {
 		slog.Error("error connecting repository", "err", err)
 		os.Exit(1)
 	}
 
-	handlers := handler.NewHandler(
-		repository,
-	)
+	sessionService := session.NewSessionService(cfg.SessionKey)
+
+	settings := settings.New(repository.Queries)
+
+	handlers, err := handler.NewHandler(repository.Queries, sessionService, settings)
+	if err != nil {
+		slog.Error("NewHandler", "err", err)
+		os.Exit(1)
+	}
+
+	a2s := authsession.New(repository.Queries, sessionService, cfg.OAuth.Endpoint, "/dash/")
+
+	authHandler, err := auth.NewAuthHandler(cfg.OAuth, a2s)
+	if err != nil {
+		slog.Error("NewAuthHandler", "err", err)
+		os.Exit(1)
+	}
 
 	router := http.NewServeMux()
 
-	subDist, err := fs.Sub(embedDist, "dist")
+	router.HandleFunc("GET /debug", func(w http.ResponseWriter, r *http.Request) {
+		set := settings.Get()
+		set.Groups.Min = 4
+		set.Groups.Max = 13
+		settings.Set(context.Background(), set)
+	})
+	router.HandleFunc("GET /debug2", func(w http.ResponseWriter, r *http.Request) {
+		set := settings.Get()
+		set.Groups.Min = 2
+		set.Groups.Max = 8
+		settings.Set(context.Background(), set)
+	})
+
+	// auth
+	router.HandleFunc("GET /login", authHandler.Login)
+	router.HandleFunc("GET /oauth/callback", authHandler.Callback)
+
+	// ./uploads => /res/
+	resRouter := http.FileServer(neuteredFileSystem{http.Dir(cfg.UploadDir)})
+	router.Handle("GET /res/", http.StripPrefix("/res", resRouter))
+
+	// ./resources => /dist/
+	subDist, err := fs.Sub(embedRes, "resources")
 	if err != nil {
 		slog.Error("fs.Sub", "err", err)
 		os.Exit(1)
 	}
 	distServer := http.FileServer(http.FS(subDist))
-	router.Handle("GET /dist", http.NotFoundHandler())
-	router.Handle("GET /dist/", http.StripPrefix("/dist", distServer))
+	router.Handle("GET /dist/", http.StripPrefix("/dist", neuter(distServer)))
 
+	// public pages
+	router.Handle("/", sessionService.OptionalAuth(http.HandlerFunc(handlers.GetHome)))
 	router.HandleFunc("GET /ping", handlers.Ping)
 	router.HandleFunc("GET /version", handlers.Version)
 	router.HandleFunc("GET /robots.txt", handlers.Robots)
 	router.HandleFunc("GET /.well-known/security.txt", handlers.Security)
 
-	// router.Handle("GET /metrics", promhttp.Handler())
-	router.HandleFunc("/", handlers.GetHome) // TODO optional auth
+	// dash routes
+	dashRouter := http.NewServeMux()
+	dashRouter.HandleFunc("GET /", handlers.Dash)
+	dashRouter.HandleFunc("GET /stations", handlers.DashStations)
+	dashRouter.HandleFunc("GET /groups", handlers.DashGroups)
+	dashRouter.HandleFunc("PUT /groups", handlers.PutGroup)
+	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequiredAuth(dashRouter)))
 
-	// DASH ROUTES
-	privateRouter := http.NewServeMux()
-	privateRouter.HandleFunc("GET /", handlers.GetHostHome)
-	router.Handle("/dash/", http.StripPrefix("/dash", privateRouter)) // TODO authenticated
+	// host routes
+	hostRouter := http.NewServeMux()
+	// hostRouter.HandleFunc("GET /", handlers.GetHostHome) // TODO
+	// hostRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
+	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(session.RoleAtLeastElevated, hostRouter)))
 
-	// HTMX ROUTES
-	apiRouter := http.NewServeMux()
-	apiRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
-	apiRouter.HandleFunc("GET /tribes", handlers.GetTribes)
-	apiRouter.HandleFunc("POST /tribes", handlers.CreateTribe)
-	router.Handle("/api/", http.StripPrefix("/api", apiRouter)) // TODO authenticated
+	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
+	router.Handle("GET /icon/tribe", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetTribeIcon)))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
+		csrf.Protect(
+			cfg.CsrfKey,
+			csrf.Secure(true),
+			csrf.SameSite(csrf.SameSiteStrictMode),
+			csrf.Path("/"),
+			csrf.CookieName(csrfCookieName),
+		),
 	)
 
 	server := http.Server{
