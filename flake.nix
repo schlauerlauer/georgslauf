@@ -1,7 +1,8 @@
 {
 	description = "georgslauf";
 
-	inputs.nixpkgs.url = "github:nixos/nixpkgs/release-24.11";
+	#inputs.nixpkgs.url = "github:nixos/nixpkgs/release-24.11";
+	inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
 	outputs = { self, nixpkgs }:
 		let
@@ -12,7 +13,7 @@
 				name = "sendit app development";
 				nativeBuildInputs = with pkgs; [
 					just
-					go_1_23 gotools gopls go-outline gopkgs gocode-gomod godef golint
+					go_1_24 gotools gopls go-outline gopkgs gocode-gomod godef golint
 					air sqlc templ atlas nodejs_23 sqlite
 				];
 				shellHook = ''

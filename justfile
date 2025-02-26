@@ -1,13 +1,10 @@
 default:
 	@air -c .air.toml
 
-restart: sqlc templ css js
+restart: generate css js
 
-sqlc:
-	@sqlc generate -f sqlc.yaml
-
-templ:
-	@templ generate -path internal/handler/templates
+generate:
+	@go generate
 
 css:
 	@node_modules/.bin/tailwindcss \

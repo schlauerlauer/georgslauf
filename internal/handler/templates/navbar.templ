@@ -56,6 +56,14 @@ templ navbar(user *session.UserData, tribeId int64) {
 					hx-target="main"
 					hx-push-url="true"
 				>Dashboard</div>
+				if user.Role >= session.RoleElevated {
+					<div
+						class="btn"
+						hx-get="/host/"
+						hx-target="main"
+						hx-push-url="true"
+					>Host</div>
+				}
 				// TODO
 				// <div class="btn" hx-get="/logout">Logout</div>
 			} else {

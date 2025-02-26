@@ -1,5 +1,7 @@
 package session
 
+// NTH module
+
 import (
 	"context"
 	"encoding/gob"
@@ -35,6 +37,15 @@ const (
 	RoleElevated
 	RoleAdmin
 )
+
+var roles = []string{"Default", "Elevated", "Admin"}
+
+func (r Role) String() string {
+	if int64(r) >= int64(len(roles)) {
+		return "Invalid"
+	}
+	return roles[r]
+}
 
 var (
 	errSessionNil   = errors.New("session is nil")

@@ -27,6 +27,9 @@ const (
 	csrfCookieName = "georgslauf.csrf"
 )
 
+//go:generate sqlc generate -f ./sqlc.yaml
+//go:generate templ generate -path internal/handler/templates
+
 //go:embed all:resources
 var embedRes embed.FS
 
@@ -89,8 +92,12 @@ func main() {
 	router.HandleFunc("GET /oauth/callback", authHandler.Callback)
 
 	// ./uploads => /res/
-	resRouter := http.FileServer(neuteredFileSystem{http.Dir(cfg.UploadDir)})
-	router.Handle("GET /res/", http.StripPrefix("/res", resRouter))
+	upl, err := os.OpenRoot(cfg.UploadDir)
+	if err != nil {
+		slog.Error("os.OpenRoot", "err", err)
+		os.Exit(1)
+	}
+	router.Handle("GET /res/", http.StripPrefix("/res", http.FileServer(neuteredFileSystem{http.FS(upl.FS())})))
 
 	// ./resources => /dist/
 	subDist, err := fs.Sub(embedRes, "resources")
@@ -118,12 +125,14 @@ func main() {
 
 	// host routes
 	hostRouter := http.NewServeMux()
-	// hostRouter.HandleFunc("GET /", handlers.GetHostHome) // TODO
-	// hostRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
+	hostRouter.HandleFunc("GET /", handlers.GetHostHome)
+	hostRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
+	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
+	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.CreateTribeIcon)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(session.RoleAtLeastElevated, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
-	router.Handle("GET /icon/tribe", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetTribeIcon)))
+	router.Handle("GET /icon/tribe/{id}", http.HandlerFunc(handlers.GetTribeIcon))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,

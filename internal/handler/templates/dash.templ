@@ -90,18 +90,13 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, isEdit bool,
 			<div
 				role="tablist"
 				class="tabs tabs-bordered"
-				hx-trigger="load, change"
 				hx-swap="innerHTML"
 				hx-target="#dash-tab"
 				hx-include="#tribe-id"
 			>
 				if isEdit || isAdmin {
-					<a id="tab-stations" role="tab" class="tab tab-active" hx-get="/dash/stations">Posten</a>
+					<a id="tab-stations" role="tab" class="tab tab-active" hx-get="/dash/stations" hx-trigger="load once, click">Posten</a>
 					<a id="tab-groups" role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
-				}
-				if isAdmin {
-					<a id="tab-users" role="tab" class="tab">Benutzer</a>
-					<a id="tab-tribe" role="tab" class="tab">Stamm</a>
 				}
 			</div>
 			<div id="dash-tab" class="pt-6"></div>

@@ -1,6 +1,10 @@
--- -- name: GetTribes :many
--- select *
--- from tribes;
+-- name: GetTribes :many
+select
+	t.*
+	,ti.id as icon
+from tribes t
+left join tribe_icons ti on ti.id = t.id
+;
 
 -- -- name: CreateTribe :one
 -- insert into tribes (updated_at, "name")
@@ -122,6 +126,13 @@ values (?,?);
 select
 	image
 from user_icons
+where id = ?
+limit 1;
+
+-- name: GetTribeIcon :one
+select
+	image
+from tribe_icons
 where id = ?
 limit 1;
 
