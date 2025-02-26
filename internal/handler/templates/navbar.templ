@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-templ navbar(user *session.UserData, tribeId int64) {
+templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 	<div class="navbar bg-base-100">
 		<div class="navbar-start">
 			<p
@@ -21,12 +21,13 @@ templ navbar(user *session.UserData, tribeId int64) {
 		</div>
 		<div class="navbar-end space-x-2">
 			if tribeId > -1 {
-				// TODO id; include this in htmx; select dropdown
-				<div class="avatar">
-					<div class="w-10 rounded-xl">
-						<img src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }/>
+				if hasIcon {
+					<div class="avatar">
+						<div class="w-10 rounded-xl">
+							<img src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }/>
+						</div>
 					</div>
-				</div>
+				}
 				<input id="tribe-id" type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
 			}
 			if user != nil {

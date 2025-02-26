@@ -20,8 +20,11 @@ type Settings struct {
 }
 
 type Groups struct {
-	Min int64 `json:"min"`
-	Max int64 `json:"max"`
+	AllowCreate bool  `json:"c"`
+	AllowUpdate bool  `json:"u"`
+	AllowDelete bool  `json:"d"`
+	Min         int64 `json:"min"`
+	Max         int64 `json:"max"`
 }
 
 func New(queries *db.Queries) *SettingsService {

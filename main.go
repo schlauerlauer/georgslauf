@@ -128,7 +128,8 @@ func main() {
 	hostRouter.HandleFunc("GET /", handlers.GetHostHome)
 	hostRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
-	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.CreateTribeIcon)
+	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.PostTribeIcon)
+	hostRouter.HandleFunc("PUT /tribes/icon/{id}", handlers.PutTribeIcon)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(session.RoleAtLeastElevated, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))

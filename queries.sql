@@ -7,8 +7,8 @@ left join tribe_icons ti on ti.id = t.id
 ;
 
 -- -- name: CreateTribe :one
--- insert into tribes (updated_at, "name")
--- values (?, ?)
+-- insert into tribes (updated_at, created_by, "name")
+-- values (?,?,?)
 -- returning *;
 
 -- -- name: GetTribe :one
@@ -45,28 +45,55 @@ order by "start" asc;
 -- TODO image_id
 -- name: GetGroupsByTribe :many
 select
-	id
-	,created_at
-	,updated_at
-	,name
-	,size
-	,grouping
-from groups
-where tribe_id = ?
-order by created_at desc;
+	g.id
+	,g.created_at
+	,g.updated_at
+	,g.name
+	,g.size
+	,g.grouping
+	,g.comment
+	,u.firstname
+from groups g
+left join users u on g.updated_by = u.id
+where g.tribe_id = ?
+order by g.created_at desc;
 
--- TODO preferred tribe limit 1
--- name: GetTribeRole :one
+-- name: UpdateGroup :exec
+update groups
+set
+	name = ?
+	,size = ?
+	,grouping = ?
+	,comment = ?
+	,updated_at = ?
+	,updated_by = ?
+where
+	id = ?
+	and tribe_id = ?;
+
+-- name: GetTribeRoleWithIcon :one
+select
+	tr.tribe_role
+	,tr.tribe_id
+	,ti.id as icon_id
+from tribe_roles tr
+left join tribe_icons ti on ti.id = tr.id
+where
+	user_id = ?
+limit 1;
+
+-- name: GetTribeRoleByTribe :one
 select
 	tribe_role
-	,tribe_id
 from tribe_roles
-where user_id = ?
+where
+	user_id = ?
+	and tribe_id = ?
 limit 1;
 
 -- name: CreateTribeRole :exec
-insert into tribe_roles (user_id, tribe_id, tribe_role)
-values (?,?,?);
+insert into tribe_roles (user_id, tribe_id, tribe_role, created_by)
+values (?,?,?,?);
 
 -- name: GetUserIdByExt :one
 select
@@ -121,6 +148,18 @@ limit 1;
 -- name: CreateUserIcon :exec
 insert into user_icons (id, image)
 values (?,?);
+
+-- name: CreateTribeIcon :exec
+insert into tribe_icons (id, created_by, image)
+values (?,?,?);
+
+-- name: UpdateTribeIcon :exec
+update tribe_icons
+set
+	created_at = unixepoch()
+	,created_by = ?
+	,image = ?
+where id = ?;
 
 -- name: GetUserIcon :one
 select
