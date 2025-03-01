@@ -2,6 +2,7 @@ package settings
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"georgslauf/internal/db"
 	"log/slog"
@@ -20,11 +21,11 @@ type Settings struct {
 }
 
 type Groups struct {
-	AllowCreate bool  `json:"c"`
-	AllowUpdate bool  `json:"u"`
-	AllowDelete bool  `json:"d"`
-	Min         int64 `json:"min"`
-	Max         int64 `json:"max"`
+	AllowCreate bool  `json:"c" schema:"group-create"`
+	AllowUpdate bool  `json:"u" schema:"group-update"`
+	AllowDelete bool  `json:"d" schema:"group-delete"`
+	Min         int64 `json:"min" schema:"group-min" validate:"gte=0"`
+	Max         int64 `json:"max" schema:"group-max" validate:"gte=0,gtfield=Min"`
 }
 
 func New(queries *db.Queries) *SettingsService {
@@ -63,7 +64,7 @@ func (s *SettingsService) Get() Settings {
 	return s.settings
 }
 
-func (s *SettingsService) Set(ctx context.Context, settings Settings) error {
+func (s *SettingsService) Set(ctx context.Context, settings Settings, userId int64) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
@@ -72,7 +73,13 @@ func (s *SettingsService) Set(ctx context.Context, settings Settings) error {
 		return err
 	}
 
-	if err := s.queries.UpdateSettings(ctx, data); err != nil {
+	if err := s.queries.UpdateSettings(ctx, db.UpdateSettingsParams{
+		Data: data,
+		UpdatedBy: sql.NullInt64{
+			Int64: userId,
+			Valid: true,
+		},
+	}); err != nil {
 		return err
 	}
 

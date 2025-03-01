@@ -188,6 +188,7 @@ insert into settings (data) values (?);
 update settings
 set
 	updated_at = unixepoch()
+	,updated_by = ?
 	,data = ?;
 
 --where id = ?

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"fmt"
 	"georgslauf/auth"
@@ -74,19 +73,6 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /debug", func(w http.ResponseWriter, r *http.Request) {
-		set := settings.Get()
-		set.Groups.Min = 4
-		set.Groups.Max = 13
-		settings.Set(context.Background(), set)
-	})
-	router.HandleFunc("GET /debug2", func(w http.ResponseWriter, r *http.Request) {
-		set := settings.Get()
-		set.Groups.Min = 2
-		set.Groups.Max = 8
-		settings.Set(context.Background(), set)
-	})
-
 	// auth
 	router.HandleFunc("GET /login", authHandler.Login)
 	router.HandleFunc("GET /oauth/callback", authHandler.Callback)
@@ -125,11 +111,13 @@ func main() {
 
 	// host routes
 	hostRouter := http.NewServeMux()
-	hostRouter.HandleFunc("GET /", handlers.GetHostHome)
-	hostRouter.HandleFunc("GET /schedule", handlers.GetSchedule)
+	hostRouter.HandleFunc("GET /", handlers.GetUsers)
+	hostRouter.HandleFunc("GET /users", handlers.GetUsers)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
 	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.PostTribeIcon)
 	hostRouter.HandleFunc("PUT /tribes/icon/{id}", handlers.PutTribeIcon)
+	hostRouter.HandleFunc("GET /settings", handlers.GetSettings)
+	hostRouter.HandleFunc("PUT /settings", handlers.PutSettings)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(session.RoleAtLeastElevated, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
