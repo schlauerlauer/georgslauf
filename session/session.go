@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/a-h/templ"
 	"github.com/gorilla/sessions"
 )
 
@@ -25,10 +26,12 @@ type UserData struct {
 }
 
 const (
-	sessionName = "georgslauf"
-	sessionKey  = "userdata"
-	ContextKey  = "session"
+	sessionName            = "georgslauf"
+	sessionKey             = "userdata"
+	ContextKey  contextKey = "session"
 )
+
+type contextKey string
 
 type Role int64
 
@@ -48,8 +51,7 @@ func (r Role) String() string {
 }
 
 var (
-	errSessionNil   = errors.New("session is nil")
-	errCouldNotCast = errors.New("could not cast user profile")
+	errSessionNil = errors.New("session is nil")
 )
 
 func RoleAtLeastElevated(userRole Role) bool {
@@ -61,10 +63,11 @@ func RoleAtLeastAdmin(userRole Role) bool {
 }
 
 type Session struct {
-	store *sessions.CookieStore
+	store             *sessions.CookieStore
+	errorUnauthorized templ.Component
 }
 
-func NewSessionService(hash []byte) *Session {
+func NewSessionService(hash []byte, unauthorizedComponent templ.Component) *Session {
 	gob.Register(UserData{})
 
 	store := sessions.NewCookieStore(hash)
@@ -73,7 +76,8 @@ func NewSessionService(hash []byte) *Session {
 	store.Options.SameSite = http.SameSiteStrictMode
 
 	return &Session{
-		store: store,
+		store:             store,
+		errorUnauthorized: unauthorizedComponent,
 	}
 }
 
@@ -112,9 +116,10 @@ func (s *Session) OptionalAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userData, err := s.GetUser(r)
 		if err != nil {
-			slog.Debug("GetUser", "err", err)
-			http.Error(w, "Unauthorized", http.StatusUnauthorized) // TODO
-			return
+			w.WriteHeader(http.StatusUnauthorized)
+			if err := s.errorUnauthorized.Render(r.Context(), w); err != nil {
+				slog.Warn("ErrorUnauthorized", "err", err)
+			}
 		}
 		ctx := context.WithValue(r.Context(), ContextKey, userData)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -125,8 +130,10 @@ func (s *Session) RequiredAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userData, err := s.GetUser(r)
 		if userData == nil || err != nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized) // TODO
-			return
+			w.WriteHeader(http.StatusUnauthorized)
+			if err := s.errorUnauthorized.Render(r.Context(), w); err != nil {
+				slog.Warn("ErrorUnauthorized", "err", err)
+			}
 		}
 		ctx := context.WithValue(r.Context(), ContextKey, userData)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -139,11 +146,17 @@ func (s *Session) RequireRoleFunc(roleFunc roleFunc, next http.Handler) http.Han
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userData, err := s.GetUser(r)
 		if userData == nil || err != nil {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized) // TODO
+			w.WriteHeader(http.StatusUnauthorized)
+			if err := s.errorUnauthorized.Render(r.Context(), w); err != nil {
+				slog.Warn("ErrorUnauthorized", "err", err)
+			}
 			return
 		}
 		if !roleFunc(userData.Role) {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized) // TODO
+			w.WriteHeader(http.StatusUnauthorized)
+			if err := s.errorUnauthorized.Render(r.Context(), w); err != nil {
+				slog.Warn("ErrorUnauthorized", "err", err)
+			}
 			return
 		}
 		ctx := context.WithValue(r.Context(), ContextKey, userData)

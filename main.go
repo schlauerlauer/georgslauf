@@ -8,6 +8,7 @@ import (
 	"georgslauf/internal/config"
 	"georgslauf/internal/db"
 	"georgslauf/internal/handler"
+	"georgslauf/internal/handler/templates"
 	"georgslauf/internal/settings"
 	"georgslauf/session"
 	"io/fs"
@@ -53,7 +54,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	sessionService := session.NewSessionService(cfg.SessionKey)
+	sessionService := session.NewSessionService(
+		cfg.SessionKey,
+		templates.ErrorUnauthorized(false, nil),
+	)
 
 	settings := settings.New(repository.Queries)
 
@@ -106,6 +110,8 @@ func main() {
 	dashRouter.HandleFunc("GET /", handlers.Dash)
 	dashRouter.HandleFunc("GET /stations", handlers.DashStations)
 	dashRouter.HandleFunc("GET /groups", handlers.DashGroups)
+	dashRouter.HandleFunc("GET /groups/new", handlers.GetNewGroup)
+	dashRouter.HandleFunc("POST /groups", handlers.PostGroup)
 	dashRouter.HandleFunc("PUT /groups", handlers.PutGroup)
 	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequiredAuth(dashRouter)))
 

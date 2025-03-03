@@ -6,41 +6,10 @@ from tribes t
 left join tribe_icons ti on ti.id = t.id
 ;
 
--- -- name: CreateTribe :one
--- insert into tribes (updated_at, created_by, "name")
--- values (?,?,?)
--- returning *;
-
--- -- name: GetTribe :one
--- select *
--- from tribes
--- where id = ?
--- limit 1;
-
--- -- name: DeleteTribe :exec
--- delete from tribes
--- where id = ?
--- limit 1;
-
 -- name: GetSchedule :many
 select *
 from schedule
 order by "start" asc;
-
--- -- name: GetGroups :many
--- select *
--- from groups;
-
--- -- name: GetGroup :one
--- select *
--- from groups
--- where id = ?
--- limit 1;
-
--- -- name: DeleteGroup :exec
--- delete from groups
--- where id = ?
--- limit 1;
 
 -- TODO image_id
 -- name: GetGroupsByTribe :many
@@ -70,6 +39,11 @@ set
 where
 	id = ?
 	and tribe_id = ?;
+
+-- name: InsertGroup :one
+insert into groups (name, size, tribe_id, grouping, comment, created_by, updated_by, created_at, updated_at)
+values (?,?,?,?,?,?,?,?,?)
+returning id;
 
 -- name: GetTribeRoleWithIcon :one
 select
@@ -184,11 +158,10 @@ limit 1;
 -- name: InsertSettings :exec
 insert into settings (data) values (?);
 
+-- NTH where id = ?
 -- name: UpdateSettings :exec
 update settings
 set
 	updated_at = unixepoch()
 	,updated_by = ?
 	,data = ?;
-
---where id = ?
