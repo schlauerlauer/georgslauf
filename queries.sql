@@ -73,6 +73,7 @@ values (?,?,?,?);
 select
 	id
 	,role
+	,last_login
 from users
 where
 	ext_id = ?
@@ -121,7 +122,9 @@ limit 1;
 
 -- name: CreateUserIcon :exec
 insert into user_icons (id, image)
-values (?,?);
+values (?,?)
+on conflict(id) do update set
+	image = excluded.image;
 
 -- name: CreateTribeIcon :exec
 insert into tribe_icons (id, created_by, image)

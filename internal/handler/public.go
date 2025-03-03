@@ -40,8 +40,6 @@ func (h *Handler) GetHome(w http.ResponseWriter, r *http.Request) {
 	var user *session.UserData
 	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
 		user = userData
-	} else {
-		slog.Warn("not ok") // TODO
 	}
 
 	schedule, err := h.queries.GetSchedule(ctx)

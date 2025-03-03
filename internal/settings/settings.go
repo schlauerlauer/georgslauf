@@ -17,7 +17,14 @@ type SettingsService struct {
 }
 
 type Settings struct {
-	Groups Groups `json:"g"`
+	Login    Login    `json:"l"`
+	Groups   Groups   `json:"g"`
+	Stations Stations `json:"s"`
+}
+
+type Login struct {
+	Title   string `json:"t" schema:"title" validate:"max=64" mod:"trim,sanitize"`
+	Welcome string `json:"w" schema:"welcome" validate:"max=1024" mod:"trim,sanitize"`
 }
 
 type Groups struct {
@@ -26,6 +33,10 @@ type Groups struct {
 	AllowDelete bool  `json:"d" schema:"group-delete"`
 	Min         int64 `json:"min" schema:"group-min" validate:"gte=0"`
 	Max         int64 `json:"max" schema:"group-max" validate:"gte=0,gtfield=Min"`
+	// TODO anmeldeschluss
+}
+
+type Stations struct {
 }
 
 func New(queries *db.Queries) *SettingsService {

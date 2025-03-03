@@ -67,7 +67,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	a2s := authsession.New(repository.Queries, sessionService, cfg.OAuth.Endpoint, "/dash/")
+	a2s := authsession.New(
+		repository.Queries,
+		sessionService,
+		cfg.OAuth.Endpoint,
+		"/dash/",
+		settings,
+	)
 
 	authHandler, err := auth.NewAuthHandler(cfg.OAuth, a2s)
 	if err != nil {
@@ -123,7 +129,8 @@ func main() {
 	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.PostTribeIcon)
 	hostRouter.HandleFunc("PUT /tribes/icon/{id}", handlers.PutTribeIcon)
 	hostRouter.HandleFunc("GET /settings", handlers.GetSettings)
-	hostRouter.HandleFunc("PUT /settings", handlers.PutSettings)
+	hostRouter.HandleFunc("PUT /settings/groups", handlers.PutSettingsGroups)
+	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(session.RoleAtLeastElevated, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
