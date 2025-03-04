@@ -102,6 +102,36 @@ table "tribes" {
 	}
 }
 
+table "station_categories" {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "name" {
+		null = false
+		type = text
+	}
+
+	column "max" {
+		null    = false
+		type    = integer
+		default = 0
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	index "idx_station_categories_name" {
+		columns = [column.name]
+		unique  = true
+	}
+}
+
 table "stations" {
 	schema = schema.main
 
@@ -138,6 +168,11 @@ table "stations" {
 		type = text
 	}
 
+	column "abbr" {
+		null = true
+		type = text
+	}
+
 	column "size" {
 		null = false
 		type = integer
@@ -146,6 +181,11 @@ table "stations" {
 
 	column "tribe_id" {
 		null = false
+		type = integer
+	}
+
+	column "category_id" {
+		null = true
 		type = integer
 	}
 
@@ -205,6 +245,19 @@ table "stations" {
 		on_update   = NO_ACTION
 		on_delete   = SET_NULL
 	}
+
+	foreign_key "category_id" {
+		columns     = [column.category_id]
+		ref_columns = [table.station_categories.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	index "idx_stations_abbr" {
+		columns = [column.abbr]
+		unique  = true
+		where   = "abbr is not null"
+	}
 }
 
 table "groups" {
@@ -243,6 +296,11 @@ table "groups" {
 		type = text
 	}
 
+	column "abbr" {
+		null = true
+		type = text
+	}
+
 	column "size" {
 		null = false
 		type = integer
@@ -267,6 +325,10 @@ table "groups" {
 	column "image_id" {
 		null = true
 		type = text
+	}
+
+	primary_key {
+		columns = [column.id]
 	}
 
 	foreign_key "tribe_id" {
@@ -297,8 +359,10 @@ table "groups" {
 		on_delete   = SET_NULL
 	}
 
-	primary_key {
-		columns = [column.id]
+	index "idx_groups_abbr" {
+		columns = [column.abbr]
+		unique  = true
+		where   = "abbr is not null"
 	}
 }
 

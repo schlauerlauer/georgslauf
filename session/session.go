@@ -8,7 +8,6 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gorilla/sessions"
@@ -20,7 +19,6 @@ type UserData struct {
 	Firstname  string
 	Lastname   string
 	Email      string
-	LastUpdate time.Time
 	Role       Role
 	HasPicture bool
 }
@@ -130,6 +128,7 @@ func (s *Session) RequiredAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userData, err := s.GetUser(r)
 		if userData == nil || err != nil {
+			slog.Warn("GetUser", "err", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			if err := s.errorUnauthorized.Render(r.Context(), w); err != nil {
 				slog.Warn("ErrorUnauthorized", "err", err)

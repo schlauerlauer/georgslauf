@@ -1,6 +1,9 @@
 package templates
 
-import "georgslauf/session"
+import (
+	"georgslauf/session"
+	"strconv"
+)
 
 templ ErrorNotFound(htmxRequest bool, user *session.UserData) {
 	// TODO
@@ -31,6 +34,26 @@ templ ErrorUnauthorized(htmxRequest bool, user *session.UserData) {
 			<p class="text-base font-semibold text-primary">401</p>
 			<h1 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">Keine Berechtigung</h1>
 			<p class="mt-6 text-base leading-7"></p>
+			<div class="mt-10 flex items-center justify-center gap-x-6">
+				<div
+					class="btn"
+					hx-get="/"
+					hx-target="main"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Zurück zur Startseite
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ ErrorPage(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool, statusCode int, message string) {
+	@base(htmxRequest, user, tribeId, hasIcon) {
+		<div class="text-center mt-20 px-9">
+			<p class="text-base font-semibold text-primary">{ strconv.FormatInt(int64(statusCode), 10) }</p>
+			<h1 class="mt-4 text-xl font-bold tracking-tight sm:text-5xl">{ message }</h1>
 			<div class="mt-10 flex items-center justify-center gap-x-6">
 				<div
 					class="btn"
