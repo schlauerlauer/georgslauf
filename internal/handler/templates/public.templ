@@ -1,0 +1,47 @@
+package templates
+
+import (
+	"georgslauf/internal/db"
+	"georgslauf/session"
+	"time"
+)
+
+templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-9 mx-auto px-3 max-w-screen-lg min-">
+			<h1 class="text-xl">GEORGSLAUF 2024 - Tribute von München-Isar</h1>
+			<h2>Liebe Bewohner*innen des Bezirks München-Isar,</h2>
+			<p>
+				Es ist soweit: Der Georgslauf 2024 steht vor der Tür! Wir freuen uns, Euch alle am <strong>Samstag, den 27.04.2024</strong> beim Stamm Sankt Ansgar begrüßen zu dürfen. Findet Euch alle bitte <strong>pünktlich um 8.00 Uhr in der Gulbranssonstraße 30, 81477 München</strong> ein.
+				Nach Eurer Ankunft können Eure StaVos die Stämme bzw. die unterschiedlichen Laufgruppen am Check-In anmelden. Bringt dazu bitte gesammelt die Anmeldungen, die Datenschutzerklärungen und das Geld mit.
+			</p>
+			// <span class="align-middle text-lg icon-[mdi--checkbox-marked-circle]"></span>
+			if len(schedule) > 0 {
+				// TODO lines not connecting
+				<ul class="my-16 timeline timeline-vertical">
+					for _, scheduleEntry := range schedule {
+						<li>
+							if scheduleEntry.End.Valid {
+								<div class="timeline-start">
+									{ time.Unix(scheduleEntry.Start, 0).Format("15:04") }
+									- { time.Unix(scheduleEntry.End.Int64, 0).Format("15:04") }
+								</div>
+							} else {
+								<div class="timeline-start">
+									{ time.Unix(scheduleEntry.Start, 0).Format("15:04") }
+								</div>
+							}
+							<div class="timeline-middle">
+								<span class="align-middle text-lg icon-[mdi--checkbox-blank-circle]"></span>
+							</div>
+							<div class="timeline-end timeline-box">{ scheduleEntry.Name }</div>
+							<hr/>
+						</li>
+					}
+				</ul>
+				<p>Nun bleibt nur die Frage, wer den diesjährigen Lauf gewinnt.</p>
+				<strong>MÖGEN DIE SPIELE BEGINNEN!</strong>
+			}
+		</div>
+	}
+}
