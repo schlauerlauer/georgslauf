@@ -76,6 +76,47 @@ limit 1;
 insert into tribe_roles (user_id, tribe_id, tribe_role, created_by)
 values (?,?,?,?);
 
+-- name: UpdateTribeRole :exec
+update tribe_roles
+set tribe_role = ?
+where id = ?;
+
+-- name: GetUsersRoleLargerNone :many
+select
+	email
+	,last_login
+	,created_at
+	,role
+	,firstname
+	,lastname
+from users
+where role > 0;
+
+-- name: GetUsersRoleNone :many
+select
+	id
+	,email
+	,created_at
+	,firstname
+	,lastname
+from users
+where role = 0
+order by created_at desc;
+
+-- TODO join icons
+-- name: GetTribeRolesOpen :many
+select
+	tr.id
+	,tr.created_at
+	,t.name as tribe_name
+	,u.email as user_email
+from tribe_roles tr
+inner join users u on tr.user_id = u.id
+inner join tribes t on tr.tribe_id = t.id
+where
+	tribe_role = 0
+order by tr.created_at desc;
+
 -- name: GetUserIdByExt :one
 select
 	id

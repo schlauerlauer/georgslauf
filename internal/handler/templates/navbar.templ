@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"georgslauf/acl"
 	"georgslauf/session"
 	"strconv"
 	"strings"
@@ -34,16 +35,17 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 				<div class="tooltip tooltip-bottom mt-1" data-tip={ user.Firstname + " " + user.Lastname }>
 					if user.HasPicture {
 						<div class="avatar">
-							switch user.Role {
-								case session.RoleDefault:
+							switch user.ACL {
+								case acl.None:
+								case acl.View:
 									<div class="w-10 rounded-full">
 										<img src="/icon/user"/>
 									</div>
-								case session.RoleElevated:
+								case acl.Edit:
 									<div class="ring-warning ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
 										<img src="/icon/user"/>
 									</div>
-								case session.RoleAdmin:
+								case acl.Admin:
 									<div class="ring-error ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
 										<img src="/icon/user"/>
 									</div>
@@ -51,8 +53,9 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 						</div>
 					} else {
 						<div class="avatar placeholder">
-							switch user.Role {
-								case session.RoleDefault:
+							switch user.ACL {
+								case acl.None:
+								case acl.View:
 									<div class="bg-neutral text-neutral-content w-10 rounded-full">
 										if user.Firstname != "" && user.Lastname != "" {
 											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
@@ -60,7 +63,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 											<span>GL</span>
 										}
 									</div>
-								case session.RoleElevated:
+								case acl.Edit:
 									<div class="ring-warning ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
 										if user.Firstname != "" && user.Lastname != "" {
 											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
@@ -68,7 +71,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 											<span>GL</span>
 										}
 									</div>
-								case session.RoleAdmin:
+								case acl.Admin:
 									<div class="ring-error ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
 										if user.Firstname != "" && user.Lastname != "" {
 											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
@@ -86,7 +89,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 					hx-target="main"
 					hx-push-url="true"
 				>Dashboard</div>
-				if user.Role >= session.RoleElevated {
+				if user.ACL >= acl.Edit {
 					<div
 						class="btn"
 						hx-get="/host/"

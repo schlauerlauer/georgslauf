@@ -27,6 +27,8 @@ sql:
             go_type: "database/sql.NullInt64"
           - column: "groups.comment"
             go_type: "database/sql.NullString"
+          - column: "groups.abbr"
+            go_type: "database/sql.NullString"
 
           - column: "points_to_groups.created_by"
             go_type: "database/sql.NullInt64"
@@ -57,6 +59,10 @@ sql:
             go_type: "database/sql.NullInt64"
           - column: "stations.updated_by"
             go_type: "database/sql.NullInt64"
+          - column: "stations.abbr"
+            go_type: "database/sql.NullString"
+          - column: "stations.category_id"
+            go_type: "database/sql.NullInt64"
 
           - column: "tribes.short"
             go_type: "database/sql.NullString"
@@ -86,7 +92,7 @@ sql:
           - column: "users.station_id"
             go_type: "database/sql.NullInt64"
           - column: "users.role"
-            go_type: "georgslauf/session.Role"
+            go_type: "georgslauf/acl.ACL"
 
           - column: "tribe_roles.tribe_role"
             go_type: "georgslauf/acl.ACL"

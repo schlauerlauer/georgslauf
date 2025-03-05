@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/gob"
 	"errors"
+	"georgslauf/acl"
 	"log/slog"
 	"net/http"
 
@@ -19,7 +20,7 @@ type UserData struct {
 	Firstname  string
 	Lastname   string
 	Email      string
-	Role       Role
+	ACL        acl.ACL
 	HasPicture bool
 }
 
@@ -31,34 +32,9 @@ const (
 
 type contextKey string
 
-type Role int64
-
-const (
-	RoleDefault Role = iota
-	RoleElevated
-	RoleAdmin
-)
-
-var roles = []string{"Default", "Elevated", "Admin"}
-
-func (r Role) String() string {
-	if int64(r) >= int64(len(roles)) {
-		return "Invalid"
-	}
-	return roles[r]
-}
-
 var (
 	errSessionNil = errors.New("session is nil")
 )
-
-func RoleAtLeastElevated(userRole Role) bool {
-	return userRole >= RoleElevated
-}
-
-func RoleAtLeastAdmin(userRole Role) bool {
-	return userRole >= RoleAdmin
-}
 
 type Session struct {
 	store             *sessions.CookieStore
@@ -139,9 +115,7 @@ func (s *Session) RequiredAuth(next http.Handler) http.Handler {
 	})
 }
 
-type roleFunc func(userRole Role) bool
-
-func (s *Session) RequireRoleFunc(roleFunc roleFunc, next http.Handler) http.Handler {
+func (s *Session) RequireRoleFunc(roleFunc acl.RoleFunc, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userData, err := s.GetUser(r)
 		if userData == nil || err != nil {
@@ -151,7 +125,7 @@ func (s *Session) RequireRoleFunc(roleFunc roleFunc, next http.Handler) http.Han
 			}
 			return
 		}
-		if !roleFunc(userData.Role) {
+		if !roleFunc(userData.ACL) {
 			w.WriteHeader(http.StatusUnauthorized)
 			if err := s.errorUnauthorized.Render(r.Context(), w); err != nil {
 				slog.Warn("ErrorUnauthorized", "err", err)
