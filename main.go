@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"georgslauf/acl"
 	"georgslauf/auth"
 	"georgslauf/authsession"
 	"georgslauf/internal/config"
@@ -111,6 +112,8 @@ func main() {
 	router.HandleFunc("GET /robots.txt", handlers.Robots)
 	router.HandleFunc("GET /.well-known/security.txt", handlers.Security)
 
+	// FIXME create page before dash
+
 	// dash routes
 	dashRouter := http.NewServeMux()
 	dashRouter.HandleFunc("GET /{$}", handlers.Dash)
@@ -120,19 +123,21 @@ func main() {
 	dashRouter.HandleFunc("POST /groups", handlers.PostGroup)
 	dashRouter.HandleFunc("PUT /groups", handlers.PutGroup)
 	dashRouter.HandleFunc("POST /join", handlers.PostJoin)
-	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequiredAuth(dashRouter)))
+	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequireRoleFunc(acl.ACLViewUp, dashRouter)))
 
 	// host routes
 	hostRouter := http.NewServeMux()
 	hostRouter.HandleFunc("GET /{$}", handlers.GetUsers)
 	hostRouter.HandleFunc("GET /users", handlers.GetUsers)
+	hostRouter.HandleFunc("PUT /users/role", handlers.PutUserRole)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
 	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.PostTribeIcon)
 	hostRouter.HandleFunc("PUT /tribes/icon/{id}", handlers.PutTribeIcon)
 	hostRouter.HandleFunc("GET /settings", handlers.GetSettings)
 	hostRouter.HandleFunc("PUT /settings/groups", handlers.PutSettingsGroups)
 	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
-	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(session.RoleAtLeastElevated, hostRouter)))
+	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
+	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
 	router.Handle("GET /icon/tribe/{id}", http.HandlerFunc(handlers.GetTribeIcon))

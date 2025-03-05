@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"georgslauf/acl"
 	"georgslauf/htmx"
 	"georgslauf/internal/db"
 	"georgslauf/internal/handler/templates"
@@ -108,6 +109,74 @@ func (h *Handler) PutSettingsGroups(w http.ResponseWriter, r *http.Request) {
 	h.settings.Set(ctx, prev, user.ID)
 
 	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("AlertSuccess", "err", err)
+	}
+}
+
+type putUserRole struct {
+	UserID   int64 `schema:"id" validate:"gte=0"`
+	UserRole int64 `schema:"role" validate:"gte=-1,lte=2"`
+}
+
+func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var data putUserRole
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		return // TODO
+	}
+
+	slog.Debug("PutUserRole", "data", data)
+	// FIXME
+}
+
+type putTribeRole struct {
+	TribeRoleID int64 `schema:"id" validate:"gte=0"`
+	TribeRole   int64 `schema:"role" validate:"gte=-1,lte=3"`
+}
+
+func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var data putTribeRole
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		return // TODO
+	}
+
+	if err := h.queries.UpdateTribeRole(ctx, db.UpdateTribeRoleParams{
+		ID:        data.TribeRoleID,
+		TribeRole: acl.ACL(data.TribeRole),
+	}); err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	slog.Debug("PutTribeRole", "data", data)
+	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
 		slog.Warn("AlertSuccess", "err", err)
 	}
 }
@@ -247,8 +316,18 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	users, err := h.queries.GetUsersRoleLargerNone(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+	}
+
+	requests, err := h.queries.GetUsersRoleNone(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+	}
+
 	w.WriteHeader(http.StatusOK)
-	if err := templates.HostUsers(htmxRequest, user, csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.HostUsers(htmxRequest, user, csrf.Token(r), users, requests).Render(ctx, w); err != nil {
 		slog.Warn("HostUsers", "err", err)
 	}
 }
@@ -274,8 +353,14 @@ func (h *Handler) GetTribes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tribeRoles, err := h.queries.GetTribeRolesOpen(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	if err := templates.HostTribes(htmxRequest, user, tribes, csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.HostTribes(htmxRequest, user, tribes, csrf.Token(r), tribeRoles).Render(ctx, w); err != nil {
 		slog.Warn("HostTribes", "err", err)
 		return
 	}

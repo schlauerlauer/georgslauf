@@ -115,6 +115,8 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 				<details class="collapse bg-base-200" open>
 					<summary class="collapse-title text-xl font-medium">Posten</summary>
 					<div class="collapse-content">
+						<p>Kategorien</p>
+						// TODO
 						<ul>
 							for _, category := range categories {
 								<li>{ strconv.FormatInt(category.ID, 10) } { category.Name }</li>
@@ -125,6 +127,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 				<details class="collapse bg-base-200" open>
 					<summary class="collapse-title text-xl font-medium">Zeitplan</summary>
 					<div class="collapse-content">
+						// TODO
 						<ul>
 							for _, scheduleEntry := range schedule {
 								<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
@@ -162,7 +165,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 	}
 }
 
-templ HostUsers(htmxRequest bool, user *session.UserData, csrf string) {
+templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []db.GetUsersRoleLargerNoneRow, requests []db.GetUsersRoleNoneRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			<div
@@ -172,18 +175,75 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string) {
 				hx-target="main"
 				hx-push-url="true"
 			>
-				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Benutzer</a>
+				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Accounts</a>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Stämme</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
 			<div class="mt-6">
-				TODO
+				if len(requests) > 0 {
+					<div class="my-9">
+						<details class="collapse bg-base-100 border-base-300 border" open>
+							<summary class="collapse-title font-semibold">Account Berechtigung setzen</summary>
+							<div class="collapse-content text-sm">
+								<div>
+									<p>Neue Benutzer*innen ohne Berechtigungen, deren Email nicht einem Stamm zugewiesen werden konnten</p>
+									<p class="mb-3 font-light">Rollen Erklärung</p>
+									<ol class="space-y-2">
+										<li>
+											<div class="badge badge-neutral">Ablehnen</div>
+											<span class="ml-3 font-light">der Account bekommt für den Georgslauf keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span>
+										</li>
+										<li>
+											<div class="badge badge-primary">Normal</div>
+											<span class="ml-3 font-light">der Account ist ein normaler Account für Posten, Gruppen oder StaVos</span>
+										</li>
+										<li>
+											<div class="badge badge-accent">Gastgeber</div>
+											<span class="ml-3 font-light">der Account ist vom austragenden Stamm und hat Zugriff auf die "Host" Seite</span>
+										</li>
+									</ol>
+								</div>
+								<ul class="mt-6 space-y-2">
+									for _, request := range requests {
+										<li>
+											<form
+												class="flex justify-between gap-x-3"
+												hx-put={ "/host/users/role" }
+												hx-swap="outerHTML"
+												hx-target="closest li"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<input type="hidden" name="id" value={ strconv.FormatInt(request.ID, 10) }/>
+												<p>{ request.Email }</p>
+												<p>{ request.Firstname } { request.Lastname }</p>
+												<div class="join">
+													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													<button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Normal</button>
+													<button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Gastgeber</button>
+												</div>
+											</form>
+										</li>
+									}
+								</ul>
+							</div>
+						</details>
+					</div>
+				}
+				<p>Accounts</p>
+				<ul>
+					for _, user := range users {
+						// <li><strong class="text-success">Lesen</strong> können nach dem sie einem Posten zugeordnet wurden Punkte vergeben und ihren Posten bearbeiten</li> // TODO
+						// <li><strong class="text-info">Schreiben</strong> können ihre eigenen Posten und Gruppen bearbeiten</li> // TODO
+						// TODO <li><strong class="text-error">Gastgeber</strong> können alle Benutzer*innen, Stämme und die Einstellungen bearbeiten</li>
+						<li>{ user.Email } { user.Firstname } { user.Lastname }</li>
+					}
+				</ul>
 			</div>
 		</div>
 	}
 }
 
-templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string) {
+templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string, tribeRoles []db.GetTribeRolesOpenRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			<div
@@ -198,7 +258,63 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
 			<div class="mt-6">
+				if len(tribeRoles) > 0 {
+					<div class="my-9">
+						<details class="collapse bg-base-100 border-base-300 border" open>
+							<summary class="collapse-title font-semibold">Stamm Berechtigungsanfragen</summary>
+							<div class="collapse-content text-sm">
+								<div>
+									<p class="mb-3 font-light">Rollen Erklärung</p>
+									<ol class="space-y-2">
+										<li>
+											<div class="badge badge-neutral">Ablehnen</div>
+											<span class="ml-3 font-light">der Account bekommt für den Stamm keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span>
+										</li>
+										// NTH
+										// <li>
+										// 	<div class="badge badge-primary">Lesen</div>
+										// 	<span class="ml-3 font-light">kann die eigenen angemeldeten Posten und Gruppen ansehen und ihre zugewiesenen Accounts ansehen</span>
+										// </li>
+										// <li>
+										// 	<div class="badge badge-accent">Schreiben</div>
+										// 	<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zu eigenen Posten hinzufügen oder entfernen</span>
+										// </li>
+										<li>
+											<div class="badge badge-secondary">StaVo</div>
+											<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zum eigenen Stamm oder Posten hinzufügen oder entfernen und ihre Berechtigungen setzen</span>
+										</li>
+									</ol>
+								</div>
+								<ul class="mt-6 space-y-2">
+									for _, tribeRole := range tribeRoles {
+										<li>
+											<form
+												class="flex justify-between gap-x-3"
+												hx-put={ "/host/tribes/role" }
+												hx-swap="outerHTML"
+												hx-target="closest li"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<input type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
+												<p>{ tribeRole.UserEmail }</p>
+												<p>{ tribeRole.TribeName }</p>
+												<div class="join">
+													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													// NTH
+													// <button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Lesen</button>
+													// <button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Schreiben</button>
+													<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">StaVo</button>
+												</div>
+											</form>
+										</li>
+									}
+								</ul>
+							</div>
+						</details>
+					</div>
+				}
 				<div class="overflow-x-auto">
+					// TODO show user roles -> add, update remove
 					<table class="table">
 						<thead>
 							<tr>
