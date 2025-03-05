@@ -24,11 +24,19 @@ func NewRepository(config *DatabaseConfig) (*Repository, error) {
 
 	queries := New(sqlDb)
 
-	if row := sqlDb.QueryRow("PRAGMA journal_mode = WAL;"); row.Err() != nil {
+	if rows, err := sqlDb.Query("PRAGMA journal_mode = WAL;"); err != nil {
 		return nil, err
+	} else {
+		if err := rows.Close(); err != nil {
+			return nil, err
+		}
 	}
 
 	if row := sqlDb.QueryRow("PRAGMA foreign_keys = on;"); row.Err() != nil {
+		return nil, err
+	}
+
+	if row := sqlDb.QueryRow("PRAGMA wal_checkpoint(TRUNCATE);"); row.Err() != nil {
 		return nil, err
 	}
 

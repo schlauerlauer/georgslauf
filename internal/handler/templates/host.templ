@@ -1,0 +1,286 @@
+package templates
+
+import (
+	"georgslauf/internal/db"
+	"georgslauf/internal/settings"
+	"georgslauf/session"
+	"strconv"
+)
+
+templ TribeIcon(tribeId int64, csrf string) {
+	<form
+		hx-put={ "/host/tribes/icon/" + strconv.FormatInt(tribeId, 10) }
+		hx-trigger="change"
+		hx-encoding="multipart/form-data"
+		hx-swap="outerHTML"
+		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+	>
+		<label class="avatar cursor-pointer">
+			<div class="mask mask-squircle h-12 w-12">
+				<input name="icon" type="file" class="hidden"/>
+				<img
+					src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }
+				/>
+			</div>
+		</label>
+	</form>
+}
+
+templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.StationCategory, csrf string) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Benutzer</a>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Stämme</a>
+				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6 space-y-6">
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Gruppen</summary>
+					<div class="collapse-content">
+						// TODO swap
+						<form
+							hx-put="/host/settings/groups"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Gruppen erstellen</span>
+									<input
+										name="group-create"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowCreate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Gruppen verändern</span>
+									<input
+										name="group-update"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowUpdate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Gruppen löschen</span>
+									<input
+										name="group-delete"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Größe Minimum</span>
+								</div>
+								<input autocomplete="off" name="group-min" min="0" type="number" value={ strconv.FormatInt(set.Groups.Min, 10) } required placeholder="Type here" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Größe Maximum (muss größer als min. sein)</span>
+								</div>
+								<input autocomplete="off" name="group-max" min="0" type="number" value={ strconv.FormatInt(set.Groups.Max, 10) } required placeholder="Type here" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+							</label>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Posten</summary>
+					<div class="collapse-content">
+						<ul>
+							for _, category := range categories {
+								<li>{ strconv.FormatInt(category.ID, 10) } { category.Name }</li>
+							}
+						</ul>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Zeitplan</summary>
+					<div class="collapse-content">
+						<ul>
+							for _, scheduleEntry := range schedule {
+								<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
+							}
+						</ul>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Anmeldung</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/login"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Titel nach Anmeldung</span>
+								</div>
+								<input maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs"/>
+							</label>
+							<label class="form-control">
+								<div class="label">
+									<span class="label-text">Nachricht nach Anmeldung</span>
+								</div>
+								<textarea maxlength="1024" name="welcome" class="textarea textarea-bordered h-24" placeholder="Nachricht">{ set.Login.Welcome }</textarea>
+							</label>
+						</form>
+					</div>
+				</details>
+			</div>
+		</div>
+	}
+}
+
+templ HostUsers(htmxRequest bool, user *session.UserData, csrf string) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Benutzer</a>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Stämme</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				TODO
+			</div>
+		</div>
+	}
+}
+
+templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Benutzer</a>
+				<a id="tab-tribes" role="tab" class="tab tab-active" hx-get="/host/tribes">Stämme</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				<div class="overflow-x-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Domain</th>
+								<th>Favorite Color</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, tribe := range tribes {
+								<tr>
+									<td>
+										<div class="flex items-center gap-3">
+											if tribe.Icon.Valid {
+												<form
+													hx-put={ "/host/tribes/icon/" + strconv.FormatInt(tribe.ID, 10) }
+													hx-trigger="change"
+													hx-encoding="multipart/form-data"
+													hx-swap="outerHTML"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<label class="avatar cursor-pointer">
+														<div class="mask mask-squircle h-12 w-12">
+															<input name="icon" type="file" class="hidden"/>
+															<img
+																src={ "/icon/tribe/" + strconv.FormatInt(tribe.ID, 10) }
+																alt={ tribe.Name + " Icon" }
+															/>
+														</div>
+													</label>
+												</form>
+											} else {
+												<form
+													hx-post={ "/host/tribes/icon/" + strconv.FormatInt(tribe.ID, 10) }
+													hx-trigger="change"
+													hx-encoding="multipart/form-data"
+													hx-swap="outerHTML"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<label class="avatar placeholder cursor-pointer">
+														<input name="icon" type="file" class="hidden"/>
+														<div class="mask mask-squircle bg-neutral text-neutral-content w-12 h-12">
+															<span class="text-2xl icon-[uil--image-upload]"></span>
+														</div>
+													</label>
+												</form>
+											}
+											<div>
+												<div class="font-bold">{ tribe.Name }</div>
+												<div class="text-sm opacity-50">{ tribe.Short.String }</div>
+												<div class="text-sm opacity-50">{ tribe.Dpsg.String }</div>
+											</div>
+										</div>
+									</td>
+									if tribe.EmailDomain.Valid {
+										<td>{ tribe.EmailDomain.String }</td>
+									} else {
+										<td class="opacity-50">N/A</td>
+									}
+									<td>
+										Zemlak, Daniel and Leannon
+										<br/>
+										<span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
+									</td>
+									<th>
+										<button class="btn btn-ghost btn-xs">details</button>
+									</th>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								<th>Domain</th>
+								<th>Favorite Color</th>
+								<th></th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+}

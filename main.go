@@ -105,7 +105,7 @@ func main() {
 	router.Handle("GET /dist/", http.StripPrefix("/dist", neuter(distServer)))
 
 	// public pages
-	router.Handle("/", sessionService.OptionalAuth(http.HandlerFunc(handlers.GetHome)))
+	router.Handle("GET /{$}", sessionService.OptionalAuth(http.HandlerFunc(handlers.GetHome)))
 	router.HandleFunc("GET /ping", handlers.Ping)
 	router.HandleFunc("GET /version", handlers.Version)
 	router.HandleFunc("GET /robots.txt", handlers.Robots)
@@ -113,17 +113,18 @@ func main() {
 
 	// dash routes
 	dashRouter := http.NewServeMux()
-	dashRouter.HandleFunc("GET /", handlers.Dash)
+	dashRouter.HandleFunc("GET /{$}", handlers.Dash)
 	dashRouter.HandleFunc("GET /stations", handlers.DashStations)
 	dashRouter.HandleFunc("GET /groups", handlers.DashGroups)
 	dashRouter.HandleFunc("GET /groups/new", handlers.GetNewGroup)
 	dashRouter.HandleFunc("POST /groups", handlers.PostGroup)
 	dashRouter.HandleFunc("PUT /groups", handlers.PutGroup)
+	dashRouter.HandleFunc("POST /join", handlers.PostJoin)
 	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequiredAuth(dashRouter)))
 
 	// host routes
 	hostRouter := http.NewServeMux()
-	hostRouter.HandleFunc("GET /", handlers.GetUsers)
+	hostRouter.HandleFunc("GET /{$}", handlers.GetUsers)
 	hostRouter.HandleFunc("GET /users", handlers.GetUsers)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
 	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.PostTribeIcon)

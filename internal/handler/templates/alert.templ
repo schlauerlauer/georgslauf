@@ -15,6 +15,15 @@ templ AlertError(message string) {
 	</div>
 }
 
+templ AlertWarning(message string) {
+	<div hx-swap-oob="beforeend:#notifications">
+		<div role="alert" class="alert alert-warning" _="on load wait 2s then remove me">
+			<span class="text-2xl icon-[solar--close-circle-outline]"></span>
+			<span>{ message }</span>
+		</div>
+	</div>
+}
+
 templ AlertSuccess(message string) {
 	<div hx-swap-oob="beforeend:#notifications">
 		<div role="alert" class="alert alert-success" _="on load wait 2s then remove me">

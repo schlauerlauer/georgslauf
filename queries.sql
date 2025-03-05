@@ -6,6 +6,13 @@ from tribes t
 left join tribe_icons ti on ti.id = t.id
 ;
 
+-- name: GetStationCategories :many
+select
+	id
+	,name
+	,max
+from station_categories;
+
 -- name: GetSchedule :many
 select *
 from schedule
