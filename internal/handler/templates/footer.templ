@@ -2,12 +2,17 @@ package templates
 
 var (
 	version = "n/a"
-	year    = ""
+	help    templ.SafeURL
+	// year    = ""
 )
 
 func SetVars(versionStr, yearStr string) {
 	version = versionStr
-	year = yearStr
+	// year = yearStr
+}
+
+func SetHelp(link string) {
+	help = templ.URL(link)
 }
 
 templ footer() {
@@ -15,12 +20,12 @@ templ footer() {
 		<aside class="flex justify-around w-full">
 			<div>
 				<span class="align-middle text-lg icon-[mdi--github]"></span>
-				<a class="link" href="https://github.com/schlauerlauer/georgslauf">
+				<a rel="noopener noreferrer" class="link" href="https://github.com/schlauerlauer/georgslauf">
 					<span>georgslauf</span>
 				</a>
 				<span class="font-light">v{ version }</span>
 			</div>
-			<p>{ year }</p>
+			<a target="_blank" rel="noopener noreferrer" href={ help }>Hilfe</a>
 			<div class="dropdown">
 				<div tabindex="0" role="button" class="btn btn-ghost">
 					<span class="h-5 w-5 icon-[solar--palette-round-bold-duotone]"></span>

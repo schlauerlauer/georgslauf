@@ -138,8 +138,24 @@ func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	if current, err := h.queries.GetUserRole(ctx, data.UserID); err != nil {
+		slog.Error("sqlc", "err", err)
+		return
+	} else {
+		if current == acl.Admin {
+			return // TODO
+		}
+	}
+
+	if err := h.queries.UpdateUserRole(ctx, db.UpdateUserRoleParams{
+		ID:   data.UserID,
+		Role: acl.ACL(data.UserRole),
+	}); err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
 	slog.Debug("PutUserRole", "data", data)
-	// FIXME
 }
 
 type putTribeRole struct {
@@ -177,7 +193,42 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 
 	slog.Debug("PutTribeRole", "data", data)
 	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
-		slog.Warn("AlertSuccess", "err", err)
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) PutSettingsHelp(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var set settings.Help
+	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.AlertError("Eingabe nicht richtig: Hilfe").Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+
+	prev := h.settings.Get()
+	prev.Help = set
+	h.settings.Set(ctx, prev, user.ID)
+
+	templates.SetHelp(set.Footer)
+
+	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
 	}
 }
 
@@ -198,7 +249,11 @@ func (h *Handler) PutSettingsLogin(w http.ResponseWriter, r *http.Request) {
 	var set settings.Login
 	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
 		slog.Error("ProcessForm", "err", err)
-		return // TODO
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.AlertError("Eingabe nicht richtig: Anmeldung").Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
 	}
 
 	prev := h.settings.Get()
@@ -206,7 +261,7 @@ func (h *Handler) PutSettingsLogin(w http.ResponseWriter, r *http.Request) {
 	h.settings.Set(ctx, prev, user.ID)
 
 	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
-		slog.Warn("AlertSuccess", "err", err)
+		slog.Warn("templ", "err", err)
 	}
 }
 
@@ -229,13 +284,14 @@ func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 
 	schedule, err := h.queries.GetSchedule(ctx)
 	if err != nil {
-		slog.Warn("GetSchedule", "err", err)
+		slog.Warn("sqlc", "err", err)
 		return
 	}
 
 	categories, err := h.queries.GetStationCategories(ctx)
 	if err != nil {
 		slog.Warn("sqlc", "err", err)
+		return // TODO
 	}
 
 	templates.HostSettings(htmxRequest, user, &set, schedule, categories, csrf.Token(r)).Render(ctx, w)
@@ -265,7 +321,7 @@ func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseMultipartForm(1 << 20); err != nil {
 		slog.Error("ParseMultipartForm", "err", err)
-		return
+		return // TODO
 	}
 
 	// TODO resize image

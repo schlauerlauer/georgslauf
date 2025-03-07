@@ -20,6 +20,7 @@ type Settings struct {
 	Login    Login    `json:"l"`
 	Groups   Groups   `json:"g"`
 	Stations Stations `json:"s"`
+	Help     Help     `json:"h"`
 }
 
 type Login struct {
@@ -37,6 +38,10 @@ type Groups struct {
 }
 
 type Stations struct {
+}
+
+type Help struct {
+	Footer string `json:"f" schema:"footer" validate:"http_url,max=128"`
 }
 
 func New(queries *db.Queries) *SettingsService {

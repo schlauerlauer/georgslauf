@@ -81,16 +81,31 @@ update tribe_roles
 set tribe_role = ?
 where id = ?;
 
+-- name: UpdateUserRole :exec
+update users
+set role = ?
+where id = ?;
+
+-- name: GetUserRole :one
+select
+	role
+from users
+where id = ?
+limit 1;
+
 -- name: GetUsersRoleLargerNone :many
 select
-	email
-	,last_login
-	,created_at
-	,role
-	,firstname
-	,lastname
-from users
-where role > 0;
+	u.id
+	,u.email
+	,u.last_login
+	,u.created_at
+	,u.role
+	,u.firstname
+	,u.lastname
+	,ui.image
+from users u
+left join user_icons ui on ui.id = u.id
+where u.role > 0;
 
 -- name: GetUsersRoleNone :many
 select

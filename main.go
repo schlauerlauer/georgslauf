@@ -61,6 +61,7 @@ func main() {
 	)
 
 	settings := settings.New(repository.Queries)
+	templates.SetHelp(settings.Get().Help.Footer) // NTH move somewhere else
 
 	handlers, err := handler.NewHandler(repository.Queries, sessionService, settings)
 	if err != nil {
@@ -136,6 +137,7 @@ func main() {
 	hostRouter.HandleFunc("GET /settings", handlers.GetSettings)
 	hostRouter.HandleFunc("PUT /settings/groups", handlers.PutSettingsGroups)
 	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
+	hostRouter.HandleFunc("PUT /settings/help", handlers.PutSettingsHelp)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 

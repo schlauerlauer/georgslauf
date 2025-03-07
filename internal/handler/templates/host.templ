@@ -1,10 +1,13 @@
 package templates
 
 import (
+	"encoding/base64"
+	"georgslauf/acl"
 	"georgslauf/internal/db"
 	"georgslauf/internal/settings"
 	"georgslauf/session"
 	"strconv"
+	"strings"
 )
 
 templ TribeIcon(tribeId int64, csrf string) {
@@ -149,13 +152,32 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 								<div class="label">
 									<span class="label-text">Titel nach Anmeldung</span>
 								</div>
-								<input maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs"/>
+								<input autocomplete="off" maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs"/>
 							</label>
 							<label class="form-control">
 								<div class="label">
 									<span class="label-text">Nachricht nach Anmeldung</span>
 								</div>
-								<textarea maxlength="1024" name="welcome" class="textarea textarea-bordered h-24" placeholder="Nachricht">{ set.Login.Welcome }</textarea>
+								<textarea autocomplete="off" maxlength="1024" name="welcome" class="textarea textarea-bordered h-24" placeholder="Nachricht">{ set.Login.Welcome }</textarea>
+							</label>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Hilfe</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/help"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full">
+								<div class="label">
+									<span class="label-text">Hilfe Link im Footer</span>
+								</div>
+								<input autocomplete="off" maxlength="128" name="footer" type="text" placeholder="https://..." class="input input-bordered w-full" value={ set.Help.Footer }/>
 							</label>
 						</form>
 					</div>
@@ -182,33 +204,18 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 			<div class="mt-6">
 				if len(requests) > 0 {
 					<div class="my-9">
-						<details class="collapse bg-base-100 border-base-300 border" open>
+						<details class="collapse collapse-arrow bg-base-200 border-base-300 border" open>
 							<summary class="collapse-title font-semibold">Account Berechtigung setzen</summary>
 							<div class="collapse-content text-sm">
-								<div>
-									<p>Neue Benutzer*innen ohne Berechtigungen, deren Email nicht einem Stamm zugewiesen werden konnten</p>
-									<p class="mb-3 font-light">Rollen Erklärung</p>
-									<ol class="space-y-2">
-										<li>
-											<div class="badge badge-neutral">Ablehnen</div>
-											<span class="ml-3 font-light">der Account bekommt für den Georgslauf keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span>
-										</li>
-										<li>
-											<div class="badge badge-primary">Normal</div>
-											<span class="ml-3 font-light">der Account ist ein normaler Account für Posten, Gruppen oder StaVos</span>
-										</li>
-										<li>
-											<div class="badge badge-accent">Gastgeber</div>
-											<span class="ml-3 font-light">der Account ist vom austragenden Stamm und hat Zugriff auf die "Host" Seite</span>
-										</li>
-									</ol>
-								</div>
+								<p class="font-light">
+									Neue Benutzer*innen ohne Berechtigungen, deren Email nicht einem Stamm zugewiesen werden konnten.
+								</p>
 								<ul class="mt-6 space-y-2">
 									for _, request := range requests {
 										<li>
 											<form
 												class="flex justify-between gap-x-3"
-												hx-put={ "/host/users/role" }
+												hx-put="/host/users/role"
 												hx-swap="outerHTML"
 												hx-target="closest li"
 												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
@@ -219,7 +226,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 												<div class="join">
 													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
 													<button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Normal</button>
-													<button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Gastgeber</button>
+													<button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Admin</button>
 												</div>
 											</form>
 										</li>
@@ -229,15 +236,138 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 						</details>
 					</div>
 				}
-				<p>Accounts</p>
-				<ul>
-					for _, user := range users {
-						// <li><strong class="text-success">Lesen</strong> können nach dem sie einem Posten zugeordnet wurden Punkte vergeben und ihren Posten bearbeiten</li> // TODO
-						// <li><strong class="text-info">Schreiben</strong> können ihre eigenen Posten und Gruppen bearbeiten</li> // TODO
-						// TODO <li><strong class="text-error">Gastgeber</strong> können alle Benutzer*innen, Stämme und die Einstellungen bearbeiten</li>
-						<li>{ user.Email } { user.Firstname } { user.Lastname }</li>
-					}
-				</ul>
+				<div>
+					<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+						<summary class="collapse-title font-semibold">Account Rollen Erklärung</summary>
+						<div class="collapse-content">
+							<p class="text-sm mb-2 font-light">
+								// TODO
+								Die initiale Rolle ist sofort wirksam, nachträgliche Änderungen benötigt einen neuen login per <a class="link" href="/login">/login</a>
+							</p>
+							<table class="table">
+								<tbody>
+									<tr>
+										<td><div class="badge badge-neutral">Ablehnen</div></td>
+										<td><span class="font-light">der Account bekommt für den Georgslauf keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+									</tr>
+									<tr>
+										<td><div class="badge badge-primary">Normal</div></td>
+										<td><span class="font-light">der Account ist ein normaler Account für Posten, Gruppen oder StaVos</span></td>
+									</tr>
+									<tr>
+										<td><div class="badge badge-accent">Admin</div></td>
+										<td><span class="font-light">der Account ist vom austragenden Stamm und hat Zugriff auf die Admin Seiten</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</details>
+					<div class="overflow-x-auto my-9">
+						if len(users) > 0 {
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Aktuelle Rolle</th>
+										<th>Neue Rolle</th>
+									</tr>
+								</thead>
+								<tbody>
+									for _, entry := range users {
+										<tr>
+											<td>
+												<div class="flex items-center gap-3">
+													if len(entry.Image) > 0 {
+														<div class="avatar">
+															<div class="mask mask-squircle h-12 w-12">
+																<img
+																	src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(entry.Image) }
+																	alt="Avatar"
+																/>
+															</div>
+														</div>
+													} else {
+														<div class="avatar placeholder">
+															<div class="bg-neutral text-neutral-content w-24 rounded-full">
+																if user.Firstname != "" && user.Lastname != "" {
+																	<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+																} else {
+																	<span>GL</span>
+																}
+															</div>
+														</div>
+													}
+													<div>
+														<div class="font-bold">{ entry.Firstname } { entry.Lastname }</div>
+														<div class="text-sm opacity-50">{ entry.Email } </div>
+													</div>
+												</div>
+											</td>
+											<td>
+												switch entry.Role {
+													case acl.View:
+														<div class="badge badge-primary">Normal</div>
+													case acl.Edit:
+														<div class="badge badge-accent">Admin</div>
+														// query excludes 0
+														// case acl.None:
+														// <div class="badge">Keine</div>
+													case acl.Denied:
+														<div class="badge badge-neutral">Abgelehnt</div>
+													case acl.Admin:
+														<div class="badge badge-accent">Admin</div>
+												}
+											</td>
+											<td>
+												// TODO swap
+												<form
+													class="flex gap-x-2"
+													hx-put="/host/users/role"
+													hx-swap="none"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<select name="role" class="select" autocomplete="off">
+														<option disabled>
+															Neue Rolle
+														</option>
+														switch entry.Role {
+															case acl.View:
+																<option value="-1">Abgelehnt</option>
+																<option value="1" selected>Normal</option>
+																<option value="2">Admin</option>
+															case acl.Edit:
+																<option value="-1">Abgelehnt</option>
+																<option value="1">Normal</option>
+																<option value="2" selected>Admin</option>
+															case acl.Denied:
+																<option value="-1" selected>Abgelehnt</option>
+																<option value="1">Normal</option>
+																<option value="2">Admin</option>
+															case acl.Admin:
+																<option value="-1">Abgelehnt</option>
+																<option value="1">Normal</option>
+																<option value="2" selected>Admin</option>
+														}
+													</select>
+													<button class="btn btn-neutral" type="submit" name="id" value={ strconv.FormatInt(entry.ID, 10) }>Speichern</button>
+												</form>
+											</td>
+										</tr>
+									}
+								</tbody>
+								<tfoot>
+									<tr>
+										<th>Name</th>
+										<th>Aktuelle Rolle</th>
+										<th>Neue Rolle</th>
+									</tr>
+								</tfoot>
+							</table>
+						} else {
+							<p class="text-center">Noch keine Benutzer*innen freigeschaltet</p>
+						}
+					</div>
+				</div>
 			</div>
 		</div>
 	}

@@ -37,16 +37,17 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 						<div class="avatar">
 							switch user.ACL {
 								case acl.None:
+									// don't show avatar
 								case acl.View:
 									<div class="w-10 rounded-full">
 										<img src="/icon/user"/>
 									</div>
 								case acl.Edit:
-									<div class="ring-warning ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
+									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
 										<img src="/icon/user"/>
 									</div>
 								case acl.Admin:
-									<div class="ring-error ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
+									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
 										<img src="/icon/user"/>
 									</div>
 							}
@@ -95,7 +96,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 						hx-get="/host/"
 						hx-target="main"
 						hx-push-url="true"
-					>Host</div>
+					>Admin</div>
 				}
 				// TODO
 				// <div class="btn" hx-get="/logout">Logout</div>
