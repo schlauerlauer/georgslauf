@@ -208,7 +208,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 								<div class="label">
 									<span class="label-text">Titel nach Anmeldung</span>
 								</div>
-								<input autocomplete="off" maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs"/>
+								<input autocomplete="off" maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs" value={ set.Login.Title }/>
 							</label>
 							<label class="form-control">
 								<div class="label">
