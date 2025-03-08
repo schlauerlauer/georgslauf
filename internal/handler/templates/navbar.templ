@@ -1,0 +1,112 @@
+package templates
+
+import (
+	"georgslauf/acl"
+	"georgslauf/session"
+	"strconv"
+	"strings"
+)
+
+templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
+	<div class="navbar bg-base-100">
+		<div class="navbar-start">
+			<p
+				hx-get="/"
+				hx-swap="innerHTML"
+				hx-target="main"
+				class="btn btn-ghost text-xl cursor-pointer"
+				hx-push-url="true"
+			>
+				Georgslauf
+			</p>
+		</div>
+		<div class="navbar-end space-x-2">
+			if tribeId > -1 {
+				if hasIcon {
+					<div class="avatar">
+						<div class="w-10 rounded-xl">
+							<img src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }/>
+						</div>
+					</div>
+				}
+				<input id="tribe-id" type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+			}
+			if user != nil {
+				<div class="tooltip tooltip-bottom mt-1" data-tip={ user.Firstname + " " + user.Lastname }>
+					if user.HasPicture {
+						<div class="avatar">
+							switch user.ACL {
+								case acl.None:
+									// don't show avatar
+								case acl.View:
+									<div class="w-10 rounded-full">
+										<img src="/icon/user"/>
+									</div>
+								case acl.Edit:
+									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
+										<img src="/icon/user"/>
+									</div>
+								case acl.Admin:
+									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
+										<img src="/icon/user"/>
+									</div>
+							}
+						</div>
+					} else {
+						<div class="avatar placeholder">
+							switch user.ACL {
+								case acl.None:
+								case acl.View:
+									<div class="bg-neutral text-neutral-content w-10 rounded-full">
+										if user.Firstname != "" && user.Lastname != "" {
+											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+										} else {
+											<span>GL</span>
+										}
+									</div>
+								case acl.Edit:
+									<div class="ring-warning ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
+										if user.Firstname != "" && user.Lastname != "" {
+											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+										} else {
+											<span>GL</span>
+										}
+									</div>
+								case acl.Admin:
+									<div class="ring-error ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
+										if user.Firstname != "" && user.Lastname != "" {
+											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+										} else {
+											<span>GL</span>
+										}
+									</div>
+							}
+						</div>
+					}
+				</div>
+				<div
+					class="btn"
+					hx-get="/dash/"
+					hx-target="main"
+					hx-push-url="true"
+				>Dashboard</div>
+				if user.ACL >= acl.Edit {
+					<div
+						class="btn"
+						hx-get="/host/"
+						hx-target="main"
+						hx-push-url="true"
+					>Admin</div>
+				}
+				// TODO
+				// <div class="btn" hx-get="/logout">Logout</div>
+			} else {
+				<div
+					class="btn"
+					hx-get="/login"
+					hx-swap="none"
+				>Anmelden</div>
+			}
+		</div>
+	</div>
+}

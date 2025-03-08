@@ -7,8 +7,8 @@ import (
 )
 
 templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule) {
-	@base(htmxRequest, user) {
-		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-9 mx-auto px-3 max-w-screen-lg min-">
 			<h1 class="text-xl">GEORGSLAUF 2024 - Tribute von München-Isar</h1>
 			<h2>Liebe Bewohner*innen des Bezirks München-Isar,</h2>
 			<p>
@@ -17,7 +17,7 @@ templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule) {
 			</p>
 			// <span class="align-middle text-lg icon-[mdi--checkbox-marked-circle]"></span>
 			if len(schedule) > 0 {
-				// FIXME lines not connecting
+				// TODO lines not connecting
 				<ul class="my-16 timeline timeline-vertical">
 					for _, scheduleEntry := range schedule {
 						<li>

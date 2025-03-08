@@ -1,0 +1,640 @@
+package templates
+
+import (
+	"encoding/base64"
+	"georgslauf/acl"
+	"georgslauf/internal/db"
+	"georgslauf/internal/settings"
+	"georgslauf/session"
+	"strconv"
+	"strings"
+)
+
+templ TribeIcon(tribeId int64, csrf string) {
+	<form
+		hx-put={ "/host/tribes/icon/" + strconv.FormatInt(tribeId, 10) }
+		hx-trigger="change"
+		hx-encoding="multipart/form-data"
+		hx-swap="outerHTML"
+		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+	>
+		<label class="avatar cursor-pointer">
+			<div class="h-12 w-12">
+				<input name="icon" type="file" class="hidden"/>
+				<img
+					src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }
+				/>
+			</div>
+		</label>
+	</form>
+}
+
+templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.StationCategory, csrf string) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Stämme</a>
+				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6 space-y-6">
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Gruppen</summary>
+					<div class="collapse-content">
+						// TODO swap
+						<form
+							hx-put="/host/settings/groups"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Gruppen erstellen</span>
+									<input
+										name="group-create"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowCreate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Gruppen verändern</span>
+									<input
+										name="group-update"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowUpdate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Gruppen löschen</span>
+									<input
+										name="group-delete"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Größe Minimum</span>
+								</div>
+								<input autocomplete="off" name="group-min" min="0" type="number" value={ strconv.FormatInt(set.Groups.Min, 10) } required placeholder="Type here" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Größe Maximum (muss größer als min. sein)</span>
+								</div>
+								<input autocomplete="off" name="group-max" min="0" type="number" value={ strconv.FormatInt(set.Groups.Max, 10) } required placeholder="Type here" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+							</label>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Posten</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/stations"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten erstellen</span>
+									<input
+										name="station-create"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowCreate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten verändern</span>
+									<input
+										name="station-update"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowUpdate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten löschen</span>
+									<input
+										name="station-delete"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+						</form>
+						<div class="mt-6">
+							<p class="mb-2">Kategorien</p>
+							// TODO
+							<ul class="ml-3">
+								for _, category := range categories {
+									//{ strconv.FormatInt(category.ID, 10) }
+									<li>{ category.Name } <div class="ml-1 badge">max. { strconv.FormatInt(category.Max, 10) }</div></li>
+								}
+							</ul>
+						</div>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Zeitplan</summary>
+					<div class="collapse-content">
+						// TODO
+						<ul>
+							for _, scheduleEntry := range schedule {
+								<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
+							}
+						</ul>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Anmeldung</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/login"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Titel nach Anmeldung</span>
+								</div>
+								<input autocomplete="off" maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs"/>
+							</label>
+							<label class="form-control">
+								<div class="label">
+									<span class="label-text">Nachricht nach Anmeldung</span>
+								</div>
+								<textarea autocomplete="off" maxlength="1024" name="welcome" class="textarea textarea-bordered h-24" placeholder="Nachricht">{ set.Login.Welcome }</textarea>
+							</label>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Hilfe</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/help"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full">
+								<div class="label">
+									<span class="label-text">Hilfe Link im Footer</span>
+								</div>
+								<input autocomplete="off" maxlength="128" name="footer" type="text" placeholder="https://..." class="input input-bordered w-full" value={ set.Help.Footer }/>
+							</label>
+						</form>
+					</div>
+				</details>
+			</div>
+		</div>
+	}
+}
+
+templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []db.GetUsersRoleLargerNoneRow, requests []db.GetUsersRoleNoneRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Accounts</a>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Stämme</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				if len(requests) > 0 {
+					<div class="my-9">
+						<details class="collapse collapse-arrow bg-base-200 border-base-300 border" open>
+							<summary class="collapse-title font-semibold">Account Berechtigung setzen</summary>
+							<div class="collapse-content text-sm">
+								<p class="font-light">
+									Neue Benutzer*innen ohne Berechtigungen, deren Email nicht einem Stamm zugewiesen werden konnten.
+								</p>
+								<ul class="mt-6 space-y-2">
+									for _, request := range requests {
+										<li>
+											<form
+												class="flex justify-between gap-x-3"
+												hx-put="/host/users/role"
+												hx-swap="outerHTML"
+												hx-target="closest li"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												// TODO icon, update from tribe
+												<input type="hidden" name="id" value={ strconv.FormatInt(request.ID, 10) }/>
+												<p>{ request.Email }</p>
+												<p>{ request.Firstname } { request.Lastname }</p>
+												<div class="join">
+													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													<button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Normal</button>
+													<button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Admin</button>
+												</div>
+											</form>
+										</li>
+									}
+								</ul>
+							</div>
+						</details>
+					</div>
+				}
+				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+					<summary class="collapse-title font-semibold">Account Rollen Erklärung</summary>
+					<div class="collapse-content">
+						<p class="text-sm mb-2 font-light">
+							Bei Rollenänderungen kann es sein, dass ein neuer login per <a class="link" href="/login">/login</a> notwendig ist.
+						</p>
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><div class="badge badge-neutral">Ablehnen</div></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Georgslauf</strong> keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-primary">Normal</div></td>
+									<td><span class="font-light">der Account ist ein normaler Account für Posten, Gruppen oder <strong>StaVos</strong></span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-accent">Admin</div></td>
+									<td><span class="font-light">der Account <strong>ist vom austragenden Stamm> und hat Zugriff auf die Admin Seiten</strong></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</details>
+				<div class="overflow-x-auto my-9">
+					if len(users) > 0 {
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Aktuelle Rolle</th>
+									<th>Neue Rolle</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, entry := range users {
+									<tr>
+										<td>
+											<div class="flex items-center gap-3">
+												if len(entry.Image) > 0 {
+													<div class="avatar">
+														<div class="mask mask-squircle w-12">
+															<img
+																src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(entry.Image) }
+																alt="Avatar"
+															/>
+														</div>
+													</div>
+												} else {
+													<div class="avatar placeholder">
+														<div class="bg-neutral text-neutral-content w-12 mask mask-squircle">
+															if entry.Firstname != "" && entry.Lastname != "" {
+																<span>{ strings.ToUpper(entry.Firstname[0:1] + entry.Lastname[0:1]) }</span>
+															} else {
+																<span>GL</span>
+															}
+														</div>
+													</div>
+												}
+												<div>
+													<div class="font-bold">{ entry.Email }</div>
+													<div class="text-sm opacity-50">{ entry.Firstname } { entry.Lastname }</div>
+												</div>
+											</div>
+										</td>
+										<td>
+											switch entry.Role {
+												case acl.View:
+													<div class="badge badge-primary">Normal</div>
+												case acl.Edit:
+													<div class="badge badge-accent">Admin</div>
+													// query excludes 0
+													// case acl.None:
+													// <div class="badge">Keine</div>
+												case acl.Denied:
+													<div class="badge badge-neutral">Abgelehnt</div>
+												case acl.Admin:
+													<div class="badge badge-accent">Admin</div>
+											}
+										</td>
+										<td>
+											// TODO swap
+											<form
+												class="flex gap-x-2"
+												hx-put="/host/users/role"
+												hx-swap="none"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<select name="role" class="select" autocomplete="off">
+													<option disabled>
+														Neue Rolle
+													</option>
+													switch entry.Role {
+														case acl.View:
+															<option value="-1">Abgelehnt</option>
+															<option value="1" selected>Normal</option>
+															<option value="2">Admin</option>
+														case acl.Edit:
+															<option value="-1">Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2" selected>Admin</option>
+														case acl.Denied:
+															<option value="-1" selected>Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2">Admin</option>
+														case acl.Admin:
+															<option value="-1">Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2" selected>Admin</option>
+													}
+												</select>
+												<button class="btn btn-neutral" type="submit" name="id" value={ strconv.FormatInt(entry.ID, 10) }>Speichern</button>
+											</form>
+										</td>
+									</tr>
+								}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Name</th>
+									<th>Aktuelle Rolle</th>
+									<th>Neue Rolle</th>
+								</tr>
+							</tfoot>
+						</table>
+					} else {
+						<p class="text-center">Noch keine Benutzer*innen freigeschaltet</p>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string, tribeRoles []db.GetTribeRolesOpenRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-tribes" role="tab" class="tab tab-active" hx-get="/host/tribes">Stämme</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				if len(tribeRoles) > 0 {
+					<div class="my-9">
+						<details class="collapse collapse-arrow bg-base-200 border-base-300 border" open>
+							<summary class="collapse-title font-semibold">Stamm Berechtigungsanfragen</summary>
+							<div class="collapse-content text-sm">
+								<p class="font-light">
+									Benutzer*innen die Zugang zu einem Stamm angefragt haben.
+								</p>
+								<ul class="mt-6 space-y-2">
+									for _, tribeRole := range tribeRoles {
+										<li>
+											<form
+												class="flex justify-between gap-x-3 items-center"
+												hx-put={ "/host/tribes/role" }
+												hx-swap="outerHTML"
+												hx-target="closest li"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<input type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
+												<div class="flex gap-x-2 items-center">
+													if len(tribeRole.UserIcon) > 0 {
+														<div class="avatar">
+															<div class="w-8 rounded-full">
+																<img
+																	src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(tribeRole.UserIcon) }
+																	alt="Avatar"
+																/>
+															</div>
+														</div>
+													} else {
+														<div class="avatar">
+															<div class="avatar placeholder">
+																<div class="bg-neutral text-neutral-content w-8 rounded-full">
+																	if user.Firstname != "" && user.Lastname != "" {
+																		<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+																	} else {
+																		<span>GL</span>
+																	}
+																</div>
+															</div>
+														</div>
+													}
+													<div>
+														<div>{ tribeRole.UserEmail }</div>
+														<div class="font-light text-sm opacity-50">{ tribeRole.Firstname } { tribeRole.Lastname }</div>
+													</div>
+												</div>
+												<p>
+													für Stamm
+												</p>
+												<div class="flex gap-x-2 items-center">
+													if tribeRole.TribeIconID.Valid {
+														<label class="avatar">
+															<div class="w-8">
+																<img
+																	src={ "/icon/tribe/" + strconv.FormatInt(tribeRole.TribeIconID.Int64, 10) }
+																	alt={ tribeRole.TribeName + " Icon" }
+																/>
+															</div>
+														</label>
+													}
+													<p>{ tribeRole.TribeName }</p>
+												</div>
+												<div class="join">
+													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													<button class="join-item btn btn-sm btn-primary" type="submit" value="0" name="role">Normal</button>
+													// NTH
+													// <button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Lesen</button>
+													// <button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Schreiben</button>
+													<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">StaVo</button>
+												</div>
+											</form>
+										</li>
+									}
+								</ul>
+							</div>
+						</details>
+					</div>
+				}
+				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+					<summary class="collapse-title font-semibold">Stamm Rollen Erklärung</summary>
+					<div class="collapse-content">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><div class="badge badge-neutral">Ablehnen</div></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Stamm</strong> keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-primary">Normal</div></td>
+									<td><span class="font-light">der Account ist ein normaler Account für <strong>Posten und Gruppen</strong></span></td>
+								</tr>
+								// NTH
+								// <li>
+								// 	<div class="badge badge-primary">Lesen</div>
+								// 	<span class="ml-3 font-light">kann die eigenen angemeldeten Posten und Gruppen ansehen und ihre zugewiesenen Accounts ansehen</span>
+								// </li>
+								// <li>
+								// 	<div class="badge badge-accent">Schreiben</div>
+								// 	<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zu eigenen Posten hinzufügen oder entfernen</span>
+								// </li>
+								<tr>
+									<td><div class="badge badge-secondary">StaVo</div></td>
+									<td><span class="font-light">der Account kann im genannten Stamm <strong>Posten und Gruppen bearbeiten</strong> und Benutzer*innen zum eigenen Stamm oder Posten hinzufügen und entfernen und ihre <strong>Berechtigungen setzen</strong></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</details>
+				<div class="overflow-x-auto">
+					// TODO show user roles -> add, update remove
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Domain</th>
+								<th>Favorite Color</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, tribe := range tribes {
+								<tr>
+									<td>
+										<div class="flex items-center gap-3">
+											if tribe.Icon.Valid {
+												<form
+													hx-put={ "/host/tribes/icon/" + strconv.FormatInt(tribe.ID, 10) }
+													hx-trigger="change"
+													hx-encoding="multipart/form-data"
+													hx-swap="outerHTML"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<label class="avatar cursor-pointer">
+														<div class="h-12 w-12">
+															<input name="icon" type="file" class="hidden"/>
+															<img
+																src={ "/icon/tribe/" + strconv.FormatInt(tribe.ID, 10) }
+																alt={ tribe.Name + " Icon" }
+															/>
+														</div>
+													</label>
+												</form>
+											} else {
+												<form
+													hx-post={ "/host/tribes/icon/" + strconv.FormatInt(tribe.ID, 10) }
+													hx-trigger="change"
+													hx-encoding="multipart/form-data"
+													hx-swap="outerHTML"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<label class="avatar placeholder cursor-pointer">
+														<input name="icon" type="file" class="hidden"/>
+														<div class="mask mask-squircle bg-neutral text-neutral-content w-12 h-12">
+															<span class="text-2xl icon-[uil--image-upload]"></span>
+														</div>
+													</label>
+												</form>
+											}
+											<div>
+												<div class="font-bold">{ tribe.Name }</div>
+												<div class="text-sm opacity-50">{ tribe.Short.String }</div>
+												<div class="text-sm opacity-50">{ tribe.Dpsg.String }</div>
+											</div>
+										</div>
+									</td>
+									if tribe.EmailDomain.Valid {
+										<td>{ tribe.EmailDomain.String }</td>
+									} else {
+										<td class="opacity-50">N/A</td>
+									}
+									<td>
+										Zemlak, Daniel and Leannon
+										<br/>
+										<span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
+									</td>
+									<th>
+										<button class="btn btn-ghost btn-xs">details</button>
+									</th>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								<th>Domain</th>
+								<th>Favorite Color</th>
+								<th></th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+}

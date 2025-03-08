@@ -1,7 +1,5 @@
 {
 	"name": "de.georgslauf",
-	"version": "2.0.0",
-	"description": "",
 	"repository": {
 		"type": "git",
 		"url": "github.com/schlauerlauer/georgslauf"
