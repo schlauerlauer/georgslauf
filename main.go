@@ -49,7 +49,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	repository, err := db.NewRepository(&cfg.Database)
+	repository, err := db.NewSqlite(&cfg.Database)
 	if err != nil {
 		slog.Error("error connecting repository", "err", err)
 		os.Exit(1)

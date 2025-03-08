@@ -7,9 +7,9 @@ BUILD_TIMESTAMP=$(date '+%Y-%m-%dT%H:%M:%S')
 LDFLAGS=(
 	"-X '${PACKAGE}/internal/handler.version=${VERSION}'"
 	"-X '${PACKAGE}/internal/handler.buildTime=${BUILD_TIMESTAMP}'"
-	# "-s"
-	# "-w"
-	# '-extldflags "-static"'
+	"-s"
+	"-w"
+	'-extldflags "-static"'
 )
 
-CGO_ENABLED=1 go build -ldflags="${LDFLAGS[*]}" -o ./tmp/georgslauf .
+CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS[*]}" -o ./build/georgslauf -v .

@@ -2,19 +2,12 @@ package db
 
 import (
 	"database/sql"
-	// _ "github.com/tursodatabase/go-libsql"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
-type Repository struct {
-	Queries *Queries
-}
-
-type DatabaseConfig struct {
-	Path string `yaml:"path"`
-}
-
-func NewLibsql(config *DatabaseConfig) (*Repository, error) {
-	sqlDb, err := sql.Open("libsql", "file:"+config.Path)
+func NewSqlite(config *DatabaseConfig) (*Repository, error) {
+	sqlDb, err := sql.Open("sqlite3", config.Path)
 	if err != nil {
 		return nil, err
 	}

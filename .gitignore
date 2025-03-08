@@ -14,3 +14,4 @@
 /internal/db/queries.sql.go
 /uploads
 /init_data.sql
+/build
