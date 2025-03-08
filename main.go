@@ -113,11 +113,10 @@ func main() {
 	router.HandleFunc("GET /robots.txt", handlers.Robots)
 	router.HandleFunc("GET /.well-known/security.txt", handlers.Security)
 
-	// FIXME create page before dash
-
 	// dash routes
 	dashRouter := http.NewServeMux()
-	dashRouter.HandleFunc("GET /{$}", handlers.Dash)
+	router.Handle("GET /dash/{$}", sessionService.RequiredAuth(http.HandlerFunc(handlers.Dash))) // check for permissions
+
 	dashRouter.HandleFunc("GET /stations", handlers.DashStations)
 	dashRouter.HandleFunc("GET /groups", handlers.DashGroups)
 	dashRouter.HandleFunc("GET /groups/new", handlers.GetNewGroup)

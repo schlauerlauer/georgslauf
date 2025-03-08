@@ -814,6 +814,11 @@ table "tribe_roles" {
 		type = integer
 	}
 
+	column "accepted_at" {
+		null = true
+		type = integer
+	}
+
 	primary_key {
 		columns = [column.id]
 	}

@@ -94,9 +94,6 @@ sql:
           - column: "users.role"
             go_type: "georgslauf/acl.ACL"
 
-          - column: "tribe_roles.tribe_role"
-            go_type: "georgslauf/acl.ACL"
-
           - column: "group_roles.created_by"
             go_type: "database/sql.NullInt64"
           - column: "group_roles.updated_by"
@@ -111,9 +108,13 @@ sql:
           - column: "station_roles.updated_by"
             go_type: "database/sql.NullInt64"
 
+          - column: "tribe_roles.tribe_role"
+            go_type: "georgslauf/acl.ACL"
           - column: "tribe_roles.created_by"
             go_type: "database/sql.NullInt64"
           - column: "tribe_roles.updated_by"
+            go_type: "database/sql.NullInt64"
+          - column: "tribe_roles.accepted_at"
             go_type: "database/sql.NullInt64"
 
           - column: "settings.updated_by"

@@ -46,20 +46,24 @@ type Help struct {
 
 func New(queries *db.Queries) *SettingsService {
 	service := SettingsService{
-		queries:  queries,
-		settings: Settings{},
-		lock:     sync.RWMutex{},
+		queries: queries,
+		settings: Settings{
+			Groups: Groups{
+				Max: 1,
+			},
+		},
+		lock: sync.RWMutex{},
 	}
 
 	if res, err := queries.GetSettings(context.Background()); err != nil {
-		slog.Warn("GetSettings", "err", err)
+		slog.Info("no settings found, setting defaults")
 
 		if data, err := json.Marshal(service.settings); err != nil {
 			slog.Error("Marshal", "err", err)
 			os.Exit(1)
 		} else {
 			if err := queries.InsertSettings(context.Background(), data); err != nil {
-				slog.Error("InsertSettings", "err", err)
+				slog.Error("sqlc", "err", err)
 				os.Exit(1)
 			}
 		}

@@ -57,28 +57,40 @@ select
 	tr.tribe_role
 	,tr.tribe_id
 	,ti.id as icon_id
+	,tr.accepted_at
+	,t.name
 from tribe_roles tr
 left join tribe_icons ti on ti.id = tr.id
+left join tribes t on tr.tribe_id = t.id
 where
-	user_id = ?
+	tr.user_id = ?
 limit 1;
 
 -- name: GetTribeRoleByTribe :one
 select
-	tribe_role
-from tribe_roles
+	tr.tribe_role
+	,ti.id as icon_id
+	,tr.accepted_at
+	,t.name
+from tribe_roles tr
+left join tribe_icons ti on ti.id = tr.id
+left join tribes t on tr.tribe_id = t.id
 where
-	user_id = ?
-	and tribe_id = ?
+	tr.user_id = ?
+	and tr.tribe_id = ?
 limit 1;
 
 -- name: CreateTribeRole :exec
-insert into tribe_roles (user_id, tribe_id, tribe_role, created_by)
-values (?,?,?,?);
+insert into tribe_roles (user_id, tribe_id, tribe_role, created_by, accepted_at)
+values (?,?,?,?,?);
 
 -- name: UpdateTribeRole :exec
 update tribe_roles
-set tribe_role = ?
+set
+	tribe_role = ?
+	,accepted_at = ?
+	,updated_by = ?
+	,updated_at = ?
 where id = ?;
 
 -- name: UpdateUserRole :exec
@@ -118,18 +130,25 @@ from users
 where role = 0
 order by created_at desc;
 
--- TODO join icons
+-- NTH multiple smaller queries
 -- name: GetTribeRolesOpen :many
 select
 	tr.id
 	,tr.created_at
 	,t.name as tribe_name
 	,u.email as user_email
+	,u.firstname
+	,u.lastname
+	,ui.image as user_icon
+	,ti.id as tribe_icon_id
 from tribe_roles tr
-inner join users u on tr.user_id = u.id
-inner join tribes t on tr.tribe_id = t.id
+inner join users u on u.id = tr.user_id
+inner join tribes t on t.id = tr.tribe_id
+left join user_icons ui on ui.id = tr.user_id
+left join tribe_icons ti on ti.id = tr.tribe_id
 where
 	tribe_role = 0
+	and accepted_at is null
 order by tr.created_at desc;
 
 -- name: GetUserIdByExt :one

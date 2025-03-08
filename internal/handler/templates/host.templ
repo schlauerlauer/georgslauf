@@ -19,7 +19,7 @@ templ TribeIcon(tribeId int64, csrf string) {
 		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 	>
 		<label class="avatar cursor-pointer">
-			<div class="mask mask-squircle h-12 w-12">
+			<div class="h-12 w-12">
 				<input name="icon" type="file" class="hidden"/>
 				<img
 					src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }
@@ -220,6 +220,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 												hx-target="closest li"
 												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 											>
+												// TODO icon, update from tribe
 												<input type="hidden" name="id" value={ strconv.FormatInt(request.ID, 10) }/>
 												<p>{ request.Email }</p>
 												<p>{ request.Firstname } { request.Lastname }</p>
@@ -236,137 +237,134 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 						</details>
 					</div>
 				}
-				<div>
-					<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
-						<summary class="collapse-title font-semibold">Account Rollen Erklärung</summary>
-						<div class="collapse-content">
-							<p class="text-sm mb-2 font-light">
-								// TODO
-								Die initiale Rolle ist sofort wirksam, nachträgliche Änderungen benötigt einen neuen login per <a class="link" href="/login">/login</a>
-							</p>
-							<table class="table">
-								<tbody>
-									<tr>
-										<td><div class="badge badge-neutral">Ablehnen</div></td>
-										<td><span class="font-light">der Account bekommt für den Georgslauf keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
-									</tr>
-									<tr>
-										<td><div class="badge badge-primary">Normal</div></td>
-										<td><span class="font-light">der Account ist ein normaler Account für Posten, Gruppen oder StaVos</span></td>
-									</tr>
-									<tr>
-										<td><div class="badge badge-accent">Admin</div></td>
-										<td><span class="font-light">der Account ist vom austragenden Stamm und hat Zugriff auf die Admin Seiten</span></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</details>
-					<div class="overflow-x-auto my-9">
-						if len(users) > 0 {
-							<table class="table">
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Aktuelle Rolle</th>
-										<th>Neue Rolle</th>
-									</tr>
-								</thead>
-								<tbody>
-									for _, entry := range users {
-										<tr>
-											<td>
-												<div class="flex items-center gap-3">
-													if len(entry.Image) > 0 {
-														<div class="avatar">
-															<div class="mask mask-squircle h-12 w-12">
-																<img
-																	src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(entry.Image) }
-																	alt="Avatar"
-																/>
-															</div>
-														</div>
-													} else {
-														<div class="avatar placeholder">
-															<div class="bg-neutral text-neutral-content w-24 rounded-full">
-																if user.Firstname != "" && user.Lastname != "" {
-																	<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
-																} else {
-																	<span>GL</span>
-																}
-															</div>
-														</div>
-													}
-													<div>
-														<div class="font-bold">{ entry.Firstname } { entry.Lastname }</div>
-														<div class="text-sm opacity-50">{ entry.Email } </div>
-													</div>
-												</div>
-											</td>
-											<td>
-												switch entry.Role {
-													case acl.View:
-														<div class="badge badge-primary">Normal</div>
-													case acl.Edit:
-														<div class="badge badge-accent">Admin</div>
-														// query excludes 0
-														// case acl.None:
-														// <div class="badge">Keine</div>
-													case acl.Denied:
-														<div class="badge badge-neutral">Abgelehnt</div>
-													case acl.Admin:
-														<div class="badge badge-accent">Admin</div>
-												}
-											</td>
-											<td>
-												// TODO swap
-												<form
-													class="flex gap-x-2"
-													hx-put="/host/users/role"
-													hx-swap="none"
-													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
-												>
-													<select name="role" class="select" autocomplete="off">
-														<option disabled>
-															Neue Rolle
-														</option>
-														switch entry.Role {
-															case acl.View:
-																<option value="-1">Abgelehnt</option>
-																<option value="1" selected>Normal</option>
-																<option value="2">Admin</option>
-															case acl.Edit:
-																<option value="-1">Abgelehnt</option>
-																<option value="1">Normal</option>
-																<option value="2" selected>Admin</option>
-															case acl.Denied:
-																<option value="-1" selected>Abgelehnt</option>
-																<option value="1">Normal</option>
-																<option value="2">Admin</option>
-															case acl.Admin:
-																<option value="-1">Abgelehnt</option>
-																<option value="1">Normal</option>
-																<option value="2" selected>Admin</option>
-														}
-													</select>
-													<button class="btn btn-neutral" type="submit" name="id" value={ strconv.FormatInt(entry.ID, 10) }>Speichern</button>
-												</form>
-											</td>
-										</tr>
-									}
-								</tbody>
-								<tfoot>
-									<tr>
-										<th>Name</th>
-										<th>Aktuelle Rolle</th>
-										<th>Neue Rolle</th>
-									</tr>
-								</tfoot>
-							</table>
-						} else {
-							<p class="text-center">Noch keine Benutzer*innen freigeschaltet</p>
-						}
+				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+					<summary class="collapse-title font-semibold">Account Rollen Erklärung</summary>
+					<div class="collapse-content">
+						<p class="text-sm mb-2 font-light">
+							Bei Rollenänderungen kann es sein, dass ein neuer login per <a class="link" href="/login">/login</a> notwendig ist.
+						</p>
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><div class="badge badge-neutral">Ablehnen</div></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Georgslauf</strong> keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-primary">Normal</div></td>
+									<td><span class="font-light">der Account ist ein normaler Account für Posten, Gruppen oder <strong>StaVos</strong></span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-accent">Admin</div></td>
+									<td><span class="font-light">der Account <strong>ist vom austragenden Stamm> und hat Zugriff auf die Admin Seiten</strong></span></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+				</details>
+				<div class="overflow-x-auto my-9">
+					if len(users) > 0 {
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Aktuelle Rolle</th>
+									<th>Neue Rolle</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, entry := range users {
+									<tr>
+										<td>
+											<div class="flex items-center gap-3">
+												if len(entry.Image) > 0 {
+													<div class="avatar">
+														<div class="mask mask-squircle w-12">
+															<img
+																src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(entry.Image) }
+																alt="Avatar"
+															/>
+														</div>
+													</div>
+												} else {
+													<div class="avatar placeholder">
+														<div class="bg-neutral text-neutral-content w-12 mask mask-squircle">
+															if user.Firstname != "" && user.Lastname != "" {
+																<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+															} else {
+																<span>GL</span>
+															}
+														</div>
+													</div>
+												}
+												<div>
+													<div class="font-bold">{ entry.Email }</div>
+													<div class="text-sm opacity-50">{ entry.Firstname } { entry.Lastname }</div>
+												</div>
+											</div>
+										</td>
+										<td>
+											switch entry.Role {
+												case acl.View:
+													<div class="badge badge-primary">Normal</div>
+												case acl.Edit:
+													<div class="badge badge-accent">Admin</div>
+													// query excludes 0
+													// case acl.None:
+													// <div class="badge">Keine</div>
+												case acl.Denied:
+													<div class="badge badge-neutral">Abgelehnt</div>
+												case acl.Admin:
+													<div class="badge badge-accent">Admin</div>
+											}
+										</td>
+										<td>
+											// TODO swap
+											<form
+												class="flex gap-x-2"
+												hx-put="/host/users/role"
+												hx-swap="none"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<select name="role" class="select" autocomplete="off">
+													<option disabled>
+														Neue Rolle
+													</option>
+													switch entry.Role {
+														case acl.View:
+															<option value="-1">Abgelehnt</option>
+															<option value="1" selected>Normal</option>
+															<option value="2">Admin</option>
+														case acl.Edit:
+															<option value="-1">Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2" selected>Admin</option>
+														case acl.Denied:
+															<option value="-1" selected>Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2">Admin</option>
+														case acl.Admin:
+															<option value="-1">Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2" selected>Admin</option>
+													}
+												</select>
+												<button class="btn btn-neutral" type="submit" name="id" value={ strconv.FormatInt(entry.ID, 10) }>Speichern</button>
+											</form>
+										</td>
+									</tr>
+								}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Name</th>
+									<th>Aktuelle Rolle</th>
+									<th>Neue Rolle</th>
+								</tr>
+							</tfoot>
+						</table>
+					} else {
+						<p class="text-center">Noch keine Benutzer*innen freigeschaltet</p>
+					}
 				</div>
 			</div>
 		</div>
@@ -390,46 +388,70 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 			<div class="mt-6">
 				if len(tribeRoles) > 0 {
 					<div class="my-9">
-						<details class="collapse bg-base-100 border-base-300 border" open>
+						<details class="collapse collapse-arrow bg-base-200 border-base-300 border" open>
 							<summary class="collapse-title font-semibold">Stamm Berechtigungsanfragen</summary>
 							<div class="collapse-content text-sm">
-								<div>
-									<p class="mb-3 font-light">Rollen Erklärung</p>
-									<ol class="space-y-2">
-										<li>
-											<div class="badge badge-neutral">Ablehnen</div>
-											<span class="ml-3 font-light">der Account bekommt für den Stamm keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span>
-										</li>
-										// NTH
-										// <li>
-										// 	<div class="badge badge-primary">Lesen</div>
-										// 	<span class="ml-3 font-light">kann die eigenen angemeldeten Posten und Gruppen ansehen und ihre zugewiesenen Accounts ansehen</span>
-										// </li>
-										// <li>
-										// 	<div class="badge badge-accent">Schreiben</div>
-										// 	<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zu eigenen Posten hinzufügen oder entfernen</span>
-										// </li>
-										<li>
-											<div class="badge badge-secondary">StaVo</div>
-											<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zum eigenen Stamm oder Posten hinzufügen oder entfernen und ihre Berechtigungen setzen</span>
-										</li>
-									</ol>
-								</div>
+								<p class="font-light">
+									Benutzer*innen die Zugang zu einem Stamm angefragt haben.
+								</p>
 								<ul class="mt-6 space-y-2">
 									for _, tribeRole := range tribeRoles {
 										<li>
 											<form
-												class="flex justify-between gap-x-3"
+												class="flex justify-between gap-x-3 items-center"
 												hx-put={ "/host/tribes/role" }
 												hx-swap="outerHTML"
 												hx-target="closest li"
 												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 											>
 												<input type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
-												<p>{ tribeRole.UserEmail }</p>
-												<p>{ tribeRole.TribeName }</p>
+												<div class="flex gap-x-2 items-center">
+													if len(tribeRole.UserIcon) > 0 {
+														<div class="avatar">
+															<div class="w-8 rounded-full">
+																<img
+																	src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(tribeRole.UserIcon) }
+																	alt="Avatar"
+																/>
+															</div>
+														</div>
+													} else {
+														<div class="avatar">
+															<div class="avatar placeholder">
+																<div class="bg-neutral text-neutral-content w-8 rounded-full">
+																	if user.Firstname != "" && user.Lastname != "" {
+																		<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+																	} else {
+																		<span>GL</span>
+																	}
+																</div>
+															</div>
+														</div>
+													}
+													<div>
+														<div>{ tribeRole.UserEmail }</div>
+														<div class="font-light text-sm opacity-50">{ tribeRole.Firstname } { tribeRole.Lastname }</div>
+													</div>
+												</div>
+												<p>
+													für Stamm
+												</p>
+												<div class="flex gap-x-2 items-center">
+													if tribeRole.TribeIconID.Valid {
+														<label class="avatar">
+															<div class="w-8">
+																<img
+																	src={ "/icon/tribe/" + strconv.FormatInt(tribeRole.TribeIconID.Int64, 10) }
+																	alt={ tribeRole.TribeName + " Icon" }
+																/>
+															</div>
+														</label>
+													}
+													<p>{ tribeRole.TribeName }</p>
+												</div>
 												<div class="join">
 													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													<button class="join-item btn btn-sm btn-primary" type="submit" value="0" name="role">Normal</button>
 													// NTH
 													// <button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Lesen</button>
 													// <button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Schreiben</button>
@@ -443,6 +465,36 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 						</details>
 					</div>
 				}
+				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+					<summary class="collapse-title font-semibold">Stamm Rollen Erklärung</summary>
+					<div class="collapse-content">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><div class="badge badge-neutral">Ablehnen</div></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Stamm</strong> keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-primary">Normal</div></td>
+									<td><span class="font-light">der Account ist ein normaler Account für <strong>Posten und Gruppen</strong></span></td>
+								</tr>
+								// NTH
+								// <li>
+								// 	<div class="badge badge-primary">Lesen</div>
+								// 	<span class="ml-3 font-light">kann die eigenen angemeldeten Posten und Gruppen ansehen und ihre zugewiesenen Accounts ansehen</span>
+								// </li>
+								// <li>
+								// 	<div class="badge badge-accent">Schreiben</div>
+								// 	<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zu eigenen Posten hinzufügen oder entfernen</span>
+								// </li>
+								<tr>
+									<td><div class="badge badge-secondary">StaVo</div></td>
+									<td><span class="font-light">der Account kann im genannten Stamm <strong>Posten und Gruppen bearbeiten</strong> und Benutzer*innen zum eigenen Stamm oder Posten hinzufügen und entfernen und ihre <strong>Berechtigungen setzen</strong></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</details>
 				<div class="overflow-x-auto">
 					// TODO show user roles -> add, update remove
 					<table class="table">
@@ -468,7 +520,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 												>
 													<label class="avatar cursor-pointer">
-														<div class="mask mask-squircle h-12 w-12">
+														<div class="h-12 w-12">
 															<input name="icon" type="file" class="hidden"/>
 															<img
 																src={ "/icon/tribe/" + strconv.FormatInt(tribe.ID, 10) }

@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/csrf"
 )
@@ -183,9 +184,21 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	accepted := sql.NullInt64{}
+	if data.TribeRole >= int64(acl.None) {
+		accepted.Int64 = time.Now().Unix()
+		accepted.Valid = true
+	}
+
 	if err := h.queries.UpdateTribeRole(ctx, db.UpdateTribeRoleParams{
-		ID:        data.TribeRoleID,
-		TribeRole: acl.ACL(data.TribeRole),
+		ID:         data.TribeRoleID,
+		TribeRole:  acl.ACL(data.TribeRole),
+		AcceptedAt: accepted,
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		UpdatedAt: time.Now().Unix(),
 	}); err != nil {
 		slog.Error("sqlc", "err", err)
 		return // TODO

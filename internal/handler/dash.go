@@ -111,8 +111,6 @@ func (h *Handler) PutGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO allow for stations
-
 	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
 		UserID:  user.ID,
 		TribeID: data.TribeId,
@@ -125,7 +123,7 @@ func (h *Handler) PutGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if tribeRole < acl.Edit {
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
 		return // TODO
 	}
 
@@ -210,6 +208,7 @@ func (h *Handler) PostJoin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		slog.Debug("created tribe role", "user", user.ID, "tribe", data.TribeId)
+		// TODO render & swap
 		return
 	} else {
 		// role exists
@@ -280,7 +279,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if tribeRole < acl.Edit {
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
 		return // TODO
 	}
 
@@ -405,7 +404,7 @@ func (h *Handler) DashGroups(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if tribeRole < acl.Edit {
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
 		return // TODO
 	}
 
@@ -467,7 +466,7 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if tribeRole < acl.Edit {
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
 		return // TODO
 	}
 
@@ -485,9 +484,6 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
-
-	// FIXME tribe role not required for stations
-
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()
 
@@ -502,8 +498,6 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("user role", "role", user.ACL.String())
-
 	var tribeId sql.NullInt64
 	if query := r.URL.Query().Get("tribe"); query != "" {
 		if id, err := strconv.ParseInt(query, 10, 64); err == nil {
@@ -515,23 +509,26 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var tribeRole acl.ACL
+	var wasAccepted bool
 	var hasIcon bool
+	var tribeName string
 
 	if !tribeId.Valid {
 		if tmpRole, err := h.queries.GetTribeRoleWithIcon(ctx, user.ID); err != nil {
 			slog.Debug("GetUserCredentials", "err", err)
 			if tribeName, ok := h.createTribeRequest(ctx, user.ID, user.Email); ok {
 				w.WriteHeader(http.StatusCreated)
-				// NTH tribe icon größer in der mitte
+				// TODO tribe icon größer in der mitte
+				// Show reload button instead of to home page
 				if err := templates.ErrorPage(
 					htmxRequest,
 					user,
 					tribeId.Int64,
 					hasIcon,
 					http.StatusCreated,
-					fmt.Sprintf("Deine Berechtigung für %s wurde angefragt!", tribeName),
+					fmt.Sprintf("Du wurdest zu %s zugeordnet!", tribeName),
 				).Render(ctx, w); err != nil {
-					slog.Warn("ErrorPage", "err", err)
+					slog.Warn("templ", "err", err)
 				}
 				return
 			} else {
@@ -557,7 +554,7 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 					tribes,
 					csrf.Token(r),
 				).Render(ctx, w); err != nil {
-					slog.Warn("TribeRoleSelect", "err", err)
+					slog.Warn("templ", "err", err)
 				}
 				return
 			}
@@ -568,6 +565,8 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 				Valid: true,
 			}
 			hasIcon = tmpRole.IconID.Valid
+			wasAccepted = tmpRole.AcceptedAt.Valid
+			tribeName = tmpRole.Name.String
 		}
 	} else {
 		if tmpRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
@@ -584,11 +583,14 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 				http.StatusInternalServerError,
 				"Keine Berechtigung gefunden",
 			).Render(ctx, w); err != nil {
-				slog.Warn("ErrorPage", "err", err)
+				slog.Warn("templ", "err", err)
 			}
 			return
 		} else {
-			tribeRole = tmpRole
+			tribeRole = tmpRole.TribeRole
+			hasIcon = tmpRole.IconID.Valid
+			wasAccepted = tmpRole.AcceptedAt.Valid
+			tribeName = tmpRole.Name.String
 		}
 	}
 
@@ -599,9 +601,10 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 
 	var isAdmin, isEdit bool
 
+	slog.Debug("role", "acl", int64(tribeRole), "test", tribeRole, "accepted", wasAccepted)
+
 	switch tribeRole {
 	case acl.Denied:
-		slog.Debug("acl denied")
 		w.WriteHeader(http.StatusUnauthorized)
 		if err := templates.ErrorPage(
 			htmxRequest,
@@ -611,40 +614,60 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 			http.StatusUnauthorized,
 			"Deine Berechtigung ist abgelaufen",
 		).Render(ctx, w); err != nil {
-			slog.Warn("ErrorPage", "err", err)
+			slog.Warn("templ", "err", err)
 		}
 		return
 	case acl.None:
-		slog.Debug("acl none")
+		if wasAccepted {
+			// TODO show different page, remove status code show tribe icon
+			// du wurdest noch keinem Posten zugeordnet
+			if err := templates.ErrorPage(
+				htmxRequest,
+				user,
+				tribeId.Int64,
+				hasIcon,
+				http.StatusOK,
+				fmt.Sprintf("Du hast noch keine Rechte für %s", tribeName),
+			).Render(ctx, w); err != nil {
+				slog.Warn("templ", "err", err)
+			}
+			return
+		}
+
 		w.WriteHeader(http.StatusUnauthorized)
+		// TODO
 		if err := templates.ErrorPage(
 			htmxRequest,
 			user,
 			tribeId.Int64,
 			hasIcon,
 			http.StatusUnauthorized,
-			"Deine Berechtigung muss noch bestätigt werden",
+			"Dein Account muss von uns noch bestätigt werden",
 		).Render(ctx, w); err != nil {
-			slog.Warn("ErrorPage", "err", err)
+			slog.Warn("templ", "err", err)
 		}
 		return
 	case acl.View:
-		// TODO no host view, but could use posten or group
 		// showUsers = false
-		templates.ErrorPage(
+		if err := templates.ErrorPage(
 			htmxRequest,
 			user,
 			tribeId.Int64,
 			hasIcon,
-			http.StatusUnauthorized,
-			"Deine Berechtigung reicht aktuell noch nicht aus",
-		).Render(ctx, w)
+			http.StatusOK,
+			"TODO Leserechte",
+		).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
 		return
 	case acl.Edit:
 		isEdit = true
 	case acl.Admin:
 		isEdit = true
 		isAdmin = true
+	default:
+		slog.Error("tribe role out of range", "role", int64(tribeRole))
+		return // TODO
 	}
 
 	if err := templates.Dash(
@@ -655,7 +678,7 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 		isEdit,
 		isAdmin,
 	).Render(ctx, w); err != nil {
-		slog.Error("Dash", "err", err)
+		slog.Error("templ", "err", err)
 	}
 }
 
@@ -677,7 +700,7 @@ func (h *Handler) createTribeRequest(ctx context.Context, userId int64, userEmai
 		Valid:  true,
 	})
 	if err != nil {
-		slog.Debug("GetTribeByEmail", "err", err)
+		slog.Debug("sqlc", "err", err)
 		return "", false
 	}
 
@@ -685,7 +708,11 @@ func (h *Handler) createTribeRequest(ctx context.Context, userId int64, userEmai
 	if err := h.queries.CreateTribeRole(ctx, db.CreateTribeRoleParams{
 		UserID:    userId,
 		TribeID:   tribe.ID,
-		TribeRole: acl.View,
+		TribeRole: acl.None,
+		AcceptedAt: sql.NullInt64{
+			Int64: time.Now().Unix(),
+			Valid: true,
+		},
 		CreatedBy: sql.NullInt64{
 			Int64: userId,
 			Valid: true,

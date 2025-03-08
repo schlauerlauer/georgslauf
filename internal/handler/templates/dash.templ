@@ -87,17 +87,6 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 					</div>
 					<input required name="name" minlength="3" maxlength="100" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off"/>
 				</label>
-				<label class="form-control w-full">
-					<div class="label">
-						<span class="label-text">Größe</span>
-					</div>
-					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(set.Min, 10) } class="range" step="1"/>
-					<div class="flex w-full justify-between px-2 pt-1 text-xs">
-						for num := range set.Max - set.Min + 1 {
-							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
-						}
-					</div>
-				</label>
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
 						<span class="label-text">Stufe</span>
@@ -109,6 +98,17 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 						<option value="2">Pfadis</option>
 						<option value="3">Rover</option>
 					</select>
+				</label>
+				<label class="form-control w-full">
+					<div class="label">
+						<span class="label-text">Größe</span>
+					</div>
+					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(set.Min, 10) } class="range" step="1"/>
+					<div class="flex w-full justify-between px-2 pt-1 text-xs">
+						for num := range set.Max - set.Min + 1 {
+							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
+						}
+					</div>
 				</label>
 				<label class="form-control">
 					<div class="label">
@@ -151,17 +151,6 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 					</div>
 					<input required name="name" minlength="3" maxlength="100" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Name }/>
 				</label>
-				<label class="form-control w-full">
-					<div class="label">
-						<span class="label-text">Größe</span>
-					</div>
-					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, set.Min), 10) } class="range" step="1"/>
-					<div class="flex w-full justify-between px-2 pt-1 text-xs">
-						for num := range set.Max - set.Min + 1 {
-							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
-						}
-					</div>
-				</label>
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
 						<span class="label-text">Stufe</span>
@@ -196,6 +185,17 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 								<option value="3">Rover</option>
 						}
 					</select>
+				</label>
+				<label class="form-control w-full">
+					<div class="label">
+						<span class="label-text">Größe</span>
+					</div>
+					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, set.Min), 10) } class="range" step="1"/>
+					<div class="flex w-full justify-between px-2 pt-1 text-xs">
+						for num := range set.Max - set.Min + 1 {
+							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
+						}
+					</div>
 				</label>
 				<label class="form-control">
 					<div class="label">
@@ -291,7 +291,7 @@ templ TribeRoleSelect(htmxRequest bool, user *session.UserData, tribes []db.GetT
 										<div class="flex items-center gap-3">
 											if tribe.Icon.Valid {
 												<label class="avatar cursor-pointer">
-													<div class="mask mask-squircle h-12 w-12">
+													<div class="h-12 w-12">
 														<img
 															src={ "/icon/tribe/" + strconv.FormatInt(tribe.ID, 10) }
 															alt={ tribe.Name + " Icon" }
