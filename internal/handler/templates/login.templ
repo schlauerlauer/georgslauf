@@ -1,0 +1,32 @@
+package templates
+
+import (
+	"georgslauf/internal/settings"
+	"georgslauf/session"
+)
+
+templ Login(user *session.UserData, set settings.Login) {
+	@base(false, user, -1, false) {
+		<div class="text-center mt-20">
+			// <p class="text-base font-semibold text-primary">401</p>
+			<h1 class="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">Hey, { user.Firstname }!</h1>
+			<p class="mt-8 text-lg leading-7">
+				{ set.Title }
+			</p>
+			<p class="mt-12 text-base leading-5">
+				{ set.Welcome }
+			</p>
+			<div class="mt-10 flex items-center justify-center gap-x-6">
+				<div
+					class="btn"
+					hx-get="/dash/"
+					hx-target="main"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					Dashboard
+				</div>
+			</div>
+		</div>
+	}
+}

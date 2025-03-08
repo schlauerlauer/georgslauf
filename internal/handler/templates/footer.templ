@@ -1,0 +1,42 @@
+package templates
+
+var (
+	version = "n/a"
+	help    templ.SafeURL
+	// year    = ""
+)
+
+func SetVars(versionStr, yearStr string) {
+	version = versionStr
+	// year = yearStr
+}
+
+func SetHelp(link string) {
+	help = templ.URL(link)
+}
+
+templ footer() {
+	<footer class="footer footer-center mt-12 px-4 py-0.5 bg-base-300 text-base-content">
+		<aside class="flex justify-around w-full">
+			<div>
+				<span class="align-middle text-lg icon-[mdi--github]"></span>
+				<a target="_blank" rel="noopener noreferrer" class="link" href="https://github.com/schlauerlauer/georgslauf">
+					<span>georgslauf</span>
+				</a>
+				<span class="font-light">v{ version }</span>
+			</div>
+			<a target="_blank" rel="noopener noreferrer" href={ help }>Hilfe</a>
+			<div class="dropdown">
+				<div tabindex="0" role="button" class="btn btn-ghost">
+					<span class="h-5 w-5 icon-[solar--palette-round-bold-duotone]"></span>
+				</div>
+				<ul tabindex="0" class="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box w-36 right-0 bottom-14">
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Pastel" value="pastel"/></li>
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cupcake" value="cupcake"/></li>
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dracula" value="dracula"/></li>
+					<li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Sunset" value="sunset"/></li>
+				</ul>
+			</div>
+		</aside>
+	</footer>
+}

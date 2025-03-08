@@ -1,4 +1,5 @@
-/.vscode/
+/.vscode/*
+!/.vscode/launch.json
 /*.code-workspace
 /tmp
 /config.yaml
@@ -12,3 +13,6 @@
 /internal/db/models.go
 /internal/db/queries.sql.go
 /uploads
+/init_data.sql
+/georgslauf.tar.gz
+/migrations.tar.gz

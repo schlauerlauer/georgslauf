@@ -2,7 +2,7 @@ package templates
 
 import "georgslauf/session"
 
-templ base(htmxRequest bool, user *session.UserData) {
+templ base(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool) {
 	if !htmxRequest {
 		<!DOCTYPE html>
 		<html>
@@ -15,16 +15,16 @@ templ base(htmxRequest bool, user *session.UserData) {
 				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			</head>
 			<body>
-				<main>
-					@navbar(user)
+				@notifications()
+				<main class="min-h-screen">
+					@navbar(user, tribeId, hasIcon)
 					{ children... }
-					@footer()
 				</main>
+				@footer()
 			</body>
 		</html>
 	} else {
-		@navbar(user)
+		@navbar(user, tribeId, hasIcon)
 		{ children... }
-		@footer()
 	}
 }
