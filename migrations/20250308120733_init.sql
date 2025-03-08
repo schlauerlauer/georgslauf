@@ -6,6 +6,8 @@ CREATE INDEX idx_schedule_start ON schedule (start);
 CREATE TABLE tribes (id integer NOT NULL PRIMARY KEY AUTOINCREMENT, created_at integer NOT NULL DEFAULT (unixepoch()), updated_at integer NOT NULL DEFAULT (unixepoch()), name text NOT NULL, short text NULL, dpsg text NULL, image_id text NULL, email_domain text NULL, stavo_email text NULL, CONSTRAINT image_id FOREIGN KEY (image_id) REFERENCES images (id) ON UPDATE NO ACTION ON DELETE SET NULL);
 -- Create index "idx_tribes_name" to table: "tribes"
 CREATE UNIQUE INDEX idx_tribes_name ON tribes (name);
+-- Create index "idx_tribes_domain" to table: "tribes"
+CREATE UNIQUE INDEX idx_tribes_domain ON tribes (email_domain);
 -- Create "station_categories" table
 CREATE TABLE station_categories (id integer NOT NULL PRIMARY KEY AUTOINCREMENT, name text NOT NULL, max integer NOT NULL DEFAULT 0);
 -- Create index "idx_station_categories_name" to table: "station_categories"
@@ -14,8 +16,14 @@ CREATE UNIQUE INDEX idx_station_categories_name ON station_categories (name);
 CREATE TABLE stations (id integer NOT NULL PRIMARY KEY AUTOINCREMENT, created_at integer NOT NULL DEFAULT (unixepoch()), created_by integer NULL, updated_at integer NOT NULL DEFAULT (unixepoch()), updated_by integer NULL, name text NOT NULL, abbr text NULL, size integer NOT NULL DEFAULT 0, tribe_id integer NOT NULL, category_id integer NULL, lati real NULL, long real NULL, image_id text NULL, description text NULL, requirements text NULL, CONSTRAINT tribe_id FOREIGN KEY (tribe_id) REFERENCES tribes (id) ON UPDATE NO ACTION ON DELETE CASCADE, CONSTRAINT image_id FOREIGN KEY (image_id) REFERENCES images (id) ON UPDATE NO ACTION ON DELETE SET NULL, CONSTRAINT created_by FOREIGN KEY (created_by) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE SET NULL, CONSTRAINT updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE SET NULL, CONSTRAINT category_id FOREIGN KEY (category_id) REFERENCES station_categories (id) ON UPDATE NO ACTION ON DELETE SET NULL);
 -- Create index "idx_stations_abbr" to table: "stations"
 CREATE UNIQUE INDEX idx_stations_abbr ON stations (abbr) WHERE abbr is not null;
+-- Create index "idx_stations_tribe" to table: "stations"
+CREATE INDEX idx_stations_tribe ON stations (tribe_id);
 -- Create "groups" table
 CREATE TABLE groups (id integer NOT NULL PRIMARY KEY AUTOINCREMENT, created_at integer NOT NULL DEFAULT (unixepoch()), created_by integer NULL, updated_at integer NOT NULL DEFAULT (unixepoch()), updated_by integer NULL, name text NOT NULL, abbr text NULL, size integer NOT NULL DEFAULT 0, comment text NULL, grouping integer NOT NULL, tribe_id integer NOT NULL, image_id text NULL, CONSTRAINT tribe_id FOREIGN KEY (tribe_id) REFERENCES tribes (id) ON UPDATE NO ACTION ON DELETE CASCADE, CONSTRAINT image_id FOREIGN KEY (image_id) REFERENCES images (id) ON UPDATE NO ACTION ON DELETE SET NULL, CONSTRAINT created_by FOREIGN KEY (created_by) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE SET NULL, CONSTRAINT updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE SET NULL);
+-- Create index "idx_groups_tribe" to table: "groups"
+CREATE INDEX idx_groups_tribe ON groups (tribe_id);
+-- Create index "idx_groups_name" to table: "groups"
+CREATE UNIQUE INDEX idx_groups_name ON groups (tribe_id, name);
 -- Create index "idx_groups_abbr" to table: "groups"
 CREATE UNIQUE INDEX idx_groups_abbr ON groups (abbr) WHERE abbr is not null;
 -- Create "images" table
@@ -50,6 +58,8 @@ CREATE INDEX idx_tribe_roles_user ON tribe_roles (user_id);
 CREATE UNIQUE INDEX idx_tribe_roles_user_tribe ON tribe_roles (user_id, tribe_id);
 -- Create "users" table
 CREATE TABLE users (id integer NOT NULL PRIMARY KEY AUTOINCREMENT, ext_id text NULL, username text NOT NULL, email text NOT NULL, last_login integer NOT NULL DEFAULT (unixepoch()), created_at integer NOT NULL DEFAULT (unixepoch()), role integer NOT NULL DEFAULT 0, firstname text NOT NULL, lastname text NOT NULL);
+-- Create index "idx_users_role" to table: "users"
+CREATE INDEX idx_users_role ON users (role);
 -- Create index "idx_users_email" to table: "users"
 CREATE UNIQUE INDEX idx_users_email ON users (email);
 -- Create index "idx_users_ext_id" to table: "users"
