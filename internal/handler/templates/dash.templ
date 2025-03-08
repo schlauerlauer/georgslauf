@@ -8,18 +8,42 @@ import (
 	"time"
 )
 
-templ DashStations(stations []db.GetStationsByTribeRow) {
+templ DashNewStation(csrf string, tribeId int64, set settings.Stations) {
+	TODO
+}
+
+templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations) {
+	<details class="collapse collapse-arrow bg-base-200" open>
+		<summary class="collapse-title text-xl font-medium">{ station.Name }</summary>
+		<div class="collapse-content">
+			<p>content</p>
+		</div>
+	</details>
+}
+
+templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set settings.Stations, csrf string) {
+	// TODO station role different tabs
+	<div hx-swap-oob="innerHTML:#dash-tablist">
+		<a role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
+		<a role="tab" class="tab tab-active" hx-get="/dash/stations">Posten</a>
+	</div>
 	<div>
 		<h2 class="text-lg mb-3">Angemeldete Posten</h2>
 		<div class="space-y-3">
 			for _, station := range stations {
-				// TODO tab animation, won't work with <details/> ?
-				<details class="collapse collapse-arrow bg-base-200" open>
-					<summary class="collapse-title text-xl font-medium">{ station.Name }</summary>
-					<div class="collapse-content">
-						<p>content</p>
-					</div>
-				</details>
+				@DashStation(station, csrf, tribeId, set)
+			}
+			if set.AllowCreate {
+				<button
+					class="btn btn-secondary"
+					hx-get="/dash/stations/new"
+					hx-swap="beforebegin"
+					hx-include="#tribe-id"
+				>
+					Neuen Posten anmelden
+				</button>
+			} else {
+				<button class="btn btn-disabled">Posten anmelden deaktiviert</button>
 			}
 		</div>
 	</div>
@@ -205,9 +229,43 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 				</label>
 				// TODO image
 				<div class="flex justify-between items-end">
-					<button type="submit" class="btn btn-primary">
-						Speichern
-					</button>
+					<div class="flex gap-x-2">
+						if set.AllowUpdate {
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+						} else {
+							<div class="tooltip" data-tip="Aktualisierung ausgeschaltet">
+								<button
+									type="button"
+									class="btn btn-primary btn-disabled"
+								>
+									Speichern
+								</button>
+							</div>
+						}
+						if set.AllowDelete {
+							// FIXME hx-target
+							// hx-disinherit
+							// hx-include="#tribe-id"
+							<button
+								hx-delete={ "/dash/groups/" + strconv.FormatInt(group.ID, 10) }
+								type="button"
+								class="btn btn-error"
+							>
+								Entfernen
+							</button>
+						} else {
+							<div class="tooltip" data-tip="Entfernen ausgeschaltet">
+								<button
+									type="button"
+									class="btn btn-error btn-disabled"
+								>
+									Entfernen
+								</button>
+							</div>
+						}
+					</div>
 					<div id={ "badge-" + strconv.FormatInt(group.ID, 10) } class="flex">
 						<div class="badge badge-accent">
 							if t := time.Unix(group.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
@@ -228,6 +286,11 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 }
 
 templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Groups, csrf string) {
+	// TODO station role
+	<div hx-swap-oob="innerHTML:#dash-tablist">
+		<a role="tab" class="tab tab-active" hx-get="/dash/groups">Gruppen</a>
+		<a role="tab" class="tab" hx-get="/dash/stations">Posten</a>
+	</div>
 	<div>
 		<h2 class="text-lg mb-3">Angemeldete Gruppen</h2>
 		<div class="space-y-3">
