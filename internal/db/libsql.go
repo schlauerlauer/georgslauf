@@ -32,6 +32,10 @@ func NewRepository(config *DatabaseConfig) (*Repository, error) {
 		}
 	}
 
+	if row := sqlDb.QueryRow("PRAGMA synchronous = NORMAL;"); row.Err() != nil {
+		return nil, err
+	}
+
 	if row := sqlDb.QueryRow("PRAGMA foreign_keys = on;"); row.Err() != nil {
 		return nil, err
 	}
