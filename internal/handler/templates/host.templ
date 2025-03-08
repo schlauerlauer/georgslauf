@@ -39,7 +39,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 				hx-target="main"
 				hx-push-url="true"
 			>
-				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Benutzer</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Stämme</a>
 				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
 			</div>
@@ -118,13 +118,69 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 				<details class="collapse bg-base-200" open>
 					<summary class="collapse-title text-xl font-medium">Posten</summary>
 					<div class="collapse-content">
-						<p>Kategorien</p>
-						// TODO
-						<ul>
-							for _, category := range categories {
-								<li>{ strconv.FormatInt(category.ID, 10) } { category.Name }</li>
-							}
-						</ul>
+						<form
+							hx-put="/host/settings/stations"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten erstellen</span>
+									<input
+										name="station-create"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowCreate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten verändern</span>
+									<input
+										name="station-update"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowUpdate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten löschen</span>
+									<input
+										name="station-delete"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+						</form>
+						<div class="mt-6">
+							<p class="mb-2">Kategorien</p>
+							// TODO
+							<ul class="ml-3">
+								for _, category := range categories {
+									//{ strconv.FormatInt(category.ID, 10) }
+									<li>{ category.Name } <div class="ml-1 badge">max. { strconv.FormatInt(category.Max, 10) }</div></li>
+								}
+							</ul>
+						</div>
 					</div>
 				</details>
 				<details class="collapse bg-base-200" open>
@@ -381,7 +437,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 				hx-target="main"
 				hx-push-url="true"
 			>
-				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Benutzer</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-tribes" role="tab" class="tab tab-active" hx-get="/host/tribes">Stämme</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>

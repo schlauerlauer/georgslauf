@@ -116,16 +116,19 @@ func main() {
 	// dash routes
 	dashRouter := http.NewServeMux()
 	router.Handle("GET /dash/{$}", sessionService.RequiredAuth(http.HandlerFunc(handlers.Dash))) // check for permissions
+	router.Handle("POST /dash/join", sessionService.RequiredAuth(http.HandlerFunc(handlers.PostJoin)))
 
 	dashRouter.HandleFunc("GET /stations", handlers.DashStations)
+	dashRouter.HandleFunc("GET /stations/new", handlers.GetNewStation)
 	dashRouter.HandleFunc("GET /groups", handlers.DashGroups)
 	dashRouter.HandleFunc("GET /groups/new", handlers.GetNewGroup)
 	dashRouter.HandleFunc("POST /groups", handlers.PostGroup)
 	dashRouter.HandleFunc("PUT /groups", handlers.PutGroup)
-	dashRouter.HandleFunc("POST /join", handlers.PostJoin)
+	dashRouter.HandleFunc("DELETE /groups/{id}", handlers.DeleteGroup)
 	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequireRoleFunc(acl.ACLViewUp, dashRouter)))
 
 	// host routes
+	// NTH acl.View auf get requests
 	hostRouter := http.NewServeMux()
 	hostRouter.HandleFunc("GET /{$}", handlers.GetUsers)
 	hostRouter.HandleFunc("GET /users", handlers.GetUsers)
@@ -135,6 +138,7 @@ func main() {
 	hostRouter.HandleFunc("PUT /tribes/icon/{id}", handlers.PutTribeIcon)
 	hostRouter.HandleFunc("GET /settings", handlers.GetSettings)
 	hostRouter.HandleFunc("PUT /settings/groups", handlers.PutSettingsGroups)
+	hostRouter.HandleFunc("PUT /settings/stations", handlers.PutSettingsStations)
 	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
 	hostRouter.HandleFunc("PUT /settings/help", handlers.PutSettingsHelp)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)

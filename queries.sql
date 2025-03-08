@@ -250,3 +250,7 @@ set
 	updated_at = unixepoch()
 	,updated_by = ?
 	,data = ?;
+
+-- name: DeleteGroup :exec
+delete from groups
+where id = ?;

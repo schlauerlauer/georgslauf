@@ -114,6 +114,39 @@ func (h *Handler) PutSettingsGroups(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) PutSettingsStations(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var set settings.Stations
+	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return // TODO
+	}
+
+	prev := h.settings.Get()
+	prev.Stations = set
+	h.settings.Set(ctx, prev, user.ID)
+
+	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("AlertSuccess", "err", err)
+	}
+}
+
 type putUserRole struct {
 	UserID   int64 `schema:"id" validate:"gte=0"`
 	UserRole int64 `schema:"role" validate:"gte=-1,lte=2"`
@@ -318,7 +351,7 @@ func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil {
 		slog.Warn("ParseInt", "err", err)
-		return
+		return // TODO
 	}
 
 	var user *session.UserData

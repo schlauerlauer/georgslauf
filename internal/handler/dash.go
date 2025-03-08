@@ -62,6 +62,82 @@ func (h *Handler) GetUserIcon(w http.ResponseWriter, r *http.Request) {
 	w.Write(image)
 }
 
+func (h *Handler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		return // TODO
+	}
+
+	var tribeId int64
+	if query := r.URL.Query().Get("tribe"); query == "" {
+		slog.Debug("no url query")
+		return // TODO
+	} else {
+		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			slog.Debug("ParseInt", "err", err)
+			return // TODO
+		} else {
+			tribeId = id
+		}
+	}
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	set := h.settings.Get()
+
+	if !set.Groups.AllowDelete {
+		if err := templates.AlertError("Entfernen ist ausgeschaltet").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
+		UserID:  user.ID,
+		TribeID: tribeId,
+	})
+	if err != nil {
+		slog.Error("GetTribeRoleByTribe", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.DeleteGroup(ctx, id); err != nil {
+		slog.Error("sqlc", "err", err)
+		if err := templates.AlertError("Entfernen fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if err := templates.AlertSuccess("Gruppe entfernt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+
+	// TODO swap
+}
+
 type putGroup struct {
 	TribeId  int64  `schema:"tribe" validate:"gte=0"`
 	GroupId  int64  `schema:"group" validate:"gte=0"`
@@ -338,6 +414,29 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetNewStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var tribeId int64
+	if query := r.URL.Query().Get("tribe"); query == "" {
+		slog.Debug("no url query")
+		return // TODO
+	} else {
+		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			slog.Debug("ParseInt", "err", err)
+			return // TODO
+		} else {
+			tribeId = id
+		}
+	}
+
+	set := h.settings.Get()
+
+	if err := templates.DashNewStation(csrf.Token(r), tribeId, set.Stations).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 func (h *Handler) GetNewGroup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -354,10 +453,10 @@ func (h *Handler) GetNewGroup(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	settings := h.settings.Get()
+	set := h.settings.Get()
 
-	if err := templates.DashNewGroup(csrf.Token(r), tribeId, settings.Groups).Render(ctx, w); err != nil {
-		slog.Warn("DashNewGroup", "err", err)
+	if err := templates.DashNewGroup(csrf.Token(r), tribeId, set.Groups).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
 	}
 }
 
@@ -476,7 +575,14 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if err := templates.DashStations(stations).Render(ctx, w); err != nil {
+	set := h.settings.Get()
+
+	if err := templates.DashStations(
+		tribeId,
+		stations,
+		set.Stations,
+		csrf.Token(r),
+	).Render(ctx, w); err != nil {
 		slog.Warn("DashStations", "err", err)
 	}
 

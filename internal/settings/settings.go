@@ -38,6 +38,9 @@ type Groups struct {
 }
 
 type Stations struct {
+	AllowCreate bool `json:"c" schema:"station-create"`
+	AllowUpdate bool `json:"u" schema:"station-update"`
+	AllowDelete bool `json:"d" schema:"station-delete"`
 }
 
 type Help struct {
