@@ -14,4 +14,5 @@
 /internal/db/queries.sql.go
 /uploads
 /init_data.sql
-/build
+/georgslauf.tar.gz
+/migrations.tar.gz

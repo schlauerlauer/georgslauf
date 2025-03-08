@@ -12,4 +12,4 @@ LDFLAGS=(
 	'-extldflags "-static"'
 )
 
-CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS[*]}" -o ./build/georgslauf -v .
+CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS[*]}" -o /app/build/georgslauf -v .

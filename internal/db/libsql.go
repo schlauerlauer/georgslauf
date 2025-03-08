@@ -2,7 +2,8 @@ package db
 
 import (
 	"database/sql"
-	// _ "github.com/tursodatabase/go-libsql"
+
+	_ "github.com/tursodatabase/go-libsql"
 )
 
 type Repository struct {

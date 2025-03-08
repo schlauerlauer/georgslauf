@@ -104,17 +104,21 @@ func (a2s *authToSession) Callback(w http.ResponseWriter, r *http.Request, token
 	}
 
 	hasPicture := false
+	slog.Debug("picture", "update", userInfo.PictureUpdate, "lastLogin", existing.LastLogin)
 	if userInfo.PictureUpdate > existing.LastLogin {
+		slog.Debug("updating user icon")
 		image, err := a2s.client.GetUserPicture(token, userInfo.ID)
 		if err != nil {
 			slog.Warn("GetUserPicture", "err", err)
 		} else {
+			slog.Debug("got image", "len", len(image))
 			if err := a2s.queries.CreateUserIcon(ctx, db.CreateUserIconParams{
 				ID:    existing.ID,
 				Image: image,
 			}); err != nil {
 				slog.Warn("CreateUserIcon", "err", err)
 			} else {
+				slog.Debug("CreateUserIcon success", "id", existing.ID)
 				hasPicture = true
 			}
 		}

@@ -66,7 +66,7 @@ func New(queries *db.Queries) *SettingsService {
 			os.Exit(1)
 		} else {
 			if err := queries.InsertSettings(context.Background(), data); err != nil {
-				slog.Error("sqlc", "err", err)
+				slog.Error("InsertSettings", "err", err)
 				os.Exit(1)
 			}
 		}

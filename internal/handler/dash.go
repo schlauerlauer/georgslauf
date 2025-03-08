@@ -124,7 +124,7 @@ func (h *Handler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.queries.DeleteGroup(ctx, id); err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("DeleteGroup", "err", err)
 		if err := templates.AlertError("Entfernen fehlgeschlagen").Render(ctx, w); err != nil {
 			slog.Error("templ", "err", err)
 		}
@@ -732,8 +732,8 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 				user,
 				tribeId.Int64,
 				hasIcon,
-				http.StatusOK,
-				fmt.Sprintf("Du hast noch keine Rechte für %s", tribeName),
+				http.StatusUnauthorized,
+				fmt.Sprintf("Du hast noch keine ausreichenden Rechte für %s", tribeName),
 			).Render(ctx, w); err != nil {
 				slog.Warn("templ", "err", err)
 			}
@@ -806,7 +806,7 @@ func (h *Handler) createTribeRequest(ctx context.Context, userId int64, userEmai
 		Valid:  true,
 	})
 	if err != nil {
-		slog.Debug("sqlc", "err", err)
+		slog.Debug("GetTribeByEmail", "err", err)
 		return "", false
 	}
 

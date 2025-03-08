@@ -73,6 +73,8 @@ func (h *authHandler) Callback(w http.ResponseWriter, r *http.Request) {
 
 	// TODO render error
 
+	slog.Debug("callback")
+
 	ctx := r.Context()
 	htmxRequest := htmx.IsHTMX(r)
 

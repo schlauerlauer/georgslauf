@@ -173,7 +173,7 @@ func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if current, err := h.queries.GetUserRole(ctx, data.UserID); err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("GetUserRole", "err", err)
 		return
 	} else {
 		if current == acl.Admin {
@@ -185,7 +185,7 @@ func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
 		ID:   data.UserID,
 		Role: acl.ACL(data.UserRole),
 	}); err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("UpdateUserRole", "err", err)
 		return // TODO
 	}
 
@@ -233,7 +233,7 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 		},
 		UpdatedAt: time.Now().Unix(),
 	}); err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("UpdateTribeRole", "err", err)
 		return // TODO
 	}
 
@@ -330,13 +330,13 @@ func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 
 	schedule, err := h.queries.GetSchedule(ctx)
 	if err != nil {
-		slog.Warn("sqlc", "err", err)
+		slog.Warn("GetSchedule", "err", err)
 		return
 	}
 
 	categories, err := h.queries.GetStationCategories(ctx)
 	if err != nil {
-		slog.Warn("sqlc", "err", err)
+		slog.Warn("GetStationCategories", "err", err)
 		return // TODO
 	}
 
@@ -420,12 +420,12 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	users, err := h.queries.GetUsersRoleLargerNone(ctx)
 	if err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("GetUsersRoleLargerNone", "err", err)
 	}
 
 	requests, err := h.queries.GetUsersRoleNone(ctx)
 	if err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("GetUsersRoleNone", "err", err)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -457,7 +457,7 @@ func (h *Handler) GetTribes(w http.ResponseWriter, r *http.Request) {
 
 	tribeRoles, err := h.queries.GetTribeRolesOpen(ctx)
 	if err != nil {
-		slog.Error("sqlc", "err", err)
+		slog.Error("GetTribeRolesOpen", "err", err)
 		return
 	}
 
