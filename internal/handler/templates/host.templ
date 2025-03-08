@@ -344,8 +344,8 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 												} else {
 													<div class="avatar placeholder">
 														<div class="bg-neutral text-neutral-content w-12 mask mask-squircle">
-															if user.Firstname != "" && user.Lastname != "" {
-																<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+															if entry.Firstname != "" && entry.Lastname != "" {
+																<span>{ strings.ToUpper(entry.Firstname[0:1] + entry.Lastname[0:1]) }</span>
 															} else {
 																<span>GL</span>
 															}
