@@ -475,8 +475,8 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 														<div class="avatar">
 															<div class="avatar placeholder">
 																<div class="bg-neutral text-neutral-content w-8 rounded-full">
-																	if user.Firstname != "" && user.Lastname != "" {
-																		<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+																	if tribeRole.Firstname != "" && tribeRole.Lastname != "" {
+																		<span>{ strings.ToUpper(tribeRole.Firstname[0:1] + tribeRole.Lastname[0:1]) }</span>
 																	} else {
 																		<span>GL</span>
 																	}
