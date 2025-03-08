@@ -100,6 +100,11 @@ table "tribes" {
 		columns = [column.name]
 		unique  = true
 	}
+
+	index "idx_tribes_domain" {
+		columns = [column.email_domain]
+		unique  = true
+	}
 }
 
 table "station_categories" {
@@ -258,6 +263,11 @@ table "stations" {
 		unique  = true
 		where   = "abbr is not null"
 	}
+
+	index "idx_stations_tribe" {
+		columns = [column.tribe_id]
+		unique  = false
+	}
 }
 
 table "groups" {
@@ -357,6 +367,16 @@ table "groups" {
 		ref_columns = [table.users.column.id]
 		on_update   = NO_ACTION
 		on_delete   = SET_NULL
+	}
+
+	index "idx_groups_tribe" {
+		columns = [column.tribe_id]
+		unique  = false
+	}
+
+	index "idx_groups_name" {
+		columns = [column.tribe_id, column.name]
+		unique  = true
 	}
 
 	index "idx_groups_abbr" {
@@ -916,6 +936,11 @@ table "users" {
 
 	primary_key {
 		columns = [column.id]
+	}
+
+	index "idx_users_role" {
+		columns = [column.role]
+		unique  = false
 	}
 
 	index "idx_users_email" {
