@@ -130,7 +130,7 @@ func main() {
 	// host routes
 	// NTH acl.View auf get requests
 	hostRouter := http.NewServeMux()
-	hostRouter.HandleFunc("GET /{$}", handlers.GetUsers)
+	hostRouter.HandleFunc("GET /{$}", handlers.GetTribes)
 	hostRouter.HandleFunc("GET /users", handlers.GetUsers)
 	hostRouter.HandleFunc("PUT /users/role", handlers.PutUserRole)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
@@ -142,6 +142,7 @@ func main() {
 	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
 	hostRouter.HandleFunc("PUT /settings/help", handlers.PutSettingsHelp)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
+	hostRouter.HandleFunc("GET /tribes/role", handlers.GetTribeRoleModal)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
