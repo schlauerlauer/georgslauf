@@ -761,7 +761,7 @@ templ TribeRoleModal(role db.GetTribeRoleByIdRow, csrf string) {
 					<h4 class="mb-3">Stamm</h4>
 					<div class="flex items-center gap-3">
 						if role.TribeIcon.Valid {
-							<label class="avatar cursor-pointer">
+							<label class="avatar">
 								<div class="h-12 w-12">
 									<img
 										src={ "/icon/tribe/" + strconv.FormatInt(role.TribeIcon.Int64, 10) }
@@ -770,7 +770,7 @@ templ TribeRoleModal(role db.GetTribeRoleByIdRow, csrf string) {
 								</div>
 							</label>
 						} else {
-							<label class="avatar placeholder cursor-pointer">
+							<label class="avatar placeholder">
 								<div class="mask mask-squircle bg-neutral text-neutral-content w-12 h-12">
 									<span class="text-2xl icon-[uil--image-upload]"></span>
 								</div>
