@@ -62,6 +62,80 @@ func (h *Handler) GetUserIcon(w http.ResponseWriter, r *http.Request) {
 	w.Write(image)
 }
 
+func (h *Handler) DeleteStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		return // TODO
+	}
+
+	var tribeId int64
+	if query := r.URL.Query().Get("tribe"); query == "" {
+		slog.Debug("no url query")
+		return // TODO
+	} else {
+		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			slog.Debug("ParseInt", "err", err)
+			return // TODO
+		} else {
+			tribeId = id
+		}
+	}
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	set := h.settings.Get()
+
+	if !set.Stations.AllowDelete {
+		if err := templates.AlertError("Entfernen ist ausgeschaltet").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
+		UserID:  user.ID,
+		TribeID: tribeId,
+	})
+	if err != nil {
+		slog.Error("GetTribeRoleByTribe", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.DeleteStation(ctx, id); err != nil {
+		slog.Error("DeleteStation", "err", err)
+		if err := templates.AlertError("Entfernen fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if err := templates.AlertSuccess("Posten entfernt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 func (h *Handler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -134,8 +208,274 @@ func (h *Handler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	if err := templates.AlertSuccess("Gruppe entfernt").Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
+}
 
-	// TODO swap
+type postStation struct {
+	TribeId      int64  `schema:"tribe" validate:"gte=0"`
+	Name         string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
+	Size         int64  `schema:"size" validate:"gte=0"`
+	Category     int64  `schema:"category"`
+	Description  string `schemal:"description" validate:"max=1024" mod:"trim,sanitize"`
+	Requirements string `schemal:"requirements" validate:"max=1024" mod:"trim,sanitize"`
+}
+
+func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	set := h.settings.Get()
+
+	if !set.Stations.AllowCreate {
+		if err := templates.AlertError("Anmeldung ist ausgestellt").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	var data postStation
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
+		UserID:  user.ID,
+		TribeID: data.TribeId,
+	})
+	if err != nil {
+		slog.Error("GetTribeRoleByTribe", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	categories, err := h.queries.GetStationCategories(ctx)
+	if err != nil {
+		slog.Error("GetStationCategories", "err", err)
+		return // TODO
+	}
+
+	category := db.StationCategory{}
+	if set.Stations.EnableCategories {
+		if cat, err := h.queries.GetStationCategory(ctx, data.Category); err != nil {
+			slog.Warn("GetStationCategory", "err", err)
+			return // TODO
+		} else {
+			// TODO query max
+			category = db.StationCategory{
+				ID:   cat.ID,
+				Name: cat.Name,
+				Max:  cat.Max,
+			}
+		}
+	}
+
+	timestamp := time.Now().Unix()
+	id, err := h.queries.InsertStation(ctx, db.InsertStationParams{
+		Name:    data.Name,
+		Size:    data.Size,
+		TribeID: data.TribeId,
+		CategoryID: sql.NullInt64{
+			Int64: data.Category,
+			Valid: data.Category >= 0,
+		},
+		Description: sql.NullString{
+			String: data.Description,
+			Valid:  data.Description != "",
+		},
+		Requirements: sql.NullString{
+			String: data.Requirements,
+			Valid:  data.Requirements != "",
+		},
+		CreatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		CreatedAt: timestamp,
+		UpdatedAt: timestamp,
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+	})
+	if err != nil {
+		slog.Error("InsertStation", "err", err)
+		if err := templates.AlertError("Anmelden fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := templates.DashStation(db.GetStationsByTribeRow{
+		ID:        id,
+		CreatedAt: timestamp,
+		UpdatedAt: timestamp,
+		Name:      data.Name,
+		Abbr:      sql.NullString{},
+		Size:      data.Size,
+		Lati:      sql.NullFloat64{},
+		Long:      sql.NullFloat64{}, // NTH
+		Description: sql.NullString{
+			String: data.Description,
+			Valid:  data.Description != "",
+		},
+		Requirements: sql.NullString{
+			String: data.Requirements,
+			Valid:  data.Requirements != "",
+		},
+		CategoryID: sql.NullInt64{
+			Int64: category.ID,
+			Valid: category.ID > 0, // sqlite
+		},
+		CategoryName: sql.NullString{
+			String: category.Name,
+			Valid:  category.Name != "",
+		},
+		Firstname: sql.NullString{
+			String: user.Firstname,
+			Valid:  true,
+		},
+		UserImage: []byte{}, // NTH
+	}, csrf.Token(r), data.TribeId, set.Stations, categories, true, user.HasPicture).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+type putStation struct {
+	TribeId      int64  `schema:"tribe" validate:"gte=0"`
+	StationId    int64  `schema:"station" validate:"gte=0"`
+	Name         string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
+	Size         int64  `schema:"size" validate:"gte=0"`
+	Category     int64  `schema:"category"`
+	Description  string `schemal:"description" validate:"max=1024" mod:"trim,sanitize"`
+	Requirements string `schemal:"requirements" validate:"max=1024" mod:"trim,sanitize"`
+}
+
+func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		// TODO redirect
+		return
+	}
+	if user == nil {
+		return
+	}
+
+	var data putStation
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	set := h.settings.Get()
+
+	if !set.Stations.AllowUpdate {
+		if err := templates.AlertError("Bearbeitung ist ausgeschaltet").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	category := sql.NullInt64{}
+	categoryName := sql.NullString{}
+	if set.Stations.EnableCategories {
+		if cat, err := h.queries.GetStationCategory(ctx, data.Category); err != nil {
+			slog.Warn("GetStationCategory", "err", err)
+			return // TODO
+		} else {
+			// TODO query max
+			category = sql.NullInt64{
+				Valid: true,
+				Int64: cat.ID,
+			}
+			categoryName = sql.NullString{
+				String: cat.Name,
+				Valid:  true,
+			}
+		}
+	}
+
+	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
+		UserID:  user.ID,
+		TribeID: data.TribeId,
+	})
+	if err != nil {
+		slog.Error("GetTribeRoleByTribe", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	slog.Debug("test", "tribeRole", data)
+
+	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
+		slog.Debug("not enough rights")
+		return // TODO
+	}
+
+	updatedAt := time.Now()
+	if err := h.queries.UpdateStation(ctx, db.UpdateStationParams{
+		ID:        data.StationId,
+		TribeID:   data.TribeId, // just to be sure
+		UpdatedAt: updatedAt.Unix(),
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		Name:       data.Name,
+		Size:       data.Size,
+		CategoryID: category,
+		Description: sql.NullString{
+			String: data.Description,
+			Valid:  data.Description != "",
+		},
+		Requirements: sql.NullString{
+			String: data.Requirements,
+			Valid:  data.Requirements != "",
+		},
+	}); err != nil {
+		slog.Error("UpdateStation", "err", err)
+		if err := templates.AlertError("Speichern fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	slog.Debug("test")
+	if err := templates.PutStation(updatedAt, data.StationId, data.Name, user.Firstname, user.HasPicture, categoryName, set.Stations.EnableCategories).Render(ctx, w); err != nil {
+		slog.Error("PutStation", "err", err)
+		return
+	}
 }
 
 type putGroup struct {
@@ -230,7 +570,7 @@ func (h *Handler) PutGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := templates.PutGroup(updatedAt, data.GroupId, data.Name, data.Grouping, user.Firstname).Render(ctx, w); err != nil {
+	if err := templates.PutGroup(updatedAt, data.GroupId, data.Name, data.Grouping, user.Firstname, user.HasPicture).Render(ctx, w); err != nil {
 		slog.Error("PutGroup", "err", err)
 		return
 	}
@@ -321,7 +661,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 	set := h.settings.Get()
 
 	if !set.Groups.AllowCreate {
-		if err := templates.AlertError("Erstellung ist ausgeschaltet").Render(ctx, w); err != nil {
+		if err := templates.AlertError("Anmeldung ist ausgestellt").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
 		return
@@ -356,7 +696,10 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		return // TODO
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
 	}
 
 	timestamp := time.Now().Unix()
@@ -385,7 +728,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		slog.Error("InsertGroup", "err", err)
-		if err := templates.AlertError("Erstellen fehlgeschlagen").Render(ctx, w); err != nil {
+		if err := templates.AlertError("Anmelden fehlgeschlagen").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
 		return
@@ -409,7 +752,8 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 			String: user.Firstname,
 			Valid:  true,
 		},
-	}, csrf.Token(r), data.TribeId, set.Groups).Render(ctx, w); err != nil {
+		// UserImage: ,
+	}, csrf.Token(r), data.TribeId, set.Groups, true, user.HasPicture).Render(ctx, w); err != nil {
 		slog.Warn("DashGroup", "err", err)
 	}
 }
@@ -432,7 +776,13 @@ func (h *Handler) GetNewStation(w http.ResponseWriter, r *http.Request) {
 
 	set := h.settings.Get()
 
-	if err := templates.DashNewStation(csrf.Token(r), tribeId, set.Stations).Render(ctx, w); err != nil {
+	categories, err := h.queries.GetStationCategories(ctx)
+	if err != nil {
+		slog.Error("GetStationCategories", "err", err)
+		return // TODO
+	}
+
+	if err := templates.DashNewStation(csrf.Token(r), tribeId, set.Stations, categories).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -521,7 +871,7 @@ func (h *Handler) DashGroups(w http.ResponseWriter, r *http.Request) {
 		settings.Groups,
 		csrf.Token(r),
 	).Render(ctx, w); err != nil {
-		slog.Warn("DashStations", "err", err)
+		slog.Warn("DashGroups", "err", err)
 	}
 }
 
@@ -575,6 +925,12 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	categories, err := h.queries.GetStationCategories(ctx)
+	if err != nil {
+		slog.Error("GetStationCategories", "err", err)
+		return // TODO
+	}
+
 	set := h.settings.Get()
 
 	if err := templates.DashStations(
@@ -582,6 +938,7 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		stations,
 		set.Stations,
 		csrf.Token(r),
+		categories,
 	).Render(ctx, w); err != nil {
 		slog.Warn("DashStations", "err", err)
 	}

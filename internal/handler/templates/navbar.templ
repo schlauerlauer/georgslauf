@@ -40,15 +40,15 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 									// don't show avatar
 								case acl.View:
 									<div class="w-10 rounded-full">
-										<img src="/icon/user"/>
+										<img src="/icon/user" alt="Avatar"/>
 									</div>
 								case acl.Edit:
 									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
-										<img src="/icon/user"/>
+										<img src="/icon/user" alt="Avatar"/>
 									</div>
 								case acl.Admin:
 									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
-										<img src="/icon/user"/>
+										<img src="/icon/user" alt="Avatar"/>
 									</div>
 							}
 						</div>

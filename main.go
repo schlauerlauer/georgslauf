@@ -124,7 +124,10 @@ func main() {
 	dashRouter.HandleFunc("GET /groups/new", handlers.GetNewGroup)
 	dashRouter.HandleFunc("POST /groups", handlers.PostGroup)
 	dashRouter.HandleFunc("PUT /groups", handlers.PutGroup)
+	dashRouter.HandleFunc("PUT /stations", handlers.PutStation)
+	dashRouter.HandleFunc("POST /stations", handlers.PostStation)
 	dashRouter.HandleFunc("DELETE /groups/{id}", handlers.DeleteGroup)
+	dashRouter.HandleFunc("DELETE /stations/{id}", handlers.DeleteStation)
 	router.Handle("/dash/", http.StripPrefix("/dash", sessionService.RequireRoleFunc(acl.ACLViewUp, dashRouter)))
 
 	// host routes
