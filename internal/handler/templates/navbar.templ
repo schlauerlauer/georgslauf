@@ -35,51 +35,34 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 				<div class="tooltip tooltip-bottom mt-1" data-tip={ user.Firstname + " " + user.Lastname }>
 					if user.HasPicture {
 						<div class="avatar">
-							switch user.ACL {
-								case acl.None:
-									// don't show avatar
-								case acl.View:
-									<div class="w-10 rounded-full">
-										<img src="/icon/user" alt="Avatar"/>
-									</div>
-								case acl.Edit:
-									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
-										<img src="/icon/user" alt="Avatar"/>
-									</div>
-								case acl.Admin:
-									<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
-										<img src="/icon/user" alt="Avatar"/>
-									</div>
+							if user.ACL < acl.Edit {
+								<div class="w-10 rounded-full">
+									<img src="/icon/user" alt="Avatar"/>
+								</div>
+							} else {
+								<div class="ring-accent ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
+									<img src="/icon/user" alt="Avatar"/>
+								</div>
 							}
 						</div>
 					} else {
 						<div class="avatar placeholder">
-							switch user.ACL {
-								case acl.None:
-								case acl.View:
-									<div class="bg-neutral text-neutral-content w-10 rounded-full">
-										if user.Firstname != "" && user.Lastname != "" {
-											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
-										} else {
-											<span>GL</span>
-										}
-									</div>
-								case acl.Edit:
-									<div class="ring-warning ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
-										if user.Firstname != "" && user.Lastname != "" {
-											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
-										} else {
-											<span>GL</span>
-										}
-									</div>
-								case acl.Admin:
-									<div class="ring-error ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
-										if user.Firstname != "" && user.Lastname != "" {
-											<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
-										} else {
-											<span>GL</span>
-										}
-									</div>
+							if user.ACL < acl.Edit {
+								<div class="bg-neutral text-neutral-content w-10 rounded-full">
+									if user.Firstname != "" && user.Lastname != "" {
+										<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+									} else {
+										<span>GL</span>
+									}
+								</div>
+							} else {
+								<div class="ring-accent ring-offset-base-100 bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-2">
+									if user.Firstname != "" && user.Lastname != "" {
+										<span>{ strings.ToUpper(user.Firstname[0:1] + user.Lastname[0:1]) }</span>
+									} else {
+										<span>GL</span>
+									}
+								</div>
 							}
 						</div>
 					}
