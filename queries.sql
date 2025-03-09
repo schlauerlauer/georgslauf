@@ -34,6 +34,15 @@ left join users u on g.updated_by = u.id
 where g.tribe_id = ?
 order by g.created_at desc;
 
+-- name: GetGroupsHost :many
+select
+	g.id
+	,g.name
+	,g.grouping
+	,g.tribe_id
+from groups g
+order by g.tribe_id asc;
+
 -- name: UpdateGroup :exec
 update groups
 set
@@ -64,6 +73,28 @@ left join tribe_icons ti on ti.id = tr.id
 left join tribes t on tr.tribe_id = t.id
 where
 	tr.user_id = ?
+limit 1;
+
+-- name: GetTribeRoleById :one
+select
+	tr.id
+	,tr.tribe_role
+	,tr.accepted_at
+	,u.email
+	,ui.image
+	,u.firstname
+	,u.lastname
+	,t.name as tribe_name
+	,t.short
+	,t.email_domain
+	,ti.id as tribe_icon
+from tribe_roles tr
+inner join users u on tr.user_id = u.id
+inner join tribes t on tr.tribe_id = t.id
+left join user_icons ui on ui.id = tr.user_id
+left join tribe_icons ti on ti.id = tr.tribe_id
+where
+	tr.id = ?
 limit 1;
 
 -- name: GetTribeRoleByTribe :one
@@ -151,6 +182,19 @@ where
 	and accepted_at is null
 order by tr.created_at desc;
 
+-- name: GetTribeRolesAssigned :many
+select
+	tr.id
+	,tr.tribe_id
+	,u.email
+	,tr.tribe_role
+from tribe_roles tr
+inner join users u on u.id = tr.user_id
+where
+	accepted_at is not null
+	or tr.tribe_role = -1
+order by tr.tribe_id asc;
+
 -- name: GetUserIdByExt :one
 select
 	id
@@ -176,6 +220,14 @@ select
 from stations
 where tribe_id = ?
 order by created_at desc;
+
+-- name: GetStationsHost :many
+select
+	id
+	,name
+	,tribe_id
+from stations
+order by tribe_id asc;
 
 -- TODO picture update
 -- name: CreateUser :one

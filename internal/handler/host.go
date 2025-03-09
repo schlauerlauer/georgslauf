@@ -192,6 +192,37 @@ func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("PutUserRole", "data", data)
 }
 
+func (h *Handler) GetTribeRoleModal(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		return // TODO
+	}
+
+	tribeRole, err := h.queries.GetTribeRoleById(ctx, id)
+	if err != nil {
+		slog.Warn("GetTribeRoleById", "err", err)
+		return // TODO
+	}
+
+	if err := templates.TribeRoleModal(tribeRole, csrf.Token(r)).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 type putTribeRole struct {
 	TribeRoleID int64 `schema:"id" validate:"gte=0"`
 	TribeRole   int64 `schema:"role" validate:"gte=-1,lte=3"`
@@ -452,17 +483,56 @@ func (h *Handler) GetTribes(w http.ResponseWriter, r *http.Request) {
 	tribes, err := h.queries.GetTribes(ctx)
 	if err != nil {
 		slog.Warn("GetTribes", "err", err)
-		return
+		return // TODO
 	}
 
 	tribeRoles, err := h.queries.GetTribeRolesOpen(ctx)
 	if err != nil {
 		slog.Error("GetTribeRolesOpen", "err", err)
-		return
+		return // TODO
+	}
+
+	accountsRows, err := h.queries.GetTribeRolesAssigned(ctx)
+	if err != nil {
+		slog.Error("GetTribeRolesAssigned", "err", err)
+		return // TODO
+	}
+	accounts := make(map[int64][]db.GetTribeRolesAssignedRow)
+	for _, row := range accountsRows {
+		accounts[row.TribeID] = append(accounts[row.TribeID], row)
+	}
+
+	groupRows, err := h.queries.GetGroupsHost(ctx)
+	if err != nil {
+		slog.Error("GetGroupsHost", "err", err)
+		return // TODO
+	}
+	groups := make(map[int64][]db.GetGroupsHostRow)
+	for _, row := range groupRows {
+		groups[row.TribeID] = append(groups[row.TribeID], row)
+	}
+
+	stationRows, err := h.queries.GetStationsHost(ctx)
+	if err != nil {
+		slog.Error("GetStationsHost", "err", err)
+		return // TODO
+	}
+	stations := make(map[int64][]db.GetStationsHostRow)
+	for _, row := range stationRows {
+		stations[row.TribeID] = append(stations[row.TribeID], row)
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := templates.HostTribes(htmxRequest, user, tribes, csrf.Token(r), tribeRoles).Render(ctx, w); err != nil {
+	if err := templates.HostTribes(
+		htmxRequest,
+		user,
+		tribes,
+		csrf.Token(r),
+		tribeRoles,
+		accounts,
+		groups,
+		stations,
+	).Render(ctx, w); err != nil {
 		slog.Warn("HostTribes", "err", err)
 		return
 	}
