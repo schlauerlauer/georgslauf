@@ -609,18 +609,21 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 									</td>
 									<td>
 										if rows, ok := groups[tribe.ID]; ok {
-											<div class="flex flex-col gap-y-1">
+											<div class="flex flex-col">
 												for _, row := range rows {
-													switch row.Grouping {
-														case 0:
-															<div class="badge bg-orange-500">{ row.Name }</div>
-														case 1:
-															<div class="badge bg-blue-700">{ row.Name }</div>
-														case 2:
-															<div class="badge bg-emerald-700">{ row.Name }</div>
-														case 3:
-															<div class="badge bg-red-700">{ row.Name }</div>
-													}
+													<div class="flex place-items-baseline">
+														switch row.Grouping {
+															case 0:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-orange-500"></div>
+															case 1:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-blue-700"></div>
+															case 2:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-emerald-700"></div>
+															case 3:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-red-700"></div>
+														}
+														<span>{ row.Name }</span>
+													</div>
 												}
 											</div>
 										} else {

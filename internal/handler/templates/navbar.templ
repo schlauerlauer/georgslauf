@@ -24,7 +24,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 			if tribeId > -1 {
 				if hasIcon {
 					<div class="avatar">
-						<div class="w-10 rounded-xl">
+						<div class="w-10">
 							<img src={ "/icon/tribe/" + strconv.FormatInt(tribeId, 10) }/>
 						</div>
 					</div>

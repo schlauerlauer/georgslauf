@@ -76,16 +76,22 @@ templ PutGroup(updatedAt time.Time, groupId int64, groupName string, grouping in
 }
 
 templ groupGrouping(grouping int64) {
-	switch grouping {
-		case 0:
-			<div class="badge bg-orange-500">Wölflinge</div>
-		case 1:
-			<div class="badge bg-blue-700">Jupfis</div>
-		case 2:
-			<div class="badge bg-emerald-700">Pfadis</div>
-		case 3:
-			<div class="badge bg-red-700">Rover</div>
-	}
+	<div class="flex place-items-baseline text-sm font-light">
+		switch grouping {
+			case 0:
+				<span>Wölflinge</span>
+				<div class="h-3 w-3 rounded-full ml-1 bg-orange-500"></div>
+			case 1:
+				<span>Jupfis</span>
+				<div class="h-3 w-3 rounded-full ml-1 bg-blue-700"></div>
+			case 2:
+				<span>Pfadis</span>
+				<div class="h-3 w-3 rounded-full ml-1 bg-emerald-700"></div>
+			case 3:
+				<span>Rover</span>
+				<div class="h-3 w-3 rounded-full ml-1 bg-red-700"></div>
+		}
+	</div>
 }
 
 templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
