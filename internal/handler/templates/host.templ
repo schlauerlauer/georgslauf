@@ -170,6 +170,21 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 									/>
 								</label>
 							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten Kategorien verwenden</span>
+									<input
+										name="station-categories"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.EnableCategories {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
 						</form>
 						<div class="mt-6">
 							<p class="mb-2">Kategorien</p>

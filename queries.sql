@@ -13,6 +13,15 @@ select
 	,max
 from station_categories;
 
+-- name: GetStationCategory :one
+select
+	id
+	,name
+	,max
+from station_categories
+where id = ?
+limit 1;
+
 -- name: GetSchedule :many
 select *
 from schedule
@@ -29,8 +38,10 @@ select
 	,g.grouping
 	,g.comment
 	,u.firstname
+	,ui.image as user_image
 from groups g
 left join users u on g.updated_by = u.id
+left join user_icons ui on g.updated_by = ui.id
 where g.tribe_id = ?
 order by g.created_at desc;
 
@@ -55,6 +66,11 @@ set
 where
 	id = ?
 	and tribe_id = ?;
+
+-- name: InsertStation :one
+insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by)
+values (?,?,?,?,?,?,?,?,?,?)
+returning id;
 
 -- name: InsertGroup :one
 insert into groups (name, size, tribe_id, grouping, comment, created_by, updated_by, created_at, updated_at)
@@ -205,21 +221,42 @@ where
 	ext_id = ?
 limit 1;
 
--- TODO imageId
 -- name: GetStationsByTribe :many
 select
-	id
-	,created_at
-	,updated_at
-	,name
-	,size
-	,lati
-	,long
-	,description
-	,requirements
-from stations
-where tribe_id = ?
-order by created_at desc;
+	s.id
+	,s.created_at
+	,s.updated_at
+	,s.name
+	,s.abbr
+	,s.size
+	,s.category_id
+	,s.lati
+	,s.long
+	,s.description
+	,s.requirements
+	,sc.name as category_name
+	,u.firstname
+	,ui.image as user_image
+from stations s
+left join station_categories sc on category_id = sc.id
+left join users u on s.updated_by = u.id
+left join user_icons ui on s.updated_by = ui.id
+where s.tribe_id = ?
+order by s.created_at desc;
+
+-- name: UpdateStation :exec
+update stations
+set
+	updated_at = ?
+	,updated_by = ?
+	,name = ?
+	,size = ?
+	,category_id = ?
+	,description = ?
+	,requirements = ?
+where
+	id = ?
+	and tribe_id = ?;
 
 -- name: GetStationsHost :many
 select
@@ -305,4 +342,8 @@ set
 
 -- name: DeleteGroup :exec
 delete from groups
+where id = ?;
+
+-- name: DeleteStation :exec
+delete from stations
 where id = ?;

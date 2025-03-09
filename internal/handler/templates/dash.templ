@@ -1,6 +1,8 @@
 package templates
 
 import (
+	"database/sql"
+	"encoding/base64"
 	"georgslauf/internal/db"
 	"georgslauf/internal/settings"
 	"georgslauf/session"
@@ -8,20 +10,261 @@ import (
 	"time"
 )
 
-templ DashNewStation(csrf string, tribeId int64, set settings.Stations) {
-	TODO
+templ PutStation(updatedAt time.Time, stationId int64, stationName string, firstname string, hasIcon bool, categoryName sql.NullString, enableCategories bool) {
+	@AlertSuccess("Gespeichert")
+	<div class="flex justify-between place-items-center">
+		<span>{ stationName }</span>
+		if categoryName.Valid && enableCategories {
+			<span class="text-sm font-light">{ categoryName.String }</span>
+		}
+	</div>
+	<div hx-swap-oob={ "innerHTML:#badge-" + strconv.FormatInt(stationId, 10) }>
+		<div class="badge badge-accent">
+			if time.Since(updatedAt) > time.Hour * 12 {
+				Zuletzt geändert { updatedAt.Format("02.01 15:04") }
+			} else {
+				Zuletzt geändert { updatedAt.Format("15:04") }
+			}
+			von { firstname }
+			if hasIcon {
+				<div class="avatar ml-1">
+					<div class="w-4 rounded-full">
+						<img
+							src="/icon/user"
+							alt="Avatar"
+						/>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
 }
 
-templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations) {
+templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categories []db.StationCategory) {
 	<details class="collapse collapse-arrow bg-base-200" open>
-		<summary class="collapse-title text-xl font-medium">{ station.Name }</summary>
+		<summary class="collapse-title text-xl font-medium">
+			<div class="flex justify-between place-items-center">
+				<span>Neuer Posten</span>
+			</div>
+		</summary>
 		<div class="collapse-content">
-			<p>content</p>
+			<form
+				class="space-y-4"
+				hx-post="/dash/stations"
+				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+				hx-swap="outerHTML"
+				hx-target="closest details"
+			>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Name</span>
+					</div>
+					<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off"/>
+					<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+				</label>
+				if set.EnableCategories {
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Kategorie</span>
+						</div>
+						<select required name="category" class="invalid:border-error select select-bordered">
+							<option disabled selected value="">Keine</option>
+							for _, cat := range categories {
+								<option value={ strconv.FormatInt(cat.ID, 10) }>{ cat.Name }</option>
+							}
+						</select>
+					</label>
+				}
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Größe</span>
+					</div>
+					<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value="1" step="1"/>
+				</label>
+				<label class="form-control">
+					<div class="label">
+						<span class="label-text">Beschreibung</span>
+					</div>
+					<textarea name="description" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung"></textarea>
+				</label>
+				<label class="form-control">
+					<div class="label">
+						<span class="label-text">Kommentar</span>
+					</div>
+					<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung"></textarea>
+					<div class="label">
+						<span class="label-text-alt">Benötigtes Material, Ort, Sonstiges</span>
+					</div>
+				</label>
+				<div class="flex justify-between items-end">
+					<div class="flex gap-x-2">
+						if set.AllowCreate {
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+						} else {
+							<div class="tooltip" data-tip="Aktualisierung ausgeschaltet">
+								<button
+									type="button"
+									class="btn btn-primary btn-disabled"
+								>
+									Speichern
+								</button>
+							</div>
+						}
+					</div>
+				</div>
+			</form>
 		</div>
 	</details>
 }
 
-templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set settings.Stations, csrf string) {
+templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations, categories []db.StationCategory, self bool, hasPicture bool) {
+	<details class="collapse collapse-arrow bg-base-200">
+		<summary class="collapse-title text-xl font-medium">
+			<div class="flex justify-between place-items-center">
+				<span>{ station.Name }</span>
+				if station.CategoryName.Valid && set.EnableCategories {
+					<span class="text-sm font-light">{ station.CategoryName.String }</span>
+				}
+			</div>
+		</summary>
+		<div class="collapse-content">
+			<form
+				class="space-y-4"
+				hx-put="/dash/stations"
+				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+				hx-swap="innerHTML"
+				hx-target="previous summary"
+				hx-disinherit="*"
+			>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Name</span>
+					</div>
+					<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Name }/>
+					<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+					<input type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
+				</label>
+				if set.EnableCategories {
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Kategorie</span>
+						</div>
+						<select required name="category" class="invalid:border-error select select-bordered">
+							if station.CategoryID.Valid {
+								<option selected value={ strconv.FormatInt(station.CategoryID.Int64, 10) }>{ station.CategoryName.String }</option>
+							} else {
+								<option disabled selected value="">Keine</option>
+							}
+							for _, cat := range categories {
+								<option value={ strconv.FormatInt(cat.ID, 10) }>{ cat.Name }</option>
+							}
+						</select>
+					</label>
+				}
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Größe</span>
+					</div>
+					<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
+				</label>
+				<label class="form-control">
+					<div class="label">
+						<span class="label-text">Beschreibung</span>
+					</div>
+					<textarea name="description" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+				</label>
+				<label class="form-control">
+					<div class="label">
+						<span class="label-text">Kommentar</span>
+					</div>
+					<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+					<div class="label">
+						<span class="label-text-alt">Benötigtes Material, Ort, Sonstiges</span>
+					</div>
+				</label>
+				// TODO image
+				<div class="flex justify-between items-end">
+					<div class="flex gap-x-2">
+						if set.AllowUpdate {
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+						} else {
+							<div class="tooltip" data-tip="Aktualisierung ausgeschaltet">
+								<button
+									type="button"
+									class="btn btn-primary btn-disabled"
+								>
+									Speichern
+								</button>
+							</div>
+						}
+						if set.AllowDelete {
+							<form
+								hx-disinherit="*"
+							>
+								<button
+									type="button"
+									class="btn btn-error"
+									hx-delete={ "/dash/stations/" + strconv.FormatInt(station.ID, 10) }
+									hx-target="closest details"
+									hx-swap="outerHTML"
+									hx-include="#tribe-id"
+								>
+									Entfernen
+								</button>
+							</form>
+						} else {
+							<div class="tooltip" data-tip="Entfernen ausgeschaltet">
+								<button
+									type="button"
+									class="btn btn-error btn-disabled"
+								>
+									Entfernen
+								</button>
+							</div>
+						}
+					</div>
+					<div id={ "badge-" + strconv.FormatInt(station.ID, 10) } class="flex">
+						<div class="badge badge-accent">
+							if t := time.Unix(station.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
+								Zuletzt geändert { time.Unix(station.UpdatedAt, 0).Format("02.01 15:04") }
+							} else {
+								Zuletzt geändert { time.Unix(station.UpdatedAt, 0).Format("15:04") }
+							}
+							if station.Firstname.Valid {
+								von { station.Firstname.String }
+								if len(station.UserImage) > 0 {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(station.UserImage) }
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								} else if self && hasPicture {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src="/icon/user"
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								}
+							}
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</details>
+}
+
+templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set settings.Stations, csrf string, categories []db.StationCategory) {
 	// TODO station role different tabs
 	<div hx-swap-oob="innerHTML:#dash-tablist">
 		<a role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
@@ -31,7 +274,7 @@ templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set setti
 		<h2 class="text-lg mb-3">Angemeldete Posten</h2>
 		<div class="space-y-3">
 			for _, station := range stations {
-				@DashStation(station, csrf, tribeId, set)
+				@DashStation(station, csrf, tribeId, set, categories, false, false)
 			}
 			if set.AllowCreate {
 				<button
@@ -56,7 +299,7 @@ func max(a, b int64) int64 {
 	return b
 }
 
-templ PutGroup(updatedAt time.Time, groupId int64, groupName string, grouping int64, firstname string) {
+templ PutGroup(updatedAt time.Time, groupId int64, groupName string, grouping int64, firstname string, hasIcon bool) {
 	@AlertSuccess("Gespeichert")
 	<div class="flex justify-between place-items-center">
 		<span>{ groupName }</span>
@@ -69,8 +312,17 @@ templ PutGroup(updatedAt time.Time, groupId int64, groupName string, grouping in
 			} else {
 				Zuletzt geändert { updatedAt.Format("15:04") }
 			}
-			// TODO user icon
-			&nbsp;von { firstname }
+			von { firstname }
+			if hasIcon {
+				<div class="avatar ml-1">
+					<div class="w-4 rounded-full">
+						<img
+							src="/icon/user"
+							alt="Avatar"
+						/>
+					</div>
+				</div>
+			}
 		</div>
 	</div>
 }
@@ -102,7 +354,6 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 			</div>
 		</summary>
 		<div class="collapse-content">
-			// TODO fix swap target to include hidden inputs, groupid
 			<form
 				class="space-y-6"
 				hx-post="/dash/groups"
@@ -115,7 +366,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 					<div class="label">
 						<span class="label-text">Name</span>
 					</div>
-					<input required name="name" minlength="3" maxlength="100" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off"/>
+					<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off"/>
 				</label>
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
@@ -144,7 +395,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 					<div class="label">
 						<span class="label-text">Kommentar</span>
 					</div>
-					<textarea name="comment" class="textarea textarea-bordered h-24" placeholder="Kommentar"></textarea>
+					<textarea name="comment" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Kommentar"></textarea>
 				</label>
 				<div class="flex justify-between items-end">
 					<button type="submit" class="btn btn-primary">
@@ -156,7 +407,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 	</details>
 }
 
-templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set settings.Groups) {
+templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set settings.Groups, self bool, hasPicture bool) {
 	<details class="collapse collapse-arrow bg-base-200">
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
@@ -164,7 +415,6 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 				@groupGrouping(group.Grouping)
 			</div>
 		</summary>
-		// TODO validate hx-target
 		<div class="collapse-content">
 			<form
 				class="space-y-6"
@@ -172,6 +422,7 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-swap="innerHTML"
 				hx-target="previous summary"
+				hx-disinherit="*"
 			>
 				<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
 				<input type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
@@ -179,7 +430,7 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 					<div class="label">
 						<span class="label-text">Name</span>
 					</div>
-					<input required name="name" minlength="3" maxlength="100" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Name }/>
+					<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Name }/>
 				</label>
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
@@ -251,16 +502,20 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 							</div>
 						}
 						if set.AllowDelete {
-							// FIXME hx-target
-							// hx-disinherit
-							// hx-include="#tribe-id"
-							<button
-								hx-delete={ "/dash/groups/" + strconv.FormatInt(group.ID, 10) }
-								type="button"
-								class="btn btn-error"
+							<form
+								hx-disinherit="*"
 							>
-								Entfernen
-							</button>
+								<button
+									hx-delete={ "/dash/groups/" + strconv.FormatInt(group.ID, 10) }
+									hx-target="closest details"
+									hx-swap="outerHTML"
+									hx-include="#tribe-id"
+									type="button"
+									class="btn btn-error"
+								>
+									Entfernen
+								</button>
+							</form>
 						} else {
 							<div class="tooltip" data-tip="Entfernen ausgeschaltet">
 								<button
@@ -279,9 +534,27 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 							} else {
 								Zuletzt geändert { time.Unix(group.UpdatedAt, 0).Format("15:04") }
 							}
-							// TODO user icon
 							if group.Firstname.Valid {
-								&nbsp;von { group.Firstname.String }
+								von { group.Firstname.String }
+								if len(group.UserImage) > 0 {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(group.UserImage) }
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								} else if self && hasPicture {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src="/icon/user"
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								}
 							}
 						</div>
 					</div>
@@ -301,7 +574,7 @@ templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Gr
 		<h2 class="text-lg mb-3">Angemeldete Gruppen</h2>
 		<div class="space-y-3">
 			for _, group := range groups {
-				@DashGroup(group, csrf, tribeId, set)
+				@DashGroup(group, csrf, tribeId, set, false, false)
 			}
 			if set.AllowCreate {
 				<button
