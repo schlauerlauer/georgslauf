@@ -21,7 +21,7 @@ func (h *Handler) Version(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) Robots(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("User-agent: *\nAllow: /"))
+	w.Write([]byte("User-agent: *\nDisallow:"))
 }
 
 func (h *Handler) Security(w http.ResponseWriter, r *http.Request) {
