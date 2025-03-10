@@ -5,6 +5,7 @@ import (
 	"georgslauf/acl"
 	"georgslauf/internal/db"
 	"georgslauf/internal/settings"
+	"georgslauf/md"
 	"georgslauf/session"
 	"strconv"
 	"strings"
@@ -29,7 +30,12 @@ templ TribeIcon(tribeId int64, csrf string) {
 	</form>
 }
 
-templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.StationCategory, csrf string) {
+templ Md(data md.MdData) {
+	@AlertSuccess("Gespeichert")
+	@templ.Raw(string(data.Intro))
+}
+
+templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.StationCategory, csrf string, home md.MdData) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			<div
@@ -210,6 +216,32 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 					</div>
 				</details>
 				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Startseite</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/home"
+							hx-trigger="change"
+							hx-swap="innerHTML"
+							hx-target="next article"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control">
+								<div class="label">
+									<span class="label-text">Startseite (markdown)</span>
+								</div>
+								<textarea autocomplete="off" maxlength="2048" name="intro" class="textarea textarea-bordered h-96" placeholder="">{ set.Home.Intro }</textarea>
+							</label>
+						</form>
+						<div class="mt-4">
+							<p class="mb-3">Vorschau</p>
+							<article class="prose bg-base-300 p-4 rounded-md max-w-full text-wrap">
+								@templ.Raw(string(home.Intro))
+							</article>
+						</div>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
 					<summary class="collapse-title text-xl font-medium">Anmeldung</summary>
 					<div class="collapse-content">
 						<form
@@ -326,7 +358,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 								</tr>
 								<tr>
 									<td><div class="badge badge-accent">Admin</div></td>
-									<td><span class="font-light">der Account <strong>ist vom austragenden Stamm> und hat Zugriff auf die Admin Seiten</strong></span></td>
+									<td><span class="font-light">der Account <strong>ist vom Stamm des Gastgebers und hat Zugriff auf die Admin Seiten</strong></span></td>
 								</tr>
 							</tbody>
 						</table>

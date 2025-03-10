@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"georgslauf/internal/db"
+	"georgslauf/md"
 	"log/slog"
 	"os"
 	"sync"
@@ -21,6 +22,7 @@ type Settings struct {
 	Groups   Groups   `json:"g"`
 	Stations Stations `json:"s"`
 	Help     Help     `json:"h"`
+	Home     md.Input `json:"hp"`
 }
 
 type Login struct {

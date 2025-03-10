@@ -7,6 +7,7 @@ import (
 	"georgslauf/internal/db"
 	"georgslauf/internal/handler/templates"
 	"georgslauf/internal/settings"
+	"georgslauf/md"
 	"georgslauf/session"
 	"io"
 	"log/slog"
@@ -274,6 +275,45 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) PutSettingsHome(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var set md.Input
+	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.AlertError("Eingabe nicht richtig: Hilfe").Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+
+	res, err := h.md.Update(set)
+	if err != nil {
+		slog.Warn("Update", "err", err)
+		return // TODO
+	}
+
+	prev := h.settings.Get()
+	prev.Home = set
+	h.settings.Set(ctx, prev, user.ID)
+
+	if err := templates.Md(res).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 func (h *Handler) PutSettingsHelp(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -371,7 +411,9 @@ func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	templates.HostSettings(htmxRequest, user, &set, schedule, categories, csrf.Token(r)).Render(ctx, w)
+	setMd := h.md.Get()
+
+	templates.HostSettings(htmxRequest, user, &set, schedule, categories, csrf.Token(r), setMd).Render(ctx, w)
 }
 
 func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {

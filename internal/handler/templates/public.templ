@@ -2,19 +2,17 @@ package templates
 
 import (
 	"georgslauf/internal/db"
+	"georgslauf/md"
 	"georgslauf/session"
 	"time"
 )
 
-templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule) {
+templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home md.MdData) {
 	@base(htmxRequest, user, -1, false) {
-		<div class="mt-9 mx-auto px-3 max-w-screen-lg min-">
-			<h1 class="text-xl">GEORGSLAUF 2024 - Tribute von München-Isar</h1>
-			<h2>Liebe Bewohner*innen des Bezirks München-Isar,</h2>
-			<p>
-				Es ist soweit: Der Georgslauf 2024 steht vor der Tür! Wir freuen uns, Euch alle am <strong>Samstag, den 27.04.2024</strong> beim Stamm Sankt Ansgar begrüßen zu dürfen. Findet Euch alle bitte <strong>pünktlich um 8.00 Uhr in der Gulbranssonstraße 30, 81477 München</strong> ein.
-				Nach Eurer Ankunft können Eure StaVos die Stämme bzw. die unterschiedlichen Laufgruppen am Check-In anmelden. Bringt dazu bitte gesammelt die Anmeldungen, die Datenschutzerklärungen und das Geld mit.
-			</p>
+		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
+			<article class="prose w-full mx-auto px-3 max-w-screen-lg">
+				@templ.Raw(string(home.Intro))
+			</article>
 			// <span class="align-middle text-lg icon-[mdi--checkbox-marked-circle]"></span>
 			if len(schedule) > 0 {
 				// TODO lines not connecting
@@ -39,8 +37,6 @@ templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule) {
 						</li>
 					}
 				</ul>
-				<p>Nun bleibt nur die Frage, wer den diesjährigen Lauf gewinnt.</p>
-				<strong>MÖGEN DIE SPIELE BEGINNEN!</strong>
 			}
 		</div>
 	}

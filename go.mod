@@ -8,8 +8,9 @@ require (
 	github.com/gorilla/sessions v1.4.0
 	github.com/lmittmann/tint v1.0.7
 	github.com/schlauerlauer/go-forms v1.0.2
-	github.com/schlauerlauer/go-middleware v1.0.0
+	github.com/schlauerlauer/go-middleware v1.0.1
 	github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92
+	github.com/yuin/goldmark v1.7.8
 	golang.org/x/oauth2 v0.27.0
 	gopkg.in/yaml.v3 v3.0.1
 )

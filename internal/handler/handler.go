@@ -4,6 +4,7 @@ import (
 	"georgslauf/internal/db"
 	"georgslauf/internal/handler/templates"
 	"georgslauf/internal/settings"
+	"georgslauf/md"
 	"georgslauf/session"
 	"log/slog"
 	"time"
@@ -23,6 +24,7 @@ type Handler struct {
 	formProcessor *forms.FormProcessor
 	session       *session.Session
 	settings      *settings.SettingsService
+	md            *md.MdService
 }
 
 func NewHandler(
@@ -45,10 +47,18 @@ func NewHandler(
 		return nil, err
 	}
 
+	set := settings.Get()
+	mdData := md.New()
+	if _, err := mdData.Update(set.Home); err != nil {
+		slog.Error("Invalid Markdown data", "err", err)
+		return nil, err
+	}
+
 	return &Handler{
 		queries:       queries,
 		formProcessor: formProcessor,
 		session:       session,
 		settings:      settings,
+		md:            mdData,
 	}, nil
 }
