@@ -62,8 +62,8 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/schlauerlauer/go-forms v1.0.2 h1:PkpSWFKC3a+60CQaI7BBtvTJqt4nTVH4UUPrNNhytUc=
 github.com/schlauerlauer/go-forms v1.0.2/go.mod h1:0fGmxR9ArfZw1E9hLjk5+3JqQXBoXPxqiUJ2a2k177w=
-github.com/schlauerlauer/go-middleware v1.0.0 h1:lS6aBidChEhrjLedrAlqtltz+q5GPoZlsV0KqE774WI=
-github.com/schlauerlauer/go-middleware v1.0.0/go.mod h1:naC8ys6DKtQYk9+4MuGbMls93RqsmqRMNHZNIMwXAWA=
+github.com/schlauerlauer/go-middleware v1.0.1 h1:b2x/D/pCECSA0/8iYsyQNBQbwlr2v93l0I/2UmEKXhU=
+github.com/schlauerlauer/go-middleware v1.0.1/go.mod h1:naC8ys6DKtQYk9+4MuGbMls93RqsmqRMNHZNIMwXAWA=
 github.com/segmentio/go-camelcase v0.0.0-20160726192923-7085f1e3c734 h1:Cpx2WLIv6fuPvaJAHNhYOgYzk/8RcJXu/8+mOrxf2KM=
 github.com/segmentio/go-camelcase v0.0.0-20160726192923-7085f1e3c734/go.mod h1:hqVOMAwu+ekffC3Tvq5N1ljnXRrFKcaSjbCmQ8JgYaI=
 github.com/segmentio/go-snakecase v1.2.0 h1:4cTmEjPGi03WmyAHWBjX53viTpBkn/z+4DO++fqYvpw=
@@ -72,6 +72,8 @@ github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOf
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92 h1:IYI1S1xt4WdQHjgVYzMa+Owot82BqlZfQV05BLnTcTA=
 github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92/go.mod h1:TjsB2miB8RW2Sse8sdxzVTdeGlx74GloD5zJYUC38d8=
+github.com/yuin/goldmark v1.7.8 h1:iERMLn0/QJeHFhxSt3p6PeN9mGnvIKSpG9YYorDMnic=
+github.com/yuin/goldmark v1.7.8/go.mod h1:uzxRWxtg69N339t3louHJ7+O03ezfj6PlliRlaOzY1E=
 golang.org/x/crypto v0.35.0 h1:b15kiHdrGCHrP6LvwaQ3c03kgNhhiMgvlhxHQhmg2Xs=
 golang.org/x/crypto v0.35.0/go.mod h1:dy7dXNW32cAb/6/PRuTNsix8T+vJAqvuIy5Bli/x0YQ=
 golang.org/x/exp v0.0.0-20230515195305-f3d0a9c9a5cc h1:mCRnTeVUjcrhlRmO0VK8a6k6Rrf6TF9htwo2pJVSjIU=

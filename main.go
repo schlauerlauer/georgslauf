@@ -144,6 +144,7 @@ func main() {
 	hostRouter.HandleFunc("PUT /settings/stations", handlers.PutSettingsStations)
 	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
 	hostRouter.HandleFunc("PUT /settings/help", handlers.PutSettingsHelp)
+	hostRouter.HandleFunc("PUT /settings/home", handlers.PutSettingsHome)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
 	hostRouter.HandleFunc("GET /tribes/role", handlers.GetTribeRoleModal)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
