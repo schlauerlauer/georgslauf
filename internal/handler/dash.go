@@ -277,6 +277,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	category := db.StationCategory{}
+	categoryValid := false
 	if set.Stations.EnableCategories {
 		if cat, err := h.queries.GetStationCategory(ctx, data.Category); err != nil {
 			slog.Warn("GetStationCategory", "err", err)
@@ -288,6 +289,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 				Name: cat.Name,
 				Max:  cat.Max,
 			}
+			categoryValid = true
 		}
 	}
 
@@ -297,8 +299,8 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		Size:    data.Size,
 		TribeID: data.TribeId,
 		CategoryID: sql.NullInt64{
-			Int64: data.Category,
-			Valid: data.Category >= 0,
+			Int64: category.ID,
+			Valid: categoryValid,
 		},
 		Description: sql.NullString{
 			String: data.Description,
