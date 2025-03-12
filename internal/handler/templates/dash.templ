@@ -21,9 +21,13 @@ templ PutStation(updatedAt time.Time, stationId int64, stationName string, first
 	<div hx-swap-oob={ "innerHTML:#badge-" + strconv.FormatInt(stationId, 10) }>
 		<div class="badge badge-accent">
 			if time.Since(updatedAt) > time.Hour * 12 {
-				Zuletzt geändert { updatedAt.Format("02.01 15:04") }
+				<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+				<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+				{ updatedAt.Format("02.01. 15:04") }
 			} else {
-				Zuletzt geändert { updatedAt.Format("15:04") }
+				<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+				<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+				{ updatedAt.Format("15:04") }
 			}
 			von { firstname }
 			if hasIcon {
@@ -185,7 +189,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 					</div>
 				</label>
 				// TODO image
-				<div class="flex justify-between items-end">
+				<div class="flex justify-between items-end flex-wrap gap-y-3">
 					<div class="flex gap-x-2">
 						if set.AllowUpdate {
 							<button type="submit" class="btn btn-primary">
@@ -230,9 +234,13 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 					<div id={ "badge-" + strconv.FormatInt(station.ID, 10) } class="flex">
 						<div class="badge badge-accent">
 							if t := time.Unix(station.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
-								Zuletzt geändert { time.Unix(station.UpdatedAt, 0).Format("02.01 15:04") }
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(station.UpdatedAt, 0).Format("02.01. 15:04") }
 							} else {
-								Zuletzt geändert { time.Unix(station.UpdatedAt, 0).Format("15:04") }
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(station.UpdatedAt, 0).Format("15:04") }
 							}
 							if station.Firstname.Valid {
 								von { station.Firstname.String }
@@ -308,9 +316,13 @@ templ PutGroup(updatedAt time.Time, groupId int64, groupName string, grouping in
 	<div hx-swap-oob={ "innerHTML:#badge-" + strconv.FormatInt(groupId, 10) }>
 		<div class="badge badge-accent">
 			if time.Since(updatedAt) > time.Hour * 12 {
-				Zuletzt geändert { updatedAt.Format("02.01 15:04") }
+				<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+				<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+				{ updatedAt.Format("02.01. 15:04") }
 			} else {
-				Zuletzt geändert { updatedAt.Format("15:04") }
+				<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+				<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+				{ updatedAt.Format("15:04") }
 			}
 			von { firstname }
 			if hasIcon {
@@ -485,7 +497,7 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 					<textarea name="comment" class="textarea textarea-bordered h-24" placeholder="Kommentar">{ group.Comment.String }</textarea>
 				</label>
 				// TODO image
-				<div class="flex justify-between items-end">
+				<div class="flex justify-between items-end flex-wrap gap-y-3">
 					<div class="flex gap-x-2">
 						if set.AllowUpdate {
 							<button type="submit" class="btn btn-primary">
@@ -530,9 +542,13 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 					<div id={ "badge-" + strconv.FormatInt(group.ID, 10) } class="flex">
 						<div class="badge badge-accent">
 							if t := time.Unix(group.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
-								Zuletzt geändert { time.Unix(group.UpdatedAt, 0).Format("02.01 15:04") }
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(group.UpdatedAt, 0).Format("02.01. 15:04") }
 							} else {
-								Zuletzt geändert { time.Unix(group.UpdatedAt, 0).Format("15:04") }
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(group.UpdatedAt, 0).Format("15:04") }
 							}
 							if group.Firstname.Valid {
 								von { group.Firstname.String }

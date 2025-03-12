@@ -17,7 +17,8 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 				class="btn btn-ghost text-xl cursor-pointer"
 				hx-push-url="true"
 			>
-				Georgslauf
+				<span class="hidden sm:block">Georgslauf</span>
+				<span class="sm:hidden h-6 w-6 icon-[majesticons--home-line]"></span>
 			</p>
 		</div>
 		<div class="navbar-end space-x-2">
@@ -34,7 +35,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 			if user != nil {
 				<div class="tooltip tooltip-bottom mt-1" data-tip={ user.Firstname + " " + user.Lastname }>
 					if user.HasPicture {
-						<div class="avatar">
+						<div class="avatar mr-1">
 							if user.ACL < acl.Edit {
 								<div class="w-10 rounded-full">
 									<img src="/icon/user" alt="Avatar"/>
@@ -46,7 +47,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 							}
 						</div>
 					} else {
-						<div class="avatar placeholder">
+						<div class="avatar placeholder mr-1">
 							if user.ACL < acl.Edit {
 								<div class="bg-neutral text-neutral-content w-10 rounded-full">
 									if user.Firstname != "" && user.Lastname != "" {
@@ -72,14 +73,20 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 					hx-get="/dash/"
 					hx-target="main"
 					hx-push-url="true"
-				>Dashboard</div>
+				>
+					<span class="hidden sm:block">Dashboard</span>
+					<span class="sm:hidden h-6 w-6 icon-[mage--dashboard]"></span>
+				</div>
 				if user.ACL >= acl.Edit {
 					<div
 						class="btn"
 						hx-get="/host/"
 						hx-target="main"
 						hx-push-url="true"
-					>Admin</div>
+					>
+						<span class="hidden sm:block">Admin</span>
+						<span class="sm:hidden h-6 w-6 icon-[eos-icons--admin-outlined]"></span>
+					</div>
 				}
 				// TODO
 				// <div class="btn" hx-get="/logout">Logout</div>
