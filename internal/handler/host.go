@@ -41,8 +41,9 @@ func (h *Handler) PutTribeIcon(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseMultipartForm(1 << 20); err != nil {
+		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		slog.Error("ParseMulitpartForm", "err", err)
-		return
+		return // TODO
 	}
 
 	file, _, err := r.FormFile("icon")
@@ -58,12 +59,12 @@ func (h *Handler) PutTribeIcon(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	// FIXME resize
+	// TODO resize
 	// img, format, err := image.Decode(bytes.NewReader(data))
 	// if err != nil {
 	// 	slog.Error("Decode", "err", err)
 	// }
-	// slog.Info("test", "f", format, "img", img) // FIXME
+	// slog.Info("test", "f", format, "img", img)
 	// // png.
 
 	if err := h.queries.UpdateTribeIcon(ctx, db.UpdateTribeIconParams{
@@ -438,7 +439,9 @@ func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO resize instead
 	if err := r.ParseMultipartForm(1 << 20); err != nil {
+		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		slog.Error("ParseMultipartForm", "err", err)
 		return // TODO
 	}

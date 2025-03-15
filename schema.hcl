@@ -184,6 +184,12 @@ table "stations" {
 		default = 0
 	}
 
+	column "vegan" {
+		null    = false
+		type    = integer
+		default = 0
+	}
+
 	column "tribe_id" {
 		null = false
 		type = integer
@@ -314,6 +320,12 @@ table "groups" {
 	column "size" {
 		null = false
 		type = integer
+		default = 0
+	}
+
+	column "vegan" {
+		null    = false
+		type    = integer
 		default = 0
 	}
 

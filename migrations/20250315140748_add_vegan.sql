@@ -1,0 +1,2 @@
+ALTER TABLE stations ADD COLUMN vegan integer NOT NULL DEFAULT 0;
+ALTER TABLE groups add COLUMN vegan integer NOT NULL DEFAULT 0;
