@@ -169,7 +169,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 				}
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
-						<span class="label-text">Größe</span>
+						<span class="label-text">Anzahl Personen</span>
 					</div>
 					<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
 				</label>
@@ -187,6 +187,12 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 					<div class="label">
 						<span class="label-text-alt">Benötigtes Material, Ort, Sonstiges</span>
 					</div>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Anzahl Vegan</span>
+					</div>
+					<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
 				</label>
 				// TODO image
 				<div class="flex justify-between items-end flex-wrap gap-y-3">
@@ -394,7 +400,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 				</label>
 				<label class="form-control w-full">
 					<div class="label">
-						<span class="label-text">Größe</span>
+						<span class="label-text">Gruppen Größe</span>
 					</div>
 					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(set.Min, 10) } class="range" step="1"/>
 					<div class="flex w-full justify-between px-2 pt-1 text-xs">
@@ -402,6 +408,12 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
 						}
 					</div>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Anzahl Vegan</span>
+					</div>
+					<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" step="1" value="0"/>
 				</label>
 				<label class="form-control">
 					<div class="label">
@@ -436,8 +448,8 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 				hx-target="previous summary"
 				hx-disinherit="*"
 			>
-				<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
-				<input type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
+				<input autocomplete="off" type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+				<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
 						<span class="label-text">Name</span>
@@ -448,7 +460,7 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 					<div class="label">
 						<span class="label-text">Stufe</span>
 					</div>
-					<select required name="grouping" class="invalid:border-error select select-bordered">
+					<select autocomplete="off" required name="grouping" class="invalid:border-error select select-bordered">
 						switch group.Grouping {
 							case 0:
 								<option selected value="0">Wölflinge</option>
@@ -481,20 +493,26 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 				</label>
 				<label class="form-control w-full">
 					<div class="label">
-						<span class="label-text">Größe</span>
+						<span class="label-text">Gruppen Größe</span>
 					</div>
-					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, set.Min), 10) } class="range" step="1"/>
+					<input autocomplete="off" name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, set.Min), 10) } class="range" step="1"/>
 					<div class="flex w-full justify-between px-2 pt-1 text-xs">
 						for num := range set.Max - set.Min + 1 {
 							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
 						}
 					</div>
 				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Anzahl Vegan</span>
+					</div>
+					<input autocomplete="off" name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(group.Vegan, 10) } step="1"/>
+				</label>
 				<label class="form-control">
 					<div class="label">
 						<span class="label-text">Kommentar</span>
 					</div>
-					<textarea name="comment" class="textarea textarea-bordered h-24" placeholder="Kommentar">{ group.Comment.String }</textarea>
+					<textarea autocomplete="off" name="comment" class="textarea textarea-bordered h-24" placeholder="Kommentar">{ group.Comment.String }</textarea>
 				</label>
 				// TODO image
 				<div class="flex justify-between items-end flex-wrap gap-y-3">

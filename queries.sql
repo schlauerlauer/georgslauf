@@ -39,6 +39,7 @@ select
 	,g.comment
 	,u.firstname
 	,ui.image as user_image
+	,g.vegan
 from groups g
 left join users u on g.updated_by = u.id
 left join user_icons ui on g.updated_by = ui.id
@@ -63,13 +64,14 @@ set
 	,comment = ?
 	,updated_at = ?
 	,updated_by = ?
+	,vegan = ?
 where
 	id = ?
 	and tribe_id = ?;
 
 -- name: InsertStation :one
-insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by)
-values (?,?,?,?,?,?,?,?,?,?)
+insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by, vegan)
+values (?,?,?,?,?,?,?,?,?,?,?)
 returning id;
 
 -- name: InsertGroup :one
@@ -237,6 +239,7 @@ select
 	,sc.name as category_name
 	,u.firstname
 	,ui.image as user_image
+	,s.vegan
 from stations s
 left join station_categories sc on category_id = sc.id
 left join users u on s.updated_by = u.id
@@ -254,6 +257,7 @@ set
 	,category_id = ?
 	,description = ?
 	,requirements = ?
+	,vegan = ?
 where
 	id = ?
 	and tribe_id = ?;

@@ -214,6 +214,7 @@ type postStation struct {
 	TribeId      int64  `schema:"tribe" validate:"gte=0"`
 	Name         string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Size         int64  `schema:"size" validate:"gte=0"`
+	Vegan        int64  `schema:"vegan" validate:"gte=0"`
 	Category     int64  `schema:"category"`
 	Description  string `schemal:"description" validate:"max=1024" mod:"trim,sanitize"`
 	Requirements string `schemal:"requirements" validate:"max=1024" mod:"trim,sanitize"`
@@ -320,6 +321,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 			Int64: user.ID,
 			Valid: true,
 		},
+		Vegan: data.Vegan,
 	})
 	if err != nil {
 		slog.Error("InsertStation", "err", err)
@@ -359,6 +361,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 			Valid:  true,
 		},
 		UserImage: []byte{}, // NTH
+		Vegan:     data.Vegan,
 	}, csrf.Token(r), data.TribeId, set.Stations, categories, true, user.HasPicture).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
@@ -369,6 +372,7 @@ type putStation struct {
 	StationId    int64  `schema:"station" validate:"gte=0"`
 	Name         string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Size         int64  `schema:"size" validate:"gte=0"`
+	Vegan        int64  `schema:"vegan" validate:"gte=0"`
 	Category     int64  `schema:"category"`
 	Description  string `schemal:"description" validate:"max=1024" mod:"trim,sanitize"`
 	Requirements string `schemal:"requirements" validate:"max=1024" mod:"trim,sanitize"`
@@ -465,6 +469,7 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 			String: data.Requirements,
 			Valid:  data.Requirements != "",
 		},
+		Vegan: data.Vegan,
 	}); err != nil {
 		slog.Error("UpdateStation", "err", err)
 		if err := templates.AlertError("Speichern fehlgeschlagen").Render(ctx, w); err != nil {
@@ -485,6 +490,7 @@ type putGroup struct {
 	GroupId  int64  `schema:"group" validate:"gte=0"`
 	Name     string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Size     int64  `schema:"size" validate:"gte=0"`
+	Vegan    int64  `schema:"vegan" validate:"gte=0"`
 	Comment  string `schemal:"comment" validate:"max=1024" mod:"trim,sanitize"`
 	Grouping int64  `schema:"grouping" validate:"gte=0,lte=3"`
 }
@@ -564,6 +570,7 @@ func (h *Handler) PutGroup(w http.ResponseWriter, r *http.Request) {
 		},
 		TribeID:  data.TribeId, // just to be sure
 		Grouping: data.Grouping,
+		Vegan:    data.Vegan,
 	}); err != nil {
 		slog.Error("UpdateGroup", "err", err)
 		if err := templates.AlertError("Speichern fehlgeschlagen").Render(ctx, w); err != nil {
