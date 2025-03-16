@@ -4,10 +4,16 @@ import (
 	"georgslauf/internal/db"
 	"georgslauf/md"
 	"georgslauf/session"
+	"strconv"
 	"time"
 )
 
-templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home md.MdData) {
+type HostParam struct {
+	ID   int64
+	Name string
+}
+
+templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home md.MdData, host HostParam) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
 			<article class="prose w-full mx-auto px-3 max-w-screen-lg">
@@ -38,6 +44,16 @@ templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, hom
 					}
 				</ul>
 			}
+			<div class="my-6 flex gap-x-2 items-center justify-end">
+				<label class="avatar">
+					<div class="w-8">
+						<img
+							src={ "/icon/tribe/" + strconv.FormatInt(host.ID, 10) }
+						/>
+					</div>
+				</label>
+				<p>{ host.Name }</p>
+			</div>
 		</div>
 	}
 }

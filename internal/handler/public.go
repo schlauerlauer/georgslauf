@@ -50,7 +50,16 @@ func (h *Handler) GetHome(w http.ResponseWriter, r *http.Request) {
 	setMd := h.md.Get()
 
 	w.WriteHeader(http.StatusOK)
-	if err := templates.Home(htmxRequest, user, schedule, setMd).Render(ctx, w); err != nil {
+	if err := templates.Home(
+		htmxRequest,
+		user,
+		schedule,
+		setMd,
+		templates.HostParam{
+			ID:   10,
+			Name: "Sankt Severin",
+		},
+	).Render(ctx, w); err != nil {
 		slog.Warn("Home", "err", err)
 	}
 }
