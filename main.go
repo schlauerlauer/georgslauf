@@ -137,6 +137,7 @@ func main() {
 	hostRouter.HandleFunc("GET /users", handlers.GetUsers)
 	hostRouter.HandleFunc("PUT /users/role", handlers.PutUserRole)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
+	hostRouter.HandleFunc("GET /groups", handlers.GetGroups)
 	hostRouter.HandleFunc("POST /tribes/icon/{id}", handlers.PostTribeIcon)
 	hostRouter.HandleFunc("PUT /tribes/icon/{id}", handlers.PutTribeIcon)
 	hostRouter.HandleFunc("GET /settings", handlers.GetSettings)

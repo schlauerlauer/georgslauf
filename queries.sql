@@ -46,6 +46,27 @@ left join user_icons ui on g.updated_by = ui.id
 where g.tribe_id = ?
 order by g.created_at desc;
 
+-- name: GetGroupOverview :one
+select
+	count(id)
+	,sum(size) as size
+	,sum(vegan) as vegan
+from groups
+limit 1;
+
+-- name: GetGroupsDetails :many
+select
+	g.id
+	,g.name
+	,g.grouping
+	,t.name as tribe
+	,g.size
+	,ti.id as tribe_icon
+from groups g
+left join tribes t on g.tribe_id = t.id
+left join tribe_icons ti on ti.id = t.id
+order by g.created_at desc;
+
 -- name: GetGroupsHost :many
 select
 	g.id
@@ -75,8 +96,8 @@ values (?,?,?,?,?,?,?,?,?,?,?)
 returning id;
 
 -- name: InsertGroup :one
-insert into groups (name, size, tribe_id, grouping, comment, created_by, updated_by, created_at, updated_at)
-values (?,?,?,?,?,?,?,?,?)
+insert into groups (name, size, tribe_id, grouping, comment, created_by, updated_by, created_at, updated_at, vegan)
+values (?,?,?,?,?,?,?,?,?,?)
 returning id;
 
 -- name: GetTribeRoleWithIcon :one

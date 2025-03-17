@@ -46,6 +46,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 				hx-push-url="true"
 			>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
 				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
 			</div>
@@ -301,6 +302,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 				hx-push-url="true"
 			>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
 				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
@@ -474,6 +476,83 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 	}
 }
 
+templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, csrf string, summary db.GetGroupOverviewRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab tab-active" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				<div class="my-6">
+					<ul class="bg-base-200 rounded-lg p-4">
+						<h2 class="font-lg font-bold mb-3">Gruppen Übersicht</h2>
+						<li>Gruppen <strong>{ strconv.FormatInt(summary.Count, 10) }</strong></li>
+						<li>Angemeldet <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
+						<li>Vegan <strong>{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) }</strong></li>
+					</ul>
+				</div>
+				<div class="overflow-x-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Stufe</th>
+								<th>Stamm</th>
+								<th>Angemeldet</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, entry := range groups {
+								<tr>
+									<td>
+										<div class="font-bold">{ entry.Name }</div>
+									</td>
+									<td>
+										@groupGrouping(entry.Grouping)
+									</td>
+									<td>
+										<div class="flex gap-x-2 items-center">
+											if entry.TribeIcon.Valid {
+												<label class="avatar">
+													<div class="w-6">
+														<img
+															src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
+															alt={ entry.Tribe.String + " Icon" }
+														/>
+													</div>
+												</label>
+											}
+											<p>{ entry.Tribe.String }</p>
+										</div>
+									</td>
+									<td>{ strconv.FormatInt(entry.Size.Int64, 10) }</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								<th>Stufe</th>
+								<th>Stamm</th>
+								<th>Angemeldet</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+}
+
 templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string, tribeRoles []db.GetTribeRolesOpenRow, accounts map[int64][]db.GetTribeRolesAssignedRow, groups map[int64][]db.GetGroupsHostRow, stations map[int64][]db.GetStationsHostRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
@@ -485,6 +564,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 				hx-push-url="true"
 			>
 				<a id="tab-tribes" role="tab" class="tab tab-active" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
 				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>

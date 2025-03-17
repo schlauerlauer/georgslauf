@@ -510,6 +510,39 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetGroups(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	groups, err := h.queries.GetGroupsDetails(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	summary, err := h.queries.GetGroupOverview(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if err := templates.HostGroups(htmxRequest, user, groups, csrf.Token(r), summary).Render(ctx, w); err != nil {
+		slog.Warn("HostGroups", "err", err)
+	}
+}
+
 func (h *Handler) GetTribes(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()

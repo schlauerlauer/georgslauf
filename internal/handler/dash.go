@@ -649,6 +649,7 @@ type postGroup struct {
 	TribeId  int64  `schema:"tribe" validate:"gte=0"`
 	Name     string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Size     int64  `schema:"size" validate:"gte=0"`
+	Vegan    int64  `schema:"vegan" validate:"gte=0"`
 	Comment  string `schemal:"comment" validate:"max=1024" mod:"trim,sanitize"`
 	Grouping int64  `schema:"grouping" validate:"gte=0,lte=3"`
 }
@@ -734,6 +735,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 		},
 		TribeID:  data.TribeId, // just to be sure
 		Grouping: data.Grouping,
+		Vegan:    data.Vegan,
 	})
 	if err != nil {
 		slog.Error("InsertGroup", "err", err)
@@ -762,6 +764,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 			Valid:  true,
 		},
 		// UserImage: ,
+		Vegan: data.Vegan,
 	}, csrf.Token(r), data.TribeId, set.Groups, true, user.HasPicture).Render(ctx, w); err != nil {
 		slog.Warn("DashGroup", "err", err)
 	}
