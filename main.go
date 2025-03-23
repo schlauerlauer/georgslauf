@@ -148,6 +148,10 @@ func main() {
 	hostRouter.HandleFunc("PUT /settings/home", handlers.PutSettingsHome)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
 	hostRouter.HandleFunc("GET /tribes/role", handlers.GetTribeRoleModal)
+	hostRouter.HandleFunc("GET /stations/categories/new", handlers.GetStationCategoryNew)
+	hostRouter.HandleFunc("POST /stations/categories", handlers.PostStationCategory)
+	hostRouter.HandleFunc("PUT /stations/categories/{id}", handlers.PutStationCategory)
+	hostRouter.HandleFunc("DELETE /stations/categories/{id}", handlers.DeleteStationCategory)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))

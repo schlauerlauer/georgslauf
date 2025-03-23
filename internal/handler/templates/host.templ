@@ -35,6 +35,68 @@ templ Md(data md.MdData) {
 	@templ.Raw(string(data.Intro))
 }
 
+templ HostStationCategory(csrf string, category db.StationCategory) {
+	<form
+		class="flex gap-x-3 items-end"
+		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+		hx-put={ "/host/stations/categories/" + strconv.FormatInt(category.ID, 10) }
+		hx-swap="outerHTML"
+		hx-target="this"
+	>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Name</span>
+			</div>
+			<input autocomplete="off" required maxlength="30" minlength="3" name="name" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" value={ category.Name }/>
+		</label>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Max. Anzahl der Posten (0 = kein Limit)</span>
+			</div>
+			<input autocomplete="off" name="max" min="0" type="number" value={ strconv.FormatInt(category.Max, 10) } required placeholder="Anzahl" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+		</label>
+		<button class="btn btn-primary">
+			<span class="text-lg icon-[mdi--content-save]"></span>
+		</button>
+		<form
+			hx-disinherit="*"
+		>
+			<button
+				hx-delete={ "/host/stations/categories/" + strconv.FormatInt(category.ID, 10) }
+				class="btn btn-error"
+			>
+				<span class="text-xl icon-[mdi--delete]"></span>
+			</button>
+		</form>
+	</form>
+}
+
+templ HostStationCategoryNew(csrf string) {
+	<form
+		class="flex gap-x-3 items-end"
+		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+		hx-post="/host/stations/categories"
+		hx-swap="outerHTML"
+		hx-target="this"
+	>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Name</span>
+			</div>
+			<input autocomplete="off" required maxlength="30" minlength="3" name="name" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" value=""/>
+		</label>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Max. Anzahl der Posten (0 = kein Limit)</span>
+			</div>
+			<input autocomplete="off" name="max" min="0" type="number" value="0" required placeholder="Anzahl" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+		</label>
+		<button class="btn btn-primary">
+			<span class="text-lg icon-[mdi--content-save]"></span>
+		</button>
+	</form>
+}
+
 templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.StationCategory, csrf string, home md.MdData) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
@@ -193,29 +255,37 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 								</label>
 							</div>
 						</form>
-						<div class="mt-6">
-							<p class="mb-2">Kategorien</p>
-							// TODO
-							<ul class="ml-3">
-								for _, category := range categories {
-									//{ strconv.FormatInt(category.ID, 10) }
-									<li>{ category.Name } <div class="ml-1 badge">max. { strconv.FormatInt(category.Max, 10) }</div></li>
-								}
-							</ul>
-						</div>
 					</div>
 				</details>
 				<details class="collapse bg-base-200" open>
-					<summary class="collapse-title text-xl font-medium">Zeitplan</summary>
+					<summary class="collapse-title text-xl font-medium">Posten Kategorien</summary>
 					<div class="collapse-content">
-						// TODO
-						<ul>
-							for _, scheduleEntry := range schedule {
-								<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
+						<div id="category-list">
+							for _, category := range categories {
+								@HostStationCategory(csrf, category)
 							}
-						</ul>
+						</div>
+						<button
+							hx-get="/host/stations/categories/new"
+							hx-swap="beforeend"
+							hx-target="#category-list"
+							class="mt-3 btn btn-secondary"
+						>
+							Hinzufügen
+						</button>
 					</div>
 				</details>
+				// <details class="collapse bg-base-200" open>
+				// 	<summary class="collapse-title text-xl font-medium">Zeitplan</summary>
+				// 	<div class="collapse-content">
+				// 		// TODO
+				// 		<ul>
+				// 			for _, scheduleEntry := range schedule {
+				// 				<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
+				// 			}
+				// 		</ul>
+				// 	</div>
+				// </details>
 				<details class="collapse bg-base-200" open>
 					<summary class="collapse-title text-xl font-medium">Startseite</summary>
 					<div class="collapse-content">

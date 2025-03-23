@@ -372,3 +372,19 @@ where id = ?;
 -- name: DeleteStation :exec
 delete from stations
 where id = ?;
+
+-- name: UpdateStationCategory :exec
+update station_categories
+set
+	name = ?
+	,max = ?
+where id = ?;
+
+-- name: DeleteStationCategory :exec
+delete from station_categories
+where id = ?;
+
+-- name: InsertStationCateogy :one
+insert into station_categories (name, max)
+values (?,?)
+returning id;

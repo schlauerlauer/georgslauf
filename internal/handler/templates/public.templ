@@ -19,10 +19,20 @@ templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, hom
 			<article class="prose w-full mx-auto px-3 max-w-screen-lg">
 				@templ.Raw(string(home.Intro))
 			</article>
+			<div class="my-6 flex gap-x-2 items-center justify-end">
+				<label class="avatar">
+					<div class="w-8">
+						<img
+							src={ "/icon/tribe/" + strconv.FormatInt(host.ID, 10) }
+						/>
+					</div>
+				</label>
+				<p>{ host.Name }</p>
+			</div>
 			// <span class="align-middle text-lg icon-[mdi--checkbox-marked-circle]"></span>
 			if len(schedule) > 0 {
-				<div class="max-w-screen-md">
-					<ul class="my-16 timeline timeline-vertical ">
+				<div class="my-16 max-w-screen-md">
+					<ul class="timeline timeline-vertical ">
 						for idx, scheduleEntry := range schedule {
 							<li>
 								if idx > 0 {
@@ -47,16 +57,6 @@ templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, hom
 					</ul>
 				</div>
 			}
-			<div class="my-6 flex gap-x-2 items-center justify-end">
-				<label class="avatar">
-					<div class="w-8">
-						<img
-							src={ "/icon/tribe/" + strconv.FormatInt(host.ID, 10) }
-						/>
-					</div>
-				</label>
-				<p>{ host.Name }</p>
-			</div>
 			<div class="mt-9 flex justify-center">
 				<img
 					class="w-96"

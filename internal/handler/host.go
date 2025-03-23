@@ -149,6 +149,118 @@ func (h *Handler) PutSettingsStations(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetStationCategoryNew(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	if err := templates.HostStationCategoryNew(csrf.Token(r)).Render(ctx, w); err != nil {
+		slog.Warn("HostStationCategory", "err", err)
+	}
+}
+
+type upsertStationCategory struct {
+	Name string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
+	Max  int64  `schema:"max" validate:"gte=0"`
+}
+
+func (h *Handler) PostStationCategory(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var data upsertStationCategory
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if id, err := h.queries.InsertStationCateogy(ctx, db.InsertStationCateogyParams{
+		Name: data.Name,
+		Max:  data.Max,
+	}); err != nil {
+		slog.Error("sqlc", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	} else {
+		if err := templates.HostStationCategory(csrf.Token(r), db.StationCategory{
+			ID:   id,
+			Name: data.Name,
+			Max:  data.Max,
+		}).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+	}
+}
+
+func (h *Handler) PutStationCategory(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	var data upsertStationCategory
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.UpdateStationCategory(ctx, db.UpdateStationCategoryParams{
+		ID:   id,
+		Name: data.Name,
+		Max:  data.Max,
+	}); err != nil {
+		slog.Error("sqlc", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := templates.HostStationCategory(csrf.Token(r), db.StationCategory{
+		ID:   id,
+		Name: data.Name,
+		Max:  data.Max,
+	}).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) DeleteStationCategory(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.DeleteStationCategory(ctx, id); err != nil {
+		slog.Warn("sqlc", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 type putUserRole struct {
 	UserID   int64 `schema:"id" validate:"gte=0"`
 	UserRole int64 `schema:"role" validate:"gte=-1,lte=2"`
