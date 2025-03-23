@@ -10,9 +10,14 @@ templ base(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 				<title>Georgslauf</title>
 				<link rel="stylesheet" href={ "/dist/main.css?v=" + version }/>
 				<script type="module" src={ "/dist/main.js?=" + version }></script>
-				<link rel="icon" type="image/png" sizes="192x192" href="/res/icon.png"/>
 				<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
 				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+				<link rel="icon" type="image/png" href="/res/favicon-96x96.png" sizes="96x96"/>
+				<link rel="icon" type="image/svg+xml" href="/res/favicon.svg"/>
+				<link rel="shortcut icon" href="/res/favicon.ico"/>
+				<link rel="apple-touch-icon" sizes="180x180" href="/res/apple-touch-icon.png"/>
+				<meta name="apple-mobile-web-app-title" content="Georgslauf"/>
+				<link rel="manifest" href="/res/site.webmanifest"/>
 			</head>
 			<body>
 				@notifications()

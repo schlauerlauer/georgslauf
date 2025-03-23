@@ -17,8 +17,11 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 				class="btn btn-ghost text-xl cursor-pointer"
 				hx-push-url="true"
 			>
+				<img
+					class="h-9 w-9"
+					src="/res/favicon-48x48.png"
+				/>
 				<span class="hidden sm:block">Georgslauf</span>
-				<span class="sm:hidden h-6 w-6 icon-[majesticons--home-line]"></span>
 			</p>
 		</div>
 		<div class="navbar-end space-x-2">
