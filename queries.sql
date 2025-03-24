@@ -46,6 +46,14 @@ left join user_icons ui on g.updated_by = ui.id
 where g.tribe_id = ?
 order by g.created_at desc;
 
+-- name: GetStationOverview :one
+select
+	count(id)
+	,sum(size) as size
+	,sum(vegan) as vegan
+from stations
+limit 1;
+
 -- name: GetGroupOverview :one
 select
 	count(id)
@@ -53,6 +61,20 @@ select
 	,sum(vegan) as vegan
 from groups
 limit 1;
+
+-- name: GetStationsDetails :many
+select
+	s.id
+	,s.name
+	,sc.name as category
+	,t.name as tribe
+	,s.size
+	,ti.id as tribe_icon
+from stations s
+left join tribes t on s.tribe_id = t.id
+left join tribe_icons ti on ti.id = t.id
+left join station_categories sc on s.category_id = sc.id
+order by s.created_at desc;
 
 -- name: GetGroupsDetails :many
 select

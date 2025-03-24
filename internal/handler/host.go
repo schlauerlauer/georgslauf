@@ -622,6 +622,41 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetStations(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	stations, err := h.queries.GetStationsDetails(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	summary, err := h.queries.GetStationOverview(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	set := h.settings.Get()
+
+	w.WriteHeader(http.StatusOK)
+	if err := templates.HostStations(htmxRequest, user, stations, csrf.Token(r), summary, set.Stations.EnableCategories).Render(ctx, w); err != nil {
+		slog.Warn("HostStations", "err", err)
+	}
+}
+
 func (h *Handler) GetGroups(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()

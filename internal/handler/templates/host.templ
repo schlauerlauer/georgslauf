@@ -109,6 +109,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 			>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
 				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
 				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
 			</div>
@@ -373,6 +374,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 			>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
 				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
 				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
@@ -546,6 +548,90 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 	}
 }
 
+templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetStationsDetailsRow, csrf string, summary db.GetStationOverviewRow, enableCategories bool) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab tab-active" hx-get="/host/stations">Posten</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				<div class="my-6">
+					<ul class="bg-base-200 rounded-lg p-4">
+						<h2 class="font-lg font-bold mb-3">Posten Übersicht</h2>
+						<li>Posten <strong>{ strconv.FormatInt(summary.Count, 10) }</strong></li>
+						<li>Angemeldet <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
+						<li>Vegan <strong>{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) }</strong></li>
+					</ul>
+				</div>
+				<div class="overflow-x-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								if enableCategories {
+									<th>Kategorie</th>
+								}
+								<th>Stamm</th>
+								<th>Angemeldet</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, entry := range stations {
+								<tr>
+									<td>
+										<div class="font-bold">{ entry.Name }</div>
+									</td>
+									if enableCategories {
+										<td>
+											{ entry.Category.String }
+										</td>
+									}
+									<td>
+										<div class="flex gap-x-2 items-center">
+											if entry.TribeIcon.Valid {
+												<label class="avatar">
+													<div class="w-6">
+														<img
+															src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
+															alt={ entry.Tribe.String + " Icon" }
+														/>
+													</div>
+												</label>
+											}
+											<p>{ entry.Tribe.String }</p>
+										</div>
+									</td>
+									<td>{ strconv.FormatInt(entry.Size, 10) }</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								if enableCategories {
+									<th>Kategorie</th>
+								}
+								<th>Stamm</th>
+								<th>Angemeldet</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+}
+
 templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, csrf string, summary db.GetGroupOverviewRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
@@ -558,6 +644,7 @@ templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroups
 			>
 				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
 				<a id="tab-groups" role="tab" class="tab tab-active" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
 				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
@@ -635,6 +722,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 			>
 				<a id="tab-tribes" role="tab" class="tab tab-active" hx-get="/host/tribes">Übersicht</a>
 				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
 				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>

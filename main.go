@@ -148,6 +148,7 @@ func main() {
 	hostRouter.HandleFunc("PUT /settings/home", handlers.PutSettingsHome)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
 	hostRouter.HandleFunc("GET /tribes/role", handlers.GetTribeRoleModal)
+	hostRouter.HandleFunc("GET /stations", handlers.GetStations)
 	hostRouter.HandleFunc("GET /stations/categories/new", handlers.GetStationCategoryNew)
 	hostRouter.HandleFunc("POST /stations/categories", handlers.PostStationCategory)
 	hostRouter.HandleFunc("PUT /stations/categories/{id}", handlers.PutStationCategory)
