@@ -22,6 +22,13 @@ from station_categories
 where id = ?
 limit 1;
 
+-- name: GetStationCategoryCount :one
+select
+	count(id)
+from stations
+where category_id = ?
+limit 1;
+
 -- name: GetSchedule :many
 select *
 from schedule

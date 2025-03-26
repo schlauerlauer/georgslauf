@@ -280,18 +280,35 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 	category := db.StationCategory{}
 	categoryValid := false
 	if set.Stations.EnableCategories {
-		if cat, err := h.queries.GetStationCategory(ctx, data.Category); err != nil {
+		cat, err := h.queries.GetStationCategory(ctx, data.Category)
+		if err != nil {
 			slog.Warn("GetStationCategory", "err", err)
-			return // TODO
-		} else {
-			// TODO query max
-			category = db.StationCategory{
-				ID:   cat.ID,
-				Name: cat.Name,
-				Max:  cat.Max,
-			}
-			categoryValid = true
+			templates.AlertError("Posten Kategorie nicht gefunden").Render(ctx, w)
+			return
 		}
+
+		count, err := h.queries.GetStationCategoryCount(ctx, sql.NullInt64{
+			Int64: cat.ID,
+			Valid: true,
+		})
+		if err != nil {
+			slog.Warn("GetStationCategoryCount", "err", err)
+			templates.AlertError("Kategorie Postenanzahl nicht verfügbar").Render(ctx, w)
+			return
+		}
+
+		if count >= cat.Max && cat.Max != 0 {
+			slog.Warn("Category full", "id", cat.ID)
+			templates.AlertError("Die Posten Kategorie ist voll").Render(ctx, w)
+			return
+		}
+
+		category = db.StationCategory{
+			ID:   cat.ID,
+			Name: cat.Name,
+			// Max:  cat.Max,
+		}
+		categoryValid = true
 	}
 
 	timestamp := time.Now().Unix()
@@ -414,19 +431,35 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 	category := sql.NullInt64{}
 	categoryName := sql.NullString{}
 	if set.Stations.EnableCategories {
-		if cat, err := h.queries.GetStationCategory(ctx, data.Category); err != nil {
+		cat, err := h.queries.GetStationCategory(ctx, data.Category)
+		if err != nil {
 			slog.Warn("GetStationCategory", "err", err)
-			return // TODO
-		} else {
-			// TODO query max
-			category = sql.NullInt64{
-				Valid: true,
-				Int64: cat.ID,
-			}
-			categoryName = sql.NullString{
-				String: cat.Name,
-				Valid:  true,
-			}
+			templates.AlertError("Posten Kategorie nicht gefunden").Render(ctx, w)
+			return
+		}
+
+		count, err := h.queries.GetStationCategoryCount(ctx, sql.NullInt64{
+			Int64: cat.ID,
+			Valid: true,
+		})
+		if err != nil {
+			slog.Warn("GetStationCategoryCount", "err", err)
+			templates.AlertError("Kategorie Postenanzahl nicht verfügbar").Render(ctx, w)
+			return
+		}
+
+		if count >= cat.Max && cat.Max != 0 {
+			templates.AlertError("Die Posten Kategorie ist voll").Render(ctx, w)
+			return
+		}
+
+		category = sql.NullInt64{
+			Valid: true,
+			Int64: cat.ID,
+		}
+		categoryName = sql.NullString{
+			String: cat.Name,
+			Valid:  true,
 		}
 	}
 
