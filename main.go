@@ -13,11 +13,11 @@ import (
 	"georgslauf/internal/settings"
 	"georgslauf/session"
 	"io/fs"
-
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/gorilla/csrf"
 	"github.com/lmittmann/tint"
