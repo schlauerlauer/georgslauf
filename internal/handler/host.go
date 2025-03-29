@@ -184,7 +184,7 @@ func (h *Handler) PostStationCategory(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	} else {
-		if err := templates.HostStationCategory(csrf.Token(r), db.StationCategory{
+		if err := templates.HostStationCategory(csrf.Token(r), db.GetStationCategoriesRow{
 			ID:   id,
 			Name: data.Name,
 			Max:  data.Max,
@@ -227,7 +227,7 @@ func (h *Handler) PutStationCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := templates.HostStationCategory(csrf.Token(r), db.StationCategory{
+	if err := templates.HostStationCategory(csrf.Token(r), db.GetStationCategoriesRow{
 		ID:   id,
 		Name: data.Name,
 		Max:  data.Max,

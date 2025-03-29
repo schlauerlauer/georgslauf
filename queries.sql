@@ -8,10 +8,13 @@ left join tribe_icons ti on ti.id = t.id
 
 -- name: GetStationCategories :many
 select
-	id
-	,name
-	,max
-from station_categories;
+	sc.id
+	,sc.name
+	,sc.max
+	,count(s.id) as count
+from station_categories sc
+left join stations s on s.category_id = sc.id
+group by s.category_id;
 
 -- name: GetStationCategory :one
 select

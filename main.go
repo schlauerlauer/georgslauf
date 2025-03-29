@@ -42,6 +42,8 @@ func main() {
 		}),
 	))
 
+	slog.Info("TZ", "loc", time.Now().Location().String(), "env", os.Getenv("TZ"))
+
 	configPath := os.Getenv("CONFIG_PATH")
 	cfg, err := config.NewConfig(configPath)
 	if err != nil {
