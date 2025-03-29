@@ -657,6 +657,308 @@ func (h *Handler) GetStations(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) HostDeleteStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		return // TODO
+	}
+
+	if err := h.queries.DeleteStation(ctx, id); err != nil {
+		slog.Error("DeleteStation", "err", err)
+		if err := templates.AlertError("Entfernen fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if err := templates.HostDeleteCloseModal("Posten entfernt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) HostDeleteGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		return // TODO
+	}
+
+	if err := h.queries.DeleteGroup(ctx, id); err != nil {
+		slog.Error("DeleteGroup", "err", err)
+		if err := templates.AlertError("Entfernen fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	if err := templates.HostDeleteCloseModal("Gruppe entfernt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		// TODO redirect
+		return
+	}
+	if user == nil {
+		return
+	}
+
+	var data putStation
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	set := h.settings.Get()
+
+	category := sql.NullInt64{}
+	categoryName := sql.NullString{}
+	if set.Stations.EnableCategories {
+		cat, err := h.queries.GetStationCategory(ctx, data.Category)
+		if err != nil {
+			slog.Warn("GetStationCategory", "err", err)
+			templates.AlertError("Posten Kategorie nicht gefunden").Render(ctx, w)
+			return
+		}
+
+		category = sql.NullInt64{
+			Valid: true,
+			Int64: cat.ID,
+		}
+		categoryName = sql.NullString{
+			String: cat.Name,
+			Valid:  true,
+		}
+	}
+
+	updatedAt := time.Now()
+	if err := h.queries.UpdateStation(ctx, db.UpdateStationParams{
+		ID:        data.StationId,
+		TribeID:   data.TribeId, // just to be sure
+		UpdatedAt: updatedAt.Unix(),
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		Name:       data.Name,
+		Size:       data.Size,
+		CategoryID: category,
+		Description: sql.NullString{
+			String: data.Description,
+			Valid:  data.Description != "",
+		},
+		Requirements: sql.NullString{
+			String: data.Requirements,
+			Valid:  data.Requirements != "",
+		},
+		Vegan: data.Vegan,
+	}); err != nil {
+		slog.Error("UpdateStation", "err", err)
+		if err := templates.AlertError("Speichern fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	tribe, err := h.queries.GetTribeNameIcon(ctx, data.TribeId)
+	if err != nil {
+		slog.Info("sqlc", "err", err)
+	}
+
+	templates.HostStationUpdate(db.GetStationsDetailsRow{
+		ID:       data.StationId,
+		Name:     data.Name,
+		Category: categoryName,
+		Tribe: sql.NullString{
+			String: tribe.Name,
+			Valid:  true,
+		},
+		Size:      data.Size,
+		TribeIcon: tribe.TribeIcon,
+	}, set.Stations.EnableCategories,
+	).Render(ctx, w)
+}
+
+func (h *Handler) HostPutGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		// TODO redirect
+		return
+	}
+	if user == nil {
+		return
+	}
+
+	var data putGroup
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	updatedAt := time.Now()
+	if err := h.queries.UpdateGroup(ctx, db.UpdateGroupParams{
+		UpdatedAt: updatedAt.Unix(),
+		Name:      data.Name,
+		Comment: sql.NullString{
+			String: data.Comment,
+			Valid:  data.Comment != "",
+		},
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		ID: data.GroupId,
+		Size: sql.NullInt64{
+			Int64: data.Size,
+			Valid: true,
+		},
+		TribeID:  data.TribeId, // just to be sure
+		Grouping: data.Grouping,
+		Vegan:    data.Vegan,
+	}); err != nil {
+		slog.Error("UpdateGroup", "err", err)
+		if err := templates.AlertError("Speichern fehlgeschlagen").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	tribe, err := h.queries.GetTribeNameIcon(ctx, data.TribeId)
+	if err != nil {
+		slog.Info("sqlc", "err", err)
+	}
+
+	templates.HostGroupUpdate(db.GetGroupsDetailsRow{
+		ID:       data.GroupId,
+		Name:     data.Name,
+		Grouping: data.Grouping,
+		Tribe: sql.NullString{
+			String: tribe.Name,
+			Valid:  true,
+		},
+		Size: sql.NullInt64{
+			Int64: data.Size,
+			Valid: true,
+		},
+		TribeIcon: tribe.TribeIcon,
+	}).Render(ctx, w)
+}
+
+func (h *Handler) GetStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return // TODO
+	}
+
+	station, err := h.queries.GetStation(ctx, id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return // TODO
+	}
+
+	categories, err := h.queries.GetStationCategories(ctx)
+	if err != nil {
+		slog.Error("GetStationCategories", "err", err)
+		return // TODO
+	}
+
+	set := h.settings.Get()
+
+	self := station.UpdatedBy.Valid && station.UpdatedBy.Int64 == user.ID
+
+	w.WriteHeader(http.StatusOK)
+	if err := templates.HostStationModal(
+		station,
+		csrf.Token(r),
+		set.Stations.EnableCategories,
+		self,
+		user.HasPicture,
+		categories,
+	).Render(ctx, w); err != nil {
+		slog.Error("templ", "err", err)
+	}
+}
+
+func (h *Handler) GetGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	groupId, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return // TODO
+	}
+
+	group, err := h.queries.GetGroup(ctx, groupId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return // TODO
+	}
+
+	set := h.settings.Get()
+
+	self := group.UpdatedBy.Valid && group.UpdatedBy.Int64 == user.ID
+
+	w.WriteHeader(http.StatusOK)
+	if err := templates.HostGroupModal(
+		group,
+		set.Groups,
+		csrf.Token(r),
+		self,
+		user.HasPicture,
+	).Render(ctx, w); err != nil {
+		slog.Error("templ", "err", err)
+	}
+}
+
 func (h *Handler) GetGroups(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()

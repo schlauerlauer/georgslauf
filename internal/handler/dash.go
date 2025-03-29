@@ -431,35 +431,51 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 	category := sql.NullInt64{}
 	categoryName := sql.NullString{}
 	if set.Stations.EnableCategories {
-		cat, err := h.queries.GetStationCategory(ctx, data.Category)
+		existing, err := h.queries.GetCategoryOfStation(ctx, data.StationId)
 		if err != nil {
-			slog.Warn("GetStationCategory", "err", err)
-			templates.AlertError("Posten Kategorie nicht gefunden").Render(ctx, w)
-			return
+			slog.Warn("sqlc", "err", err)
+			return // TODO
 		}
 
-		count, err := h.queries.GetStationCategoryCount(ctx, sql.NullInt64{
-			Int64: cat.ID,
-			Valid: true,
-		})
-		if err != nil {
-			slog.Warn("GetStationCategoryCount", "err", err)
-			templates.AlertError("Kategorie Postenanzahl nicht verfügbar").Render(ctx, w)
-			return
-		}
+		// category stays the same
+		if existing.CategoryID.Valid && existing.CategoryID.Int64 == data.Category {
+			category = sql.NullInt64{
+				Valid: true,
+				Int64: existing.CategoryID.Int64,
+			}
+			categoryName = existing.Name
+		} else {
+			// category has changed
+			cat, err := h.queries.GetStationCategory(ctx, data.Category)
+			if err != nil {
+				slog.Warn("GetStationCategory", "err", err)
+				templates.AlertError("Posten Kategorie nicht gefunden").Render(ctx, w)
+				return
+			}
 
-		if count >= cat.Max && cat.Max != 0 {
-			templates.AlertError("Die Posten Kategorie ist voll").Render(ctx, w)
-			return
-		}
+			count, err := h.queries.GetStationCategoryCount(ctx, sql.NullInt64{
+				Int64: cat.ID,
+				Valid: true,
+			})
+			if err != nil {
+				slog.Warn("GetStationCategoryCount", "err", err)
+				templates.AlertError("Kategorie Postenanzahl nicht verfügbar").Render(ctx, w)
+				return
+			}
 
-		category = sql.NullInt64{
-			Valid: true,
-			Int64: cat.ID,
-		}
-		categoryName = sql.NullString{
-			String: cat.Name,
-			Valid:  true,
+			if count >= cat.Max && cat.Max != 0 {
+				templates.AlertError("Die Posten Kategorie ist voll").Render(ctx, w)
+				return
+			}
+
+			category = sql.NullInt64{
+				Valid: true,
+				Int64: cat.ID,
+			}
+			categoryName = sql.NullString{
+				String: cat.Name,
+				Valid:  true,
+			}
 		}
 	}
 
@@ -511,7 +527,6 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("test")
 	if err := templates.PutStation(updatedAt, data.StationId, data.Name, user.Firstname, user.HasPicture, categoryName, set.Stations.EnableCategories).Render(ctx, w); err != nil {
 		slog.Error("PutStation", "err", err)
 		return

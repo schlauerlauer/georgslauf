@@ -16,6 +16,15 @@ from station_categories sc
 left join stations s on s.category_id = sc.id
 group by s.category_id;
 
+-- name: GetCategoryOfStation :one
+select
+	s.category_id
+	,sc.name
+from stations s
+left join station_categories sc on s.category_id = sc.id
+where s.id = ?
+limit 1;
+
 -- name: GetStationCategory :one
 select
 	id
@@ -47,9 +56,9 @@ select
 	,g.size
 	,g.grouping
 	,g.comment
+	,g.vegan
 	,u.firstname
 	,ui.image as user_image
-	,g.vegan
 from groups g
 left join users u on g.updated_by = u.id
 left join user_icons ui on g.updated_by = ui.id
@@ -72,6 +81,53 @@ select
 from groups
 limit 1;
 
+-- name: GetStation :one
+select
+	s.id
+	,s.created_at
+	,s.updated_at
+	,s.name
+	,s.abbr
+	,s.size
+	,s.category_id
+	,s.lati
+	,s.long
+	,s.description
+	,s.requirements
+	,s.vegan
+	,s.tribe_id
+	,s.updated_by
+	,sc.name as category_name
+	,u.firstname
+	,ui.image as user_image
+from stations s
+left join station_categories sc on category_id = sc.id
+left join users u on s.updated_by = u.id
+left join user_icons ui on s.updated_by = ui.id
+where s.id = ?
+limit 1;
+
+-- name: GetGroup :one
+select
+	g.id
+	,g.created_at
+	,g.updated_at
+	,g.name
+	,g.abbr
+	,g.size
+	,g.comment
+	,g.grouping
+	,g.vegan
+	,g.tribe_id
+	,g.updated_by
+	,u.firstname
+	,ui.image as user_image
+from groups g
+left join users u on g.updated_by = u.id
+left join user_icons ui on g.updated_by = ui.id
+where g.id = ?
+limit 1;
+
 -- name: GetStationsDetails :many
 select
 	s.id
@@ -85,6 +141,16 @@ left join tribes t on s.tribe_id = t.id
 left join tribe_icons ti on ti.id = t.id
 left join station_categories sc on s.category_id = sc.id
 order by s.created_at desc;
+
+-- name: GetTribeNameIcon :one
+select
+	t.name
+	,ti.id as tribe_icon
+from tribes t
+left join tribe_icons ti on ti.id = t.id
+where
+	t.id = ?
+limit 1;
 
 -- name: GetGroupsDetails :many
 select
@@ -289,10 +355,10 @@ select
 	,s.long
 	,s.description
 	,s.requirements
+	,s.vegan
 	,sc.name as category_name
 	,u.firstname
 	,ui.image as user_image
-	,s.vegan
 from stations s
 left join station_categories sc on category_id = sc.id
 left join users u on s.updated_by = u.id

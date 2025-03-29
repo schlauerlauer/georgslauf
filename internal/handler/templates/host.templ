@@ -2,6 +2,7 @@ package templates
 
 import (
 	"encoding/base64"
+	"fmt"
 	"georgslauf/acl"
 	"georgslauf/internal/db"
 	"georgslauf/internal/settings"
@@ -9,6 +10,7 @@ import (
 	"georgslauf/session"
 	"strconv"
 	"strings"
+	"time"
 )
 
 templ TribeIcon(tribeId int64, csrf string) {
@@ -559,6 +561,199 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 	}
 }
 
+templ HostStationUpdate(station db.GetStationsDetailsRow, enableCategories bool) {
+	// the order matters
+	@HostStationEntry(station, enableCategories)
+	@AlertSuccess("Gespeichert")
+	// NTH close modal instead for animation
+	<div hx-swap-oob="innerHTML:#modal-container"></div>
+}
+
+templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool) {
+	<tr id={ "station-" + strconv.FormatInt(station.ID, 10) }>
+		<td>
+			<div class="font-bold">{ station.Name }</div>
+		</td>
+		if enableCategories {
+			<td>
+				{ station.Category.String }
+			</td>
+		}
+		<td>
+			<div class="flex gap-x-2 items-center">
+				if station.TribeIcon.Valid {
+					<label class="avatar">
+						<div class="w-6">
+							<img
+								src={ "/icon/tribe/" + strconv.FormatInt(station.TribeIcon.Int64, 10) }
+								alt={ station.Tribe.String + " Icon" }
+							/>
+						</div>
+					</label>
+				}
+				<p>{ station.Tribe.String }</p>
+			</div>
+		</td>
+		<td>{ strconv.FormatInt(station.Size, 10) }</td>
+		<td>
+			<form
+				hx-get={ "/host/stations/" + strconv.FormatInt(station.ID, 10) }
+				hx-swap="innerHTML"
+				hx-target="#modal-container"
+			>
+				<button type="submit" class="btn btn-ghost btn-sm">
+					<span class="icon-[mdi--eye-outline]"></span>
+				</button>
+			</form>
+		</td>
+	</tr>
+}
+
+templ HostDeleteCloseModal(message string) {
+	@AlertSuccess(message)
+	// NTH close modal instead of removing
+	<div hx-swap-oob="innerHTML:#modal-container"></div>
+}
+
+templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Posten { station.Name }</h3>
+			<div class="mt-6 space-y-6">
+				// NTH duplicate from DashGroup
+				<form
+					class="space-y-4"
+					hx-put="/host/stations"
+					hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+					hx-swap="outerHTML"
+					hx-target={ "#station-" + strconv.FormatInt(station.ID, 10) }
+				>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Name</span>
+						</div>
+						<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Name }/>
+						<input type="hidden" name="tribe" value={ strconv.FormatInt(station.TribeID, 10) }/>
+						<input type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
+					</label>
+					if enableCategories {
+						<label class="form-control w-full max-w-xs">
+							<div class="label">
+								<span class="label-text">Kategorie</span>
+							</div>
+							<select required name="category" class="invalid:border-error select select-bordered">
+								if station.CategoryID.Valid {
+									<option selected value={ strconv.FormatInt(station.CategoryID.Int64, 10) }>{ station.CategoryName.String }</option>
+								} else {
+									<option disabled selected value="">Keine</option>
+								}
+								for _, cat := range categories {
+									<option value={ strconv.FormatInt(cat.ID, 10) }>
+										if cat.Max > 0 {
+											{ cat.Name + fmt.Sprintf(" (%d/%d)", cat.Count, cat.Max) }
+										} else {
+											{ cat.Name }
+										}
+									</option>
+								}
+							</select>
+						</label>
+					}
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Anzahl Personen</span>
+						</div>
+						<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
+					</label>
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Beschreibung</span>
+						</div>
+						<textarea name="description" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+					</label>
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Kommentar</span>
+						</div>
+						<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+						<div class="label">
+							<span class="label-text-alt">Allergien, Benötigtes Material, Ort, Sonstiges</span>
+						</div>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Anzahl Vegan</span>
+						</div>
+						<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
+					</label>
+					// TODO image
+					<div class="flex justify-between items-end flex-wrap gap-y-3">
+						<div class="flex gap-x-2">
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+							<form
+								hx-disinherit="*"
+							>
+								<button
+									type="button"
+									class="btn btn-error"
+									hx-delete={ "/host/stations/" + strconv.FormatInt(station.ID, 10) }
+									hx-target={ "#station-" + strconv.FormatInt(station.ID, 10) }
+									hx-swap="outerHTML"
+								>
+									Entfernen
+								</button>
+							</form>
+						</div>
+						<form method="dialog">
+							<button class="btn btn-neutral">Abbrechen</button>
+						</form>
+					</div>
+					<div class="flex">
+						<div class="badge badge-accent">
+							if t := time.Unix(station.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(station.UpdatedAt, 0).Format("02.01. 15:04") }
+							} else {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(station.UpdatedAt, 0).Format("15:04") }
+							}
+							if station.Firstname.Valid {
+								von { station.Firstname.String }
+								if len(station.UserImage) > 0 {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(station.UserImage) }
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								} else if self && hasPicture {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src="/icon/user"
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								}
+							}
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</dialog>
+}
+
 templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetStationsDetailsRow, csrf string, summary db.GetStationOverviewRow, enableCategories bool) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
@@ -580,7 +775,7 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 					<ul class="bg-base-200 rounded-lg p-4">
 						<h2 class="font-lg font-bold mb-3">Posten Übersicht</h2>
 						<li>Posten <strong>{ strconv.FormatInt(summary.Count, 10) }</strong></li>
-						<li>Angemeldet <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
+						<li>Personen <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
 						<li>Vegan <strong>{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) }</strong></li>
 					</ul>
 				</div>
@@ -593,37 +788,13 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 									<th>Kategorie</th>
 								}
 								<th>Stamm</th>
-								<th>Angemeldet</th>
+								<th>Personen</th>
+								<th>Details</th>
 							</tr>
 						</thead>
 						<tbody>
 							for _, entry := range stations {
-								<tr>
-									<td>
-										<div class="font-bold">{ entry.Name }</div>
-									</td>
-									if enableCategories {
-										<td>
-											{ entry.Category.String }
-										</td>
-									}
-									<td>
-										<div class="flex gap-x-2 items-center">
-											if entry.TribeIcon.Valid {
-												<label class="avatar">
-													<div class="w-6">
-														<img
-															src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
-															alt={ entry.Tribe.String + " Icon" }
-														/>
-													</div>
-												</label>
-											}
-											<p>{ entry.Tribe.String }</p>
-										</div>
-									</td>
-									<td>{ strconv.FormatInt(entry.Size, 10) }</td>
-								</tr>
+								@HostStationEntry(entry, enableCategories)
 							}
 						</tbody>
 						<tfoot>
@@ -633,14 +804,212 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 									<th>Kategorie</th>
 								}
 								<th>Stamm</th>
-								<th>Angemeldet</th>
+								<th>Personen</th>
+								<th>Details</th>
 							</tr>
 						</tfoot>
 					</table>
 				</div>
 			</div>
 		</div>
+		<div id="modal-container"></div>
 	}
+}
+
+templ HostGroupUpdate(group db.GetGroupsDetailsRow) {
+	// the order matters
+	@HostGroupEntry(group)
+	@AlertSuccess("Gespeichert")
+	// NTH close modal instead for animation
+	<div hx-swap-oob="innerHTML:#modal-container"></div>
+}
+
+templ HostGroupEntry(group db.GetGroupsDetailsRow) {
+	<tr id={ "group-" + strconv.FormatInt(group.ID, 10) }>
+		<td>
+			<div class="font-bold">{ group.Name }</div>
+		</td>
+		<td>
+			@groupGrouping(group.Grouping)
+		</td>
+		<td>
+			<div class="flex gap-x-2 items-center">
+				if group.TribeIcon.Valid {
+					<label class="avatar">
+						<div class="w-6">
+							<img
+								src={ "/icon/tribe/" + strconv.FormatInt(group.TribeIcon.Int64, 10) }
+								alt={ group.Tribe.String + " Icon" }
+							/>
+						</div>
+					</label>
+				}
+				<p>{ group.Tribe.String }</p>
+			</div>
+		</td>
+		<td>{ strconv.FormatInt(group.Size.Int64, 10) }</td>
+		<td>
+			<form
+				hx-get={ "/host/groups/" + strconv.FormatInt(group.ID, 10) }
+				hx-swap="innerHTML"
+				hx-target="#modal-container"
+			>
+				<button type="submit" class="btn btn-ghost btn-sm">
+					<span class="icon-[mdi--eye-outline]"></span>
+				</button>
+			</form>
+		</td>
+	</tr>
+}
+
+templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, self bool, hasPicture bool) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Gruppe { group.Name }</h3>
+			<div class="mt-6 space-y-6">
+				// NTH duplicate from DashGroup
+				<form
+					class="space-y-6"
+					hx-put="/host/groups"
+					hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+					hx-swap="outerHTML"
+					hx-target={ "#group-" + strconv.FormatInt(group.ID, 10) }
+				>
+					<input autocomplete="off" type="hidden" name="tribe" value={ strconv.FormatInt(group.TribeID, 10) }/>
+					<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Name</span>
+						</div>
+						<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Name }/>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Stufe</span>
+						</div>
+						<select autocomplete="off" required name="grouping" class="invalid:border-error select select-bordered">
+							switch group.Grouping {
+								case 0:
+									<option selected value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option value="3">Rover</option>
+								case 1:
+									<option value="0">Wölflinge</option>
+									<option selected value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option value="3">Rover</option>
+								case 2:
+									<option value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option selected value="2">Pfadis</option>
+									<option value="3">Rover</option>
+								case 3:
+									<option value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option selected value="3">Rover</option>
+								default:
+									<option value="" selected disabled>Auswählen</option>
+									<option value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option value="3">Rover</option>
+							}
+						</select>
+					</label>
+					<label class="form-control w-full">
+						<div class="label">
+							<span class="label-text">Gruppen Größe</span>
+						</div>
+						<input autocomplete="off" name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, set.Min), 10) } class="range" step="1"/>
+						<div class="flex w-full justify-between px-2 pt-1 text-xs">
+							for num := range set.Max - set.Min + 1 {
+								<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
+							}
+						</div>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Anzahl Vegan</span>
+						</div>
+						<input autocomplete="off" name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(group.Vegan, 10) } step="1"/>
+					</label>
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Kommentar</span>
+						</div>
+						<textarea autocomplete="off" name="comment" class="textarea textarea-bordered h-24" placeholder="Kommentar">{ group.Comment.String }</textarea>
+						<div class="label">
+							<span class="label-text-alt">Allergien, Sonstiges</span>
+						</div>
+					</label>
+					// TODO image
+					<div class="flex justify-between items-end flex-wrap gap-y-3">
+						<div class="flex gap-x-2">
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+							<form
+								hx-disinherit="*"
+							>
+								<button
+									hx-delete={ "/host/groups/" + strconv.FormatInt(group.ID, 10) }
+									hx-target={ "#group-" + strconv.FormatInt(group.ID, 10) }
+									hx-swap="outerHTML"
+									type="button"
+									class="btn btn-error"
+								>
+									Entfernen
+								</button>
+							</form>
+						</div>
+						<form method="dialog">
+							<button class="btn btn-neutral">Abbrechen</button>
+						</form>
+					</div>
+					<div class="flex">
+						<div class="badge badge-accent">
+							if t := time.Unix(group.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(group.UpdatedAt, 0).Format("02.01. 15:04") }
+							} else {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(group.UpdatedAt, 0).Format("15:04") }
+							}
+							if group.Firstname.Valid {
+								von { group.Firstname.String }
+								if len(group.UserImage) > 0 {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(group.UserImage) }
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								} else if self && hasPicture {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src="/icon/user"
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								}
+							}
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</dialog>
 }
 
 templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, csrf string, summary db.GetGroupOverviewRow) {
@@ -664,7 +1033,7 @@ templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroups
 					<ul class="bg-base-200 rounded-lg p-4">
 						<h2 class="font-lg font-bold mb-3">Gruppen Übersicht</h2>
 						<li>Gruppen <strong>{ strconv.FormatInt(summary.Count, 10) }</strong></li>
-						<li>Angemeldet <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
+						<li>Personen <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
 						<li>Vegan <strong>{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) }</strong></li>
 					</ul>
 				</div>
@@ -675,35 +1044,13 @@ templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroups
 								<th>Name</th>
 								<th>Stufe</th>
 								<th>Stamm</th>
-								<th>Angemeldet</th>
+								<th>Personen</th>
+								<th>Details</th>
 							</tr>
 						</thead>
 						<tbody>
 							for _, entry := range groups {
-								<tr>
-									<td>
-										<div class="font-bold">{ entry.Name }</div>
-									</td>
-									<td>
-										@groupGrouping(entry.Grouping)
-									</td>
-									<td>
-										<div class="flex gap-x-2 items-center">
-											if entry.TribeIcon.Valid {
-												<label class="avatar">
-													<div class="w-6">
-														<img
-															src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
-															alt={ entry.Tribe.String + " Icon" }
-														/>
-													</div>
-												</label>
-											}
-											<p>{ entry.Tribe.String }</p>
-										</div>
-									</td>
-									<td>{ strconv.FormatInt(entry.Size.Int64, 10) }</td>
-								</tr>
+								@HostGroupEntry(entry)
 							}
 						</tbody>
 						<tfoot>
@@ -711,13 +1058,15 @@ templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroups
 								<th>Name</th>
 								<th>Stufe</th>
 								<th>Stamm</th>
-								<th>Angemeldet</th>
+								<th>Personen</th>
+								<th>Details</th>
 							</tr>
 						</tfoot>
 					</table>
 				</div>
 			</div>
 		</div>
+		<div id="modal-container"></div>
 	}
 }
 
