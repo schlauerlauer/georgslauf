@@ -14,7 +14,7 @@ select
 	,count(s.id) as count
 from station_categories sc
 left join stations s on s.category_id = sc.id
-group by s.category_id;
+group by sc.id;
 
 -- name: GetCategoryOfStation :one
 select
