@@ -13,11 +13,13 @@ type MdService struct {
 }
 
 type MdData struct {
-	Intro []byte
+	Headline string
+	Intro    []byte
 }
 
 type Input struct {
-	Intro string `json:"i" schema:"intro" validate:"max=2048" mod:"trim,sanitize"`
+	Headline string `json:"h" schema:"headline" validate:"max=64" mod:"trim,sanitize"`
+	Intro    string `json:"i" schema:"intro" validate:"max=2048" mod:"trim,sanitize"`
 }
 
 func New() *MdService {
@@ -41,7 +43,8 @@ func (s *MdService) Update(data Input) (MdData, error) {
 	}
 
 	output := MdData{
-		Intro: buffer.Bytes(),
+		Intro:    buffer.Bytes(),
+		Headline: data.Headline,
 	}
 
 	s.data = output

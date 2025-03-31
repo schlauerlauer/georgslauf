@@ -16,19 +16,22 @@ type HostParam struct {
 templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home md.MdData, host HostParam) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
+			<div class="px-3 mb-6 flex justify-between items-center lg:flex-row flex-col">
+				<h2 class="text-2xl font-bold">{ home.Headline }</h2>
+				<div class="my-6 flex gap-x-2 items-center justify-end">
+					<label class="avatar">
+						<div class="w-8">
+							<img
+								src={ "/icon/tribe/" + strconv.FormatInt(host.ID, 10) }
+							/>
+						</div>
+					</label>
+					<p>{ host.Name }</p>
+				</div>
+			</div>
 			<article class="prose w-full mx-auto px-3 max-w-screen-lg">
 				@templ.Raw(string(home.Intro))
 			</article>
-			<div class="my-6 flex gap-x-2 items-center justify-end">
-				<label class="avatar">
-					<div class="w-8">
-						<img
-							src={ "/icon/tribe/" + strconv.FormatInt(host.ID, 10) }
-						/>
-					</div>
-				</label>
-				<p>{ host.Name }</p>
-			</div>
 			// <span class="align-middle text-lg icon-[mdi--checkbox-marked-circle]"></span>
 			if len(schedule) > 0 {
 				<div class="my-16 max-w-screen-md">

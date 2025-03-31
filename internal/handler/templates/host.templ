@@ -311,6 +311,12 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							class="space-y-3"
 							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						>
+							<label class="form-control w-full">
+								<div class="label">
+									<span class="label-text">Titel</span>
+								</div>
+								<input autocomplete="off" maxlength="64" name="headline" type="text" placeholder="Georgslauf" class="input input-bordered w-full" value={ set.Home.Headline }/>
+							</label>
 							<label class="form-control">
 								<div class="label">
 									<span class="label-text">Startseite (markdown)</span>
