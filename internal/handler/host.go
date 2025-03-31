@@ -748,9 +748,13 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedAt := time.Now()
-	if err := h.queries.UpdateStation(ctx, db.UpdateStationParams{
-		ID:        data.StationId,
-		TribeID:   data.TribeId, // just to be sure
+	if err := h.queries.UpdateStationHost(ctx, db.UpdateStationHostParams{
+		ID:      data.StationId,
+		TribeID: data.TribeId,
+		Abbr: sql.NullString{
+			Valid:  data.Abbr != "",
+			String: data.Abbr,
+		},
 		UpdatedAt: updatedAt.Unix(),
 		UpdatedBy: sql.NullInt64{
 			Int64: user.ID,
@@ -791,6 +795,10 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 		},
 		Size:      data.Size,
 		TribeIcon: tribe.TribeIcon,
+		Abbr: sql.NullString{
+			String: data.Abbr,
+			Valid:  data.Abbr != "",
+		},
 	}, set.Stations.EnableCategories,
 	).Render(ctx, w)
 }
@@ -820,7 +828,12 @@ func (h *Handler) HostPutGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedAt := time.Now()
-	if err := h.queries.UpdateGroup(ctx, db.UpdateGroupParams{
+	if err := h.queries.UpdateGroupHost(ctx, db.UpdateGroupHostParams{
+		TribeID: data.TribeId,
+		Abbr: sql.NullString{
+			String: data.Abbr,
+			Valid:  data.Abbr != "",
+		},
 		UpdatedAt: updatedAt.Unix(),
 		Name:      data.Name,
 		Comment: sql.NullString{
@@ -836,7 +849,6 @@ func (h *Handler) HostPutGroup(w http.ResponseWriter, r *http.Request) {
 			Int64: data.Size,
 			Valid: true,
 		},
-		TribeID:  data.TribeId, // just to be sure
 		Grouping: data.Grouping,
 		Vegan:    data.Vegan,
 	}); err != nil {
@@ -865,6 +877,10 @@ func (h *Handler) HostPutGroup(w http.ResponseWriter, r *http.Request) {
 			Valid: true,
 		},
 		TribeIcon: tribe.TribeIcon,
+		Abbr: sql.NullString{
+			String: data.Abbr,
+			Valid:  data.Abbr != "",
+		},
 	}).Render(ctx, w)
 }
 
@@ -904,6 +920,12 @@ func (h *Handler) GetStation(w http.ResponseWriter, r *http.Request) {
 
 	self := station.UpdatedBy.Valid && station.UpdatedBy.Int64 == user.ID
 
+	tribes, err := h.queries.GetTribesName(ctx)
+	if err != nil {
+		slog.Error("GetTribesName", "err", err)
+		return // TODO
+	}
+
 	w.WriteHeader(http.StatusOK)
 	if err := templates.HostStationModal(
 		station,
@@ -912,6 +934,7 @@ func (h *Handler) GetStation(w http.ResponseWriter, r *http.Request) {
 		self,
 		user.HasPicture,
 		categories,
+		tribes,
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)
 	}
@@ -947,6 +970,12 @@ func (h *Handler) GetGroup(w http.ResponseWriter, r *http.Request) {
 
 	self := group.UpdatedBy.Valid && group.UpdatedBy.Int64 == user.ID
 
+	tribes, err := h.queries.GetTribesName(ctx)
+	if err != nil {
+		slog.Error("GetTribesName", "err", err)
+		return // TODO
+	}
+
 	w.WriteHeader(http.StatusOK)
 	if err := templates.HostGroupModal(
 		group,
@@ -954,6 +983,7 @@ func (h *Handler) GetGroup(w http.ResponseWriter, r *http.Request) {
 		csrf.Token(r),
 		self,
 		user.HasPicture,
+		tribes,
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)
 	}

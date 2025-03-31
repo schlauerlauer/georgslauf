@@ -6,6 +6,13 @@ from tribes t
 left join tribe_icons ti on ti.id = t.id
 ;
 
+-- name: GetTribesName :many
+select
+	t.id
+	,t.short
+	,t.name
+from tribes t;
+
 -- name: GetStationCategories :many
 select
 	sc.id
@@ -132,6 +139,7 @@ limit 1;
 select
 	s.id
 	,s.name
+	,s.abbr
 	,sc.name as category
 	,t.name as tribe
 	,s.size
@@ -157,8 +165,9 @@ select
 	g.id
 	,g.name
 	,g.grouping
-	,t.name as tribe
 	,g.size
+	,g.abbr
+	,t.name as tribe
 	,ti.id as tribe_icon
 from groups g
 left join tribes t on g.tribe_id = t.id
@@ -187,6 +196,21 @@ set
 where
 	id = ?
 	and tribe_id = ?;
+
+-- name: UpdateGroupHost :exec
+update groups
+set
+	name = ?
+	,size = ?
+	,grouping = ?
+	,comment = ?
+	,updated_at = ?
+	,updated_by = ?
+	,vegan = ?
+	,abbr = ?
+	,tribe_id = ?
+where
+	id = ?;
 
 -- name: InsertStation :one
 insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by, vegan)
@@ -380,6 +404,22 @@ set
 where
 	id = ?
 	and tribe_id = ?;
+
+-- name: UpdateStationHost :exec
+update stations
+set
+	updated_at = ?
+	,updated_by = ?
+	,name = ?
+	,size = ?
+	,category_id = ?
+	,description = ?
+	,requirements = ?
+	,vegan = ?
+	,tribe_id = ?
+	,abbr = ?
+where
+	id = ?;
 
 -- name: GetStationsHost :many
 select

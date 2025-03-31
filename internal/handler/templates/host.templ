@@ -139,7 +139,12 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 						>
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
-									<span class="label-text">Gruppen erstellen</span>
+									<div class="label-text">
+										Gruppen erstellen
+										<div class="tooltip" data-tip="StaVos können Gruppen anlegen">
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</div>
 									<input
 										name="group-create"
 										type="checkbox"
@@ -154,7 +159,12 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							</div>
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
-									<span class="label-text">Gruppen verändern</span>
+									<span class="label-text">
+										Gruppen verändern
+										<div class="tooltip" data-tip="StaVos können ihre Gruppen verändern">
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</span>
 									<input
 										name="group-update"
 										type="checkbox"
@@ -169,7 +179,12 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							</div>
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
-									<span class="label-text">Gruppen löschen</span>
+									<span class="label-text">
+										Gruppen löschen
+										<div class="tooltip" data-tip="StaVos können ihre Gruppen löschen">
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</span>
 									<input
 										name="group-delete"
 										type="checkbox"
@@ -177,6 +192,26 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 										value="true"
 										autocomplete="off"
 										if set.Groups.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">
+										Laufgruppe anzeigen
+										<div class="tooltip" data-tip='z.B. "Laufgruppe 2" den Posten und StaVos anzeigen'>
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</span>
+									<input
+										name="group-abbr"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.ShowAbbr {
 											checked="checked"
 										}
 									/>
@@ -262,6 +297,21 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 										value="true"
 										autocomplete="off"
 										if set.Stations.EnableCategories {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten Kürzel anzeigen</span>
+									<input
+										name="station-abbr"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.ShowAbbr {
 											checked="checked"
 										}
 									/>
@@ -434,7 +484,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 					</div>
 				}
 				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
-					<summary class="collapse-title font-semibold">Account Rollen Erklärung</summary>
+					<summary class="collapse-title font-semibold">Account Berechtigung Erklärung</summary>
 					<div class="collapse-content">
 						<p class="text-sm mb-2 font-light">
 							Bei Rollenänderungen kann es sein, dass ein neuer login per <a class="link" href="/login">/login</a> notwendig ist.
@@ -443,7 +493,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 							<tbody>
 								<tr>
 									<td><div class="badge badge-neutral">Abgelehnt</div></td>
-									<td><span class="font-light">der Account bekommt für den <strong>Georgslauf</strong> keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Georgslauf</strong> keine Berechtigung</span></td>
 								</tr>
 								<tr>
 									<td><div class="badge badge-primary">Normal</div></td>
@@ -580,6 +630,9 @@ templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool) 
 		<td>
 			<div class="font-bold">{ station.Name }</div>
 		</td>
+		<td>
+			{ station.Abbr.String }
+		</td>
 		if enableCategories {
 			<td>
 				{ station.Category.String }
@@ -621,7 +674,7 @@ templ HostDeleteCloseModal(message string) {
 	<div hx-swap-oob="innerHTML:#modal-container"></div>
 }
 
-templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow) {
+templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow, tribes []db.GetTribesNameRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -629,7 +682,7 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 			</form>
 			<h3 class="text-lg">Posten { station.Name }</h3>
 			<div class="mt-6 space-y-6">
-				// NTH duplicate from DashGroup
+				// NTH (almost) duplicate from DashGroup
 				<form
 					class="space-y-4"
 					hx-put="/host/stations"
@@ -642,7 +695,6 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 							<span class="label-text">Name</span>
 						</div>
 						<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Name }/>
-						<input type="hidden" name="tribe" value={ strconv.FormatInt(station.TribeID, 10) }/>
 						<input type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
 					</label>
 					if enableCategories {
@@ -694,6 +746,31 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 							<span class="label-text">Anzahl Vegan</span>
 						</div>
 						<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
+					</label>
+					<div class="py-4">
+						<hr/>
+					</div>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Postenkürzel</span>
+							<span class="label-text-alt">z.B. "A" - muss einmalig sein</span>
+						</div>
+						<input name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Abbr.String }/>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Stamm</span>
+						</div>
+						<select autocomplete="off" required name="tribe" class="invalid:border-error select select-bordered">
+							<option selected value={ strconv.FormatInt(station.TribeID, 10) }>Beibehalten</option>
+							for _, tribe := range tribes {
+								if tribe.Short.Valid {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Short.String }</option>
+								} else {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Name }</option>
+								}
+							}
+						</select>
 					</label>
 					// TODO image
 					<div class="flex justify-between items-end flex-wrap gap-y-3">
@@ -777,19 +854,29 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
 			<div class="mt-6">
-				<div class="my-6">
-					<ul class="bg-base-200 rounded-lg p-4">
-						<h2 class="font-lg font-bold mb-3">Posten Übersicht</h2>
-						<li>Posten <strong>{ strconv.FormatInt(summary.Count, 10) }</strong></li>
-						<li>Personen <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
-						<li>Vegan <strong>{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) }</strong></li>
-					</ul>
+				<div class="mb-6 stats shadow bg-base-200">
+					<div class="stat">
+						<div class="stat-figure text-primary">
+							<span class="w-12 h-12 icon-[mdi--map-marker-outline]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Posten</div>
+						<div class="stat-value text-primary">{ strconv.FormatInt(summary.Count, 10) }</div>
+					</div>
+					<div class="stat">
+						<div class="stat-figure text-secondary">
+							<span class="w-12 h-12 icon-[material-symbols--group-outline-rounded]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Personen</div>
+						<div class="stat-value text-secondary">{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</div>
+						<div class="stat-desc">{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) } davon Vegan</div>
+					</div>
 				</div>
 				<div class="overflow-x-auto">
 					<table class="table">
 						<thead>
 							<tr>
 								<th>Name</th>
+								<th>Kürzel</th>
 								if enableCategories {
 									<th>Kategorie</th>
 								}
@@ -806,6 +893,7 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 						<tfoot>
 							<tr>
 								<th>Name</th>
+								<th>Kürzel</th>
 								if enableCategories {
 									<th>Kategorie</th>
 								}
@@ -834,6 +922,9 @@ templ HostGroupEntry(group db.GetGroupsDetailsRow) {
 	<tr id={ "group-" + strconv.FormatInt(group.ID, 10) }>
 		<td>
 			<div class="font-bold">{ group.Name }</div>
+		</td>
+		<td>
+			{ group.Abbr.String }
 		</td>
 		<td>
 			@groupGrouping(group.Grouping)
@@ -868,7 +959,7 @@ templ HostGroupEntry(group db.GetGroupsDetailsRow) {
 	</tr>
 }
 
-templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, self bool, hasPicture bool) {
+templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, self bool, hasPicture bool, tribes []db.GetTribesNameRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -876,7 +967,7 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 			</form>
 			<h3 class="text-lg">Gruppe { group.Name }</h3>
 			<div class="mt-6 space-y-6">
-				// NTH duplicate from DashGroup
+				// NTH (almost) duplicate from DashGroup
 				<form
 					class="space-y-6"
 					hx-put="/host/groups"
@@ -884,7 +975,6 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 					hx-swap="outerHTML"
 					hx-target={ "#group-" + strconv.FormatInt(group.ID, 10) }
 				>
-					<input autocomplete="off" type="hidden" name="tribe" value={ strconv.FormatInt(group.TribeID, 10) }/>
 					<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
 					<label class="form-control w-full max-w-xs">
 						<div class="label">
@@ -952,6 +1042,31 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 						<div class="label">
 							<span class="label-text-alt">Allergien, Sonstiges</span>
 						</div>
+					</label>
+					<div class="py-4">
+						<hr/>
+					</div>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Laufgruppe</span>
+							<span class="label-text-alt">z.B. "2" - muss einmalig sein</span>
+						</div>
+						<input name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Abbr.String }/>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Stamm</span>
+						</div>
+						<select autocomplete="off" required name="tribe" class="invalid:border-error select select-bordered">
+							<option selected value={ strconv.FormatInt(group.TribeID, 10) }>Beibehalten</option>
+							for _, tribe := range tribes {
+								if tribe.Short.Valid {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Short.String }</option>
+								} else {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Name }</option>
+								}
+							}
+						</select>
 					</label>
 					// TODO image
 					<div class="flex justify-between items-end flex-wrap gap-y-3">
@@ -1035,19 +1150,29 @@ templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroups
 				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
 			<div class="mt-6">
-				<div class="my-6">
-					<ul class="bg-base-200 rounded-lg p-4">
-						<h2 class="font-lg font-bold mb-3">Gruppen Übersicht</h2>
-						<li>Gruppen <strong>{ strconv.FormatInt(summary.Count, 10) }</strong></li>
-						<li>Personen <strong>{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</strong></li>
-						<li>Vegan <strong>{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) }</strong></li>
-					</ul>
+				<div class="mb-6 stats shadow bg-base-200">
+					<div class="stat">
+						<div class="stat-figure text-primary">
+							<span class="w-12 h-12 icon-[fluent--run-20-regular]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Gruppen</div>
+						<div class="stat-value text-primary">{ strconv.FormatInt(summary.Count, 10) }</div>
+					</div>
+					<div class="stat">
+						<div class="stat-figure text-secondary">
+							<span class="w-12 h-12 icon-[material-symbols--group-outline-rounded]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Personen</div>
+						<div class="stat-value text-secondary">{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</div>
+						<div class="stat-desc">{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) } davon Vegan</div>
+					</div>
 				</div>
 				<div class="overflow-x-auto">
 					<table class="table">
 						<thead>
 							<tr>
 								<th>Name</th>
+								<th>Laufgruppe</th>
 								<th>Stufe</th>
 								<th>Stamm</th>
 								<th>Personen</th>
@@ -1062,6 +1187,7 @@ templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroups
 						<tfoot>
 							<tr>
 								<th>Name</th>
+								<th>Laufgruppe</th>
 								<th>Stufe</th>
 								<th>Stamm</th>
 								<th>Personen</th>
@@ -1173,13 +1299,13 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 					</div>
 				}
 				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
-					<summary class="collapse-title font-semibold">Stamm Rollen Erklärung</summary>
+					<summary class="collapse-title font-semibold">Stamm Berechtigung Erklärung</summary>
 					<div class="collapse-content">
 						<table class="table">
 							<tbody>
 								<tr>
 									<td><div class="badge badge-neutral">Abgelehnt</div></td>
-									<td><span class="font-light">der Account bekommt für den <strong>Stamm</strong> keine Berechtigung und diese Nachricht wird nicht mehr angezeigt</span></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Stamm</strong> keine Berechtigung</span></td>
 								</tr>
 								<tr>
 									<td><div class="badge badge-primary">Normal</div></td>
@@ -1209,7 +1335,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 								<th>Name</th>
 								<th>Gruppen</th>
 								<th>Posten</th>
-								<th>Accounts</th>
+								<th>Berechtigungen</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1345,7 +1471,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 								<th>Name</th>
 								<th>Gruppen</th>
 								<th>Posten</th>
-								<th>Accounts</th>
+								<th>Berechtigungen</th>
 							</tr>
 						</tfoot>
 					</table>

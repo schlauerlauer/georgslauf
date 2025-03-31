@@ -391,8 +391,9 @@ type putStation struct {
 	Size         int64  `schema:"size" validate:"gte=0"`
 	Vegan        int64  `schema:"vegan" validate:"gte=0"`
 	Category     int64  `schema:"category"`
-	Description  string `schemal:"description" validate:"max=1024" mod:"trim,sanitize"`
-	Requirements string `schemal:"requirements" validate:"max=1024" mod:"trim,sanitize"`
+	Description  string `schema:"description" validate:"max=1024" mod:"trim,sanitize"`
+	Requirements string `schema:"requirements" validate:"max=1024" mod:"trim,sanitize"`
+	Abbr         string `schema:"abbr" validate:"max=3"` // only for host
 }
 
 func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
@@ -541,6 +542,7 @@ type putGroup struct {
 	Vegan    int64  `schema:"vegan" validate:"gte=0"`
 	Comment  string `schemal:"comment" validate:"max=1024" mod:"trim,sanitize"`
 	Grouping int64  `schema:"grouping" validate:"gte=0,lte=3"`
+	Abbr     string `schema:"abbr" validate:"max=3"` // only for host
 }
 
 func (h *Handler) PutGroup(w http.ResponseWriter, r *http.Request) {

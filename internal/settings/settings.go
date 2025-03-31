@@ -34,9 +34,9 @@ type Groups struct {
 	AllowCreate bool  `json:"c" schema:"group-create"`
 	AllowUpdate bool  `json:"u" schema:"group-update"`
 	AllowDelete bool  `json:"d" schema:"group-delete"`
+	ShowAbbr    bool  `json:"s" schema:"group-abbr"`
 	Min         int64 `json:"min" schema:"group-min" validate:"gte=0"`
 	Max         int64 `json:"max" schema:"group-max" validate:"gte=0,gtfield=Min"`
-	// TODO anmeldeschluss
 }
 
 type Stations struct {
@@ -44,6 +44,7 @@ type Stations struct {
 	AllowUpdate      bool `json:"u" schema:"station-update"`
 	AllowDelete      bool `json:"d" schema:"station-delete"`
 	EnableCategories bool `json:"ca" schema:"station-categories"`
+	ShowAbbr         bool `json:"s" schema:"station-abbr"`
 }
 
 type Help struct {
