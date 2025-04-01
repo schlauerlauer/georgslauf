@@ -97,8 +97,6 @@ select
 	,s.abbr
 	,s.size
 	,s.category_id
-	,s.lati
-	,s.long
 	,s.description
 	,s.requirements
 	,s.vegan
@@ -213,8 +211,8 @@ where
 	id = ?;
 
 -- name: InsertStation :one
-insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by, vegan)
-values (?,?,?,?,?,?,?,?,?,?,?)
+insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by, vegan, pref_loc)
+values (?,?,?,?,?,?,?,?,?,?,?,?)
 returning id;
 
 -- name: InsertGroup :one
@@ -375,11 +373,10 @@ select
 	,s.abbr
 	,s.size
 	,s.category_id
-	,s.lati
-	,s.long
 	,s.description
 	,s.requirements
 	,s.vegan
+	,s.pref_loc
 	,sc.name as category_name
 	,u.firstname
 	,ui.image as user_image
@@ -401,6 +398,7 @@ set
 	,description = ?
 	,requirements = ?
 	,vegan = ?
+	,pref_loc = ?
 where
 	id = ?
 	and tribe_id = ?;

@@ -178,6 +178,11 @@ table "stations" {
 		type = text
 	}
 
+	column "pref_loc" {
+		nul  = true
+		type = text
+	}
+
 	column "size" {
 		null = false
 		type = integer
@@ -198,16 +203,6 @@ table "stations" {
 	column "category_id" {
 		null = true
 		type = integer
-	}
-
-	column "lati" {
-		null = true
-		type = real
-	}
-
-	column "long" {
-		null = true
-		type = real
 	}
 
 	column "image_id" {

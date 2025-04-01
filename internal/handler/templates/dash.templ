@@ -88,7 +88,45 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 				}
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
-						<span class="label-text">Größe</span>
+						<span class="label-text">Bevorzugter Standort</span>
+						<span class="label-text-alt">
+							siehe
+							<a class="link" rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
+								Dokument
+							</a>
+						</span>
+					</div>
+					<select
+						name="prefLoc"
+						class="invalid:border-error select select-bordered"
+						autocomplete="off"
+					>
+						<option value="">Keinen</option>
+						<option value="A">A</option>
+						<option value="B">B</option>
+						<option value="C">C</option>
+						<option value="D">D</option>
+						<option value="E">E</option>
+						<option value="F">F</option>
+						<option value="G">G</option>
+						<option value="H">H</option>
+						<option value="I">I</option>
+						<option value="J">J</option>
+						<option value="K">K</option>
+						<option value="L">L</option>
+						<option value="M">M</option>
+						<option value="N">N</option>
+						<option value="O">O</option>
+						<option value="P">P</option>
+						<option value="Q">Q</option>
+						<option value="R">R</option>
+						<option value="S">S</option>
+						<option value="T">T</option>
+					</select>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Anzahl Personen</span>
 					</div>
 					<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value="1" step="1"/>
 				</label>
@@ -160,8 +198,8 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 						<span class="label-text">Name</span>
 					</div>
 					<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Name }/>
-					<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
-					<input type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
+					<input type="hidden" autocomplete="off" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+					<input type="hidden" autocomplete="off" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
 				</label>
 				if set.EnableCategories {
 					<label class="form-control w-full max-w-xs">
@@ -188,21 +226,62 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 				}
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
+						<span class="label-text">Bevorzugter Standort</span>
+						<span class="label-text-alt">
+							siehe
+							<a class="link" rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
+								Dokument
+							</a>
+						</span>
+					</div>
+					<select
+						name="prefLoc"
+						class="invalid:border-error select select-bordered"
+						autocomplete="off"
+					>
+						if station.PrefLoc.Valid {
+							<option selected value={ station.PrefLoc.String }>{ station.PrefLoc.String }</option>
+						}
+						<option value="">Keinen</option>
+						<option value="A">A</option>
+						<option value="B">B</option>
+						<option value="C">C</option>
+						<option value="D">D</option>
+						<option value="E">E</option>
+						<option value="F">F</option>
+						<option value="G">G</option>
+						<option value="H">H</option>
+						<option value="I">I</option>
+						<option value="J">J</option>
+						<option value="K">K</option>
+						<option value="L">L</option>
+						<option value="M">M</option>
+						<option value="N">N</option>
+						<option value="O">O</option>
+						<option value="P">P</option>
+						<option value="Q">Q</option>
+						<option value="R">R</option>
+						<option value="S">S</option>
+						<option value="T">T</option>
+					</select>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
 						<span class="label-text">Anzahl Personen</span>
 					</div>
-					<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
+					<input autocomplete="off" name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
 				</label>
 				<label class="form-control">
 					<div class="label">
 						<span class="label-text">Beschreibung</span>
 					</div>
-					<textarea name="description" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+					<textarea autocomplete="off" name="description" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
 				</label>
 				<label class="form-control">
 					<div class="label">
 						<span class="label-text">Kommentar</span>
 					</div>
-					<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+					<textarea autocomplete="off" name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
 					<div class="label">
 						<span class="label-text-alt">Allergien, Benötigtes Material, Ort, Sonstiges</span>
 					</div>
@@ -211,7 +290,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 					<div class="label">
 						<span class="label-text">Anzahl Vegan</span>
 					</div>
-					<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
+					<input autocomplete="off" name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
 				</label>
 				// TODO image
 				<div class="flex justify-between items-end flex-wrap gap-y-3">
@@ -321,6 +400,19 @@ templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set setti
 			} else {
 				<button class="btn btn-disabled">Posten anmelden deaktiviert</button>
 			}
+		</div>
+	</div>
+	<div class="mt-9 card bg-base-200 w-96 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title">Posten Standorte</h2>
+			<p>Mögliche Standorte ansehen</p>
+			<div class="card-actions justify-end">
+				<a rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
+					<button class="btn btn-primary">
+						<span class="text-2xl icon-[mingcute--pdf-line]"></span>
+					</button>
+				</a>
+			</div>
 		</div>
 	</div>
 }

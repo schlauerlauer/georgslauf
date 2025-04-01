@@ -216,8 +216,9 @@ type postStation struct {
 	Size         int64  `schema:"size" validate:"gte=0"`
 	Vegan        int64  `schema:"vegan" validate:"gte=0"`
 	Category     int64  `schema:"category"`
-	Description  string `schemal:"description" validate:"max=1024" mod:"trim,sanitize"`
-	Requirements string `schemal:"requirements" validate:"max=1024" mod:"trim,sanitize"`
+	Description  string `schema:"description" validate:"max=1024" mod:"trim,sanitize"`
+	Requirements string `schema:"requirements" validate:"max=1024" mod:"trim,sanitize"`
+	PrefLoc      string `schema:"prefLoc" validate:"max=1"`
 }
 
 func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
@@ -339,6 +340,10 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 			Valid: true,
 		},
 		Vegan: data.Vegan,
+		PrefLoc: sql.NullString{
+			String: data.PrefLoc,
+			Valid:  data.PrefLoc != "",
+		},
 	})
 	if err != nil {
 		slog.Error("InsertStation", "err", err)
@@ -355,8 +360,6 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		Name:      data.Name,
 		Abbr:      sql.NullString{},
 		Size:      data.Size,
-		Lati:      sql.NullFloat64{},
-		Long:      sql.NullFloat64{}, // NTH
 		Description: sql.NullString{
 			String: data.Description,
 			Valid:  data.Description != "",
@@ -394,6 +397,7 @@ type putStation struct {
 	Description  string `schema:"description" validate:"max=1024" mod:"trim,sanitize"`
 	Requirements string `schema:"requirements" validate:"max=1024" mod:"trim,sanitize"`
 	Abbr         string `schema:"abbr" validate:"max=3"` // only for host
+	PrefLoc      string `schema:"prefLoc" validate:"max=1"`
 }
 
 func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
@@ -520,6 +524,10 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 			Valid:  data.Requirements != "",
 		},
 		Vegan: data.Vegan,
+		PrefLoc: sql.NullString{
+			String: data.PrefLoc,
+			Valid:  data.PrefLoc != "",
+		},
 	}); err != nil {
 		slog.Error("UpdateStation", "err", err)
 		if err := templates.AlertError("Speichern fehlgeschlagen").Render(ctx, w); err != nil {
@@ -540,7 +548,7 @@ type putGroup struct {
 	Name     string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Size     int64  `schema:"size" validate:"gte=0"`
 	Vegan    int64  `schema:"vegan" validate:"gte=0"`
-	Comment  string `schemal:"comment" validate:"max=1024" mod:"trim,sanitize"`
+	Comment  string `schema:"comment" validate:"max=1024" mod:"trim,sanitize"`
 	Grouping int64  `schema:"grouping" validate:"gte=0,lte=3"`
 	Abbr     string `schema:"abbr" validate:"max=3"` // only for host
 }
@@ -700,7 +708,7 @@ type postGroup struct {
 	Name     string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Size     int64  `schema:"size" validate:"gte=0"`
 	Vegan    int64  `schema:"vegan" validate:"gte=0"`
-	Comment  string `schemal:"comment" validate:"max=1024" mod:"trim,sanitize"`
+	Comment  string `schema:"comment" validate:"max=1024" mod:"trim,sanitize"`
 	Grouping int64  `schema:"grouping" validate:"gte=0,lte=3"`
 }
 
