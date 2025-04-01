@@ -45,7 +45,7 @@ templ PutStation(updatedAt time.Time, stationId int64, stationName string, first
 	</div>
 }
 
-templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow) {
+templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
 	<details class="collapse collapse-arrow bg-base-200" open>
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
@@ -88,7 +88,7 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 				}
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
-						<span class="label-text">Bevorzugter Standort</span>
+						<span class="label-text">Posten Standort</span>
 						<span class="label-text-alt">
 							siehe
 							<a class="link" rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
@@ -97,31 +97,14 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 						</span>
 					</div>
 					<select
-						name="prefLoc"
+						name="position"
 						class="invalid:border-error select select-bordered"
 						autocomplete="off"
 					>
-						<option value="">Keinen</option>
-						<option value="A">A</option>
-						<option value="B">B</option>
-						<option value="C">C</option>
-						<option value="D">D</option>
-						<option value="E">E</option>
-						<option value="F">F</option>
-						<option value="G">G</option>
-						<option value="H">H</option>
-						<option value="I">I</option>
-						<option value="J">J</option>
-						<option value="K">K</option>
-						<option value="L">L</option>
-						<option value="M">M</option>
-						<option value="N">N</option>
-						<option value="O">O</option>
-						<option value="P">P</option>
-						<option value="Q">Q</option>
-						<option value="R">R</option>
-						<option value="S">S</option>
-						<option value="T">T</option>
+						<option value="">Keinen (später auswählen)</option>
+						for _, position := range positions {
+							<option value={ strconv.FormatInt(position.ID, 10) }>{ position.Name }</option>
+						}
 					</select>
 				</label>
 				<label class="form-control w-full max-w-xs">
@@ -174,7 +157,7 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 	</details>
 }
 
-templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, self bool, hasPicture bool) {
+templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, self bool, hasPicture bool, positions []db.StationPosition) {
 	<details class="collapse collapse-arrow bg-base-200">
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
@@ -226,7 +209,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 				}
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
-						<span class="label-text">Bevorzugter Standort</span>
+						<span class="label-text">Posten Standort</span>
 						<span class="label-text-alt">
 							siehe
 							<a class="link" rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
@@ -235,34 +218,17 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 						</span>
 					</div>
 					<select
-						name="prefLoc"
+						name="position"
 						class="invalid:border-error select select-bordered"
 						autocomplete="off"
 					>
-						if station.PrefLoc.Valid {
-							<option selected value={ station.PrefLoc.String }>{ station.PrefLoc.String }</option>
+						if station.PositionID.Valid {
+							<option selected value={ strconv.FormatInt(station.PositionID.Int64, 10) }>{ station.PositionName.String }</option>
 						}
-						<option value="">Keinen</option>
-						<option value="A">A</option>
-						<option value="B">B</option>
-						<option value="C">C</option>
-						<option value="D">D</option>
-						<option value="E">E</option>
-						<option value="F">F</option>
-						<option value="G">G</option>
-						<option value="H">H</option>
-						<option value="I">I</option>
-						<option value="J">J</option>
-						<option value="K">K</option>
-						<option value="L">L</option>
-						<option value="M">M</option>
-						<option value="N">N</option>
-						<option value="O">O</option>
-						<option value="P">P</option>
-						<option value="Q">Q</option>
-						<option value="R">R</option>
-						<option value="S">S</option>
-						<option value="T">T</option>
+						<option value="">Keinen (später auswählen)</option>
+						for _, position := range positions {
+							<option value={ strconv.FormatInt(position.ID, 10) }>{ position.Name }</option>
+						}
 					</select>
 				</label>
 				<label class="form-control w-full max-w-xs">
@@ -376,7 +342,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 	</details>
 }
 
-templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set settings.Stations, csrf string, categories []db.GetStationCategoriesRow) {
+templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set settings.Stations, csrf string, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
 	// TODO station role different tabs
 	<div hx-swap-oob="innerHTML:#dash-tablist">
 		<a role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
@@ -386,7 +352,7 @@ templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set setti
 		<h2 class="text-lg mb-3">Angemeldete Posten</h2>
 		<div class="space-y-3">
 			for _, station := range stations {
-				@DashStation(station, csrf, tribeId, set, categories, false, false)
+				@DashStation(station, csrf, tribeId, set, categories, false, false, positions)
 			}
 			if set.AllowCreate {
 				<button

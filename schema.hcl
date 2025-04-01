@@ -107,6 +107,42 @@ table "tribes" {
 	}
 }
 
+table "station_positions" {
+	schema = schema.main
+
+	column "id" {
+		null           = false
+		type           = integer
+		auto_increment = true
+	}
+
+	column "name" {
+		null = false
+		type = text
+	}
+
+	column "image_id" {
+		null = true
+		type = text
+	}
+
+	primary_key {
+		columns = [column.id]
+	}
+
+	foreign_key "image_id" {
+		columns     = [column.image_id]
+		ref_columns = [table.images.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	index "idx_station_positions_name" {
+		columns = [column.name]
+		unique  = true
+	}
+}
+
 table "station_categories" {
 	schema = schema.main
 
@@ -173,14 +209,9 @@ table "stations" {
 		type = text
 	}
 
-	column "abbr" {
+	column "position_id" {
 		null = true
-		type = text
-	}
-
-	column "pref_loc" {
-		nul  = true
-		type = text
+		type = integer
 	}
 
 	column "size" {
@@ -259,10 +290,17 @@ table "stations" {
 		on_delete   = SET_NULL
 	}
 
-	index "idx_stations_abbr" {
-		columns = [column.abbr]
-		unique  = true
-		where   = "abbr is not null"
+	foreign_key "position_id" {
+		columns     = [column.position_id]
+		ref_columns = [table.station_positions.column.id]
+		on_update   = NO_ACTION
+		on_delete   = SET_NULL
+	}
+
+	index "idx_stations_position" {
+		columns = [column.position_id]
+		unique = true
+		where  = "position_id is not null"
 	}
 
 	index "idx_stations_tribe" {

@@ -94,7 +94,6 @@ select
 	,s.created_at
 	,s.updated_at
 	,s.name
-	,s.abbr
 	,s.size
 	,s.category_id
 	,s.description
@@ -102,11 +101,14 @@ select
 	,s.vegan
 	,s.tribe_id
 	,s.updated_by
+	,s.position_id
 	,sc.name as category_name
+	,sp.name as position_name
 	,u.firstname
 	,ui.image as user_image
 from stations s
 left join station_categories sc on category_id = sc.id
+left join station_positions sp on position_id = sp.id
 left join users u on s.updated_by = u.id
 left join user_icons ui on s.updated_by = ui.id
 where s.id = ?
@@ -137,8 +139,8 @@ limit 1;
 select
 	s.id
 	,s.name
-	,s.abbr
-	,sc.name as category
+	,sp.name as position_name
+	,sc.name as category_name
 	,t.name as tribe
 	,s.size
 	,ti.id as tribe_icon
@@ -146,6 +148,7 @@ from stations s
 left join tribes t on s.tribe_id = t.id
 left join tribe_icons ti on ti.id = t.id
 left join station_categories sc on s.category_id = sc.id
+left join station_positions sp on s.position_id = sp.id
 order by s.created_at desc;
 
 -- name: GetTribeNameIcon :one
@@ -211,7 +214,7 @@ where
 	id = ?;
 
 -- name: InsertStation :one
-insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by, vegan, pref_loc)
+insert into stations (name, size, tribe_id, category_id, description, requirements, created_by, created_at, updated_at, updated_by, vegan, position_id)
 values (?,?,?,?,?,?,?,?,?,?,?,?)
 returning id;
 
@@ -364,24 +367,49 @@ where
 	ext_id = ?
 limit 1;
 
+-- name: GetStationPosition :one
+select
+	name
+from station_positions
+where id = ?
+limit 1;
+
+-- name: GetStationPositionsOpen :many
+select
+	sp.id
+	,sp.name
+from station_positions sp
+left join stations s
+	on sp.id = s.position_id
+where s.position_id is null;
+
+-- name: GetStationPositionsStation :many
+select
+	sp.name as position_name
+	,s.name as station_name
+from station_positions sp
+left join stations s
+	on sp.id = s.position_id;
+
 -- name: GetStationsByTribe :many
 select
 	s.id
 	,s.created_at
 	,s.updated_at
 	,s.name
-	,s.abbr
 	,s.size
 	,s.category_id
 	,s.description
 	,s.requirements
 	,s.vegan
-	,s.pref_loc
+	,sp.id as position_id
+	,sp.name as position_name
 	,sc.name as category_name
 	,u.firstname
 	,ui.image as user_image
 from stations s
 left join station_categories sc on category_id = sc.id
+left join station_positions sp on position_id = sp.id
 left join users u on s.updated_by = u.id
 left join user_icons ui on s.updated_by = ui.id
 where s.tribe_id = ?
@@ -398,7 +426,7 @@ set
 	,description = ?
 	,requirements = ?
 	,vegan = ?
-	,pref_loc = ?
+	,position_id = ?
 where
 	id = ?
 	and tribe_id = ?;
@@ -415,7 +443,7 @@ set
 	,requirements = ?
 	,vegan = ?
 	,tribe_id = ?
-	,abbr = ?
+	,position_id = ?
 where
 	id = ?;
 

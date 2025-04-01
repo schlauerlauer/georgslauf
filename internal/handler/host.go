@@ -524,9 +524,11 @@ func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	positions, err := h.queries.GetStationPositionsStation(ctx)
+
 	setMd := h.md.Get()
 
-	templates.HostSettings(htmxRequest, user, &set, schedule, categories, csrf.Token(r), setMd).Render(ctx, w)
+	templates.HostSettings(htmxRequest, user, &set, schedule, categories, csrf.Token(r), setMd, positions).Render(ctx, w)
 }
 
 func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {
@@ -751,9 +753,9 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 	if err := h.queries.UpdateStationHost(ctx, db.UpdateStationHostParams{
 		ID:      data.StationId,
 		TribeID: data.TribeId,
-		Abbr: sql.NullString{
-			Valid:  data.Abbr != "",
-			String: data.Abbr,
+		PositionID: sql.NullInt64{
+			Valid: data.PositionId > 0, // sqlite
+			Int64: data.PositionId,
 		},
 		UpdatedAt: updatedAt.Unix(),
 		UpdatedBy: sql.NullInt64{
@@ -785,20 +787,32 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 		slog.Info("sqlc", "err", err)
 	}
 
+	var positionName sql.NullString
+	// sqlite
+	if data.PositionId > 0 {
+		pos, err := h.queries.GetStationPosition(ctx, data.PositionId)
+		if err != nil {
+			slog.Error("sqlc", "err", err)
+			return
+		}
+
+		positionName = sql.NullString{
+			Valid:  true,
+			String: pos,
+		}
+	}
+
 	templates.HostStationUpdate(db.GetStationsDetailsRow{
-		ID:       data.StationId,
-		Name:     data.Name,
-		Category: categoryName,
+		ID:           data.StationId,
+		Name:         data.Name,
+		CategoryName: categoryName,
 		Tribe: sql.NullString{
 			String: tribe.Name,
 			Valid:  true,
 		},
-		Size:      data.Size,
-		TribeIcon: tribe.TribeIcon,
-		Abbr: sql.NullString{
-			String: data.Abbr,
-			Valid:  data.Abbr != "",
-		},
+		Size:         data.Size,
+		TribeIcon:    tribe.TribeIcon,
+		PositionName: positionName,
 	}, set.Stations.EnableCategories,
 	).Render(ctx, w)
 }
@@ -916,6 +930,12 @@ func (h *Handler) GetStation(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	positions, err := h.queries.GetStationPositionsOpen(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return
+	}
+
 	set := h.settings.Get()
 
 	self := station.UpdatedBy.Valid && station.UpdatedBy.Int64 == user.ID
@@ -935,6 +955,7 @@ func (h *Handler) GetStation(w http.ResponseWriter, r *http.Request) {
 		user.HasPicture,
 		categories,
 		tribes,
+		positions,
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)
 	}

@@ -218,7 +218,7 @@ type postStation struct {
 	Category     int64  `schema:"category"`
 	Description  string `schema:"description" validate:"max=1024" mod:"trim,sanitize"`
 	Requirements string `schema:"requirements" validate:"max=1024" mod:"trim,sanitize"`
-	PrefLoc      string `schema:"prefLoc" validate:"max=1"`
+	PositionId   int64  `schema:"position" validate:"gte=0"`
 }
 
 func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
@@ -312,6 +312,25 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		categoryValid = true
 	}
 
+	var positionId sql.NullInt64
+	var positionName sql.NullString
+	// sqlite
+	if data.PositionId > 0 {
+		pos, err := h.queries.GetStationPosition(ctx, data.PositionId)
+		if err != nil {
+			slog.Warn("GetStationPosition", "err", err)
+		} else {
+			positionId = sql.NullInt64{
+				Valid: true,
+				Int64: data.PositionId,
+			}
+			positionName = sql.NullString{
+				Valid:  true,
+				String: pos,
+			}
+		}
+	}
+
 	timestamp := time.Now().Unix()
 	id, err := h.queries.InsertStation(ctx, db.InsertStationParams{
 		Name:    data.Name,
@@ -339,11 +358,8 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 			Int64: user.ID,
 			Valid: true,
 		},
-		Vegan: data.Vegan,
-		PrefLoc: sql.NullString{
-			String: data.PrefLoc,
-			Valid:  data.PrefLoc != "",
-		},
+		Vegan:      data.Vegan,
+		PositionID: positionId,
 	})
 	if err != nil {
 		slog.Error("InsertStation", "err", err)
@@ -353,13 +369,20 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	positions, err := h.queries.GetStationPositionsOpen(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
 	if err := templates.DashStation(db.GetStationsByTribeRow{
-		ID:        id,
-		CreatedAt: timestamp,
-		UpdatedAt: timestamp,
-		Name:      data.Name,
-		Abbr:      sql.NullString{},
-		Size:      data.Size,
+		ID:           id,
+		CreatedAt:    timestamp,
+		UpdatedAt:    timestamp,
+		Name:         data.Name,
+		PositionID:   positionId,
+		PositionName: positionName,
+		Size:         data.Size,
 		Description: sql.NullString{
 			String: data.Description,
 			Valid:  data.Description != "",
@@ -382,7 +405,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		},
 		UserImage: []byte{}, // NTH
 		Vegan:     data.Vegan,
-	}, csrf.Token(r), data.TribeId, set.Stations, categories, true, user.HasPicture).Render(ctx, w); err != nil {
+	}, csrf.Token(r), data.TribeId, set.Stations, categories, true, user.HasPicture, positions).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -396,8 +419,7 @@ type putStation struct {
 	Category     int64  `schema:"category"`
 	Description  string `schema:"description" validate:"max=1024" mod:"trim,sanitize"`
 	Requirements string `schema:"requirements" validate:"max=1024" mod:"trim,sanitize"`
-	Abbr         string `schema:"abbr" validate:"max=3"` // only for host
-	PrefLoc      string `schema:"prefLoc" validate:"max=1"`
+	PositionId   int64  `schema:"position" validate:"gte=0"`
 }
 
 func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
@@ -524,9 +546,9 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 			Valid:  data.Requirements != "",
 		},
 		Vegan: data.Vegan,
-		PrefLoc: sql.NullString{
-			String: data.PrefLoc,
-			Valid:  data.PrefLoc != "",
+		PositionID: sql.NullInt64{
+			Int64: data.PositionId,
+			Valid: data.PositionId > 0, // sqlite
 		},
 	}); err != nil {
 		slog.Error("UpdateStation", "err", err)
@@ -852,7 +874,13 @@ func (h *Handler) GetNewStation(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if err := templates.DashNewStation(csrf.Token(r), tribeId, set.Stations, categories).Render(ctx, w); err != nil {
+	positions, err := h.queries.GetStationPositionsOpen(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	if err := templates.DashNewStation(csrf.Token(r), tribeId, set.Stations, categories, positions).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -1001,6 +1029,12 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	positions, err := h.queries.GetStationPositionsOpen(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
 	set := h.settings.Get()
 
 	if err := templates.DashStations(
@@ -1009,6 +1043,7 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		set.Stations,
 		csrf.Token(r),
 		categories,
+		positions,
 	).Render(ctx, w); err != nil {
 		slog.Warn("DashStations", "err", err)
 	}

@@ -57,8 +57,8 @@ sql:
             go_type: "database/sql.NullInt64"
           - column: "stations.updated_by"
             go_type: "database/sql.NullInt64"
-          - column: "stations.abbr"
-            go_type: "database/sql.NullString"
+          - column: "stations.position_id"
+            go_type: "database/sql.NullInt64"
           - column: "stations.category_id"
             go_type: "database/sql.NullInt64"
 

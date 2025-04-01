@@ -109,7 +109,7 @@ templ HostStationCategoryNew(csrf string) {
 	</form>
 }
 
-templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.GetStationCategoriesRow, csrf string, home md.MdData) {
+templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.GetStationCategoriesRow, csrf string, home md.MdData, positions []db.GetStationPositionsStationRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			<div
@@ -304,7 +304,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							</div>
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
-									<span class="label-text">Posten Kürzel anzeigen</span>
+									<span class="label-text">Posten Standort anzeigen</span>
 									<input
 										name="station-abbr"
 										type="checkbox"
@@ -337,6 +337,20 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 						>
 							Hinzufügen
 						</button>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Posten Standorte</summary>
+					<div class="collapse-content">
+						<ul>
+							for _, position := range positions {
+								if position.StationName.Valid {
+									<li><strong>{ position.PositionName }</strong> { position.StationName.String }</li>
+								} else {
+									<li><strong>{ position.PositionName }</strong> <span class="font-light">kein Posten</span></li>
+								}
+							}
+						</ul>
 					</div>
 				</details>
 				// <details class="collapse bg-base-200" open>
@@ -631,11 +645,11 @@ templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool) 
 			<div class="font-bold">{ station.Name }</div>
 		</td>
 		<td>
-			{ station.Abbr.String }
+			{ station.PositionName.String }
 		</td>
 		if enableCategories {
 			<td>
-				{ station.Category.String }
+				{ station.CategoryName.String }
 			</td>
 		}
 		<td>
@@ -674,7 +688,7 @@ templ HostDeleteCloseModal(message string) {
 	<div hx-swap-oob="innerHTML:#modal-container"></div>
 }
 
-templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow, tribes []db.GetTribesNameRow) {
+templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow, tribes []db.GetTribesNameRow, positions []db.StationPosition) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -752,10 +766,27 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 					</div>
 					<label class="form-control w-full max-w-xs">
 						<div class="label">
-							<span class="label-text">Postenkürzel</span>
-							<span class="label-text-alt">z.B. "A" - muss einmalig sein</span>
+							<span class="label-text">Posten Standort</span>
+							<span class="label-text-alt">
+								siehe
+								<a class="link" rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
+									Dokument
+								</a>
+							</span>
 						</div>
-						<input name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Abbr.String }/>
+						<select
+							name="position"
+							class="invalid:border-error select select-bordered"
+							autocomplete="off"
+						>
+							if station.PositionID.Valid {
+								<option selected value={ strconv.FormatInt(station.PositionID.Int64, 10) }>{ station.PositionName.String }</option>
+							}
+							<option value="">Keinen</option>
+							for _, position := range positions {
+								<option value={ strconv.FormatInt(position.ID, 10) }>{ position.Name }</option>
+							}
+						</select>
 					</label>
 					<label class="form-control w-full max-w-xs">
 						<div class="label">
@@ -876,7 +907,7 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 						<thead>
 							<tr>
 								<th>Name</th>
-								<th>Kürzel</th>
+								<th>Standort</th>
 								if enableCategories {
 									<th>Kategorie</th>
 								}
@@ -893,7 +924,7 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 						<tfoot>
 							<tr>
 								<th>Name</th>
-								<th>Kürzel</th>
+								<th>Standort</th>
 								if enableCategories {
 									<th>Kategorie</th>
 								}
