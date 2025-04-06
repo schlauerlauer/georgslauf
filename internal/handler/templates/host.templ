@@ -990,6 +990,10 @@ templ HostGroupEntry(group db.GetGroupsDetailsRow) {
 	</tr>
 }
 
+templ FirstValid(abbr int64) {
+	<input id="group-abbr" name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ strconv.FormatInt(abbr, 10) }/>
+}
+
 templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, self bool, hasPicture bool, tribes []db.GetTribesNameRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
@@ -1082,7 +1086,15 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 							<span class="label-text">Laufgruppe</span>
 							<span class="label-text-alt">z.B. "2" - muss einmalig sein</span>
 						</div>
-						<input name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Abbr.String }/>
+						<input id="group-abbr" name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Abbr.String }/>
+						<button
+							class="btn"
+							hx-get="/host/groups/abbr"
+							hx-swap="outerHTML"
+							hx-target="#group-abbr"
+						>
+							Auf erste freie Zahl setzen
+						</button>
 					</label>
 					<label class="form-control w-full max-w-xs">
 						<div class="label">

@@ -1010,6 +1010,31 @@ func (h *Handler) GetGroup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetGroupsAbbr(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	abbrs, err := h.queries.GetGroupsAbbr(ctx)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	x := firstMissing(abbrs)
+
+	templates.FirstValid(x).Render(ctx, w)
+}
+
+func firstMissing(ordered []int64) int64 {
+	for idx, val := range ordered {
+		if val != int64(idx)+1 {
+			return int64(idx) + 1
+		}
+	}
+
+	return int64(len(ordered) + 1)
+}
+
 func (h *Handler) GetGroups(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()

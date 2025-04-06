@@ -367,6 +367,13 @@ where
 	ext_id = ?
 limit 1;
 
+-- name: GetGroupsAbbr :many
+select
+	cast(abbr as integer)
+from groups
+where abbr is not null
+order by abbr asc;
+
 -- name: GetStationPosition :one
 select
 	name
@@ -430,6 +437,14 @@ set
 where
 	id = ?
 	and tribe_id = ?;
+
+-- -- name: Debug :one
+-- select
+-- 	*
+-- from images
+-- where
+-- 	(filepath = @path OR false = cast(@filter_by_path as bool) ) OR
+-- 	(station_id = @station OR @station IS NULL);
 
 -- name: UpdateStationHost :exec
 update stations

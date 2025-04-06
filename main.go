@@ -140,6 +140,7 @@ func main() {
 	hostRouter.HandleFunc("PUT /users/role", handlers.PutUserRole)
 	hostRouter.HandleFunc("GET /tribes", handlers.GetTribes)
 	hostRouter.HandleFunc("GET /groups", handlers.GetGroups)
+	hostRouter.HandleFunc("GET /groups/abbr", handlers.GetGroupsAbbr)
 	hostRouter.HandleFunc("GET /groups/{id}", handlers.GetGroup)
 	hostRouter.HandleFunc("PUT /groups", handlers.HostPutGroup)
 	hostRouter.HandleFunc("DELETE /groups/{id}", handlers.HostDeleteGroup)
