@@ -1,0 +1,196 @@
+package templates
+
+import (
+	"encoding/base64"
+	"georgslauf/acl"
+	"georgslauf/internal/db"
+	"georgslauf/session"
+	"strconv"
+	"strings"
+)
+
+templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []db.GetUsersRoleLargerNoneRow, requests []db.GetUsersRoleNoneRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a id="tab-users" role="tab" class="tab tab-active" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				if len(requests) > 0 {
+					<div class="my-9">
+						<details class="collapse collapse-arrow bg-base-200 border-base-300 border" open>
+							<summary class="collapse-title font-semibold">Account Berechtigung setzen</summary>
+							<div class="collapse-content text-sm">
+								<p class="font-light">
+									Neue Benutzer*innen ohne Berechtigungen, deren Email nicht einem Stamm zugewiesen werden konnten.
+								</p>
+								<ul class="mt-6 space-y-2">
+									for _, request := range requests {
+										<li>
+											<form
+												class="flex justify-between gap-x-3"
+												hx-put="/host/users/role"
+												hx-swap="outerHTML"
+												hx-target="closest li"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												// TODO icon, update from tribe
+												<input type="hidden" name="id" value={ strconv.FormatInt(request.ID, 10) }/>
+												<p>{ request.Email }</p>
+												<p>{ request.Firstname } { request.Lastname }</p>
+												<div class="join">
+													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													<button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Normal</button>
+													<button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Admin</button>
+												</div>
+											</form>
+										</li>
+									}
+								</ul>
+							</div>
+						</details>
+					</div>
+				}
+				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+					<summary class="collapse-title font-semibold">Account Berechtigung Erklärung</summary>
+					<div class="collapse-content">
+						<p class="text-sm mb-2 font-light">
+							Bei Rollenänderungen kann es sein, dass ein neuer login per <a class="link" href="/login">/login</a> notwendig ist.
+						</p>
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><div class="badge badge-neutral">Abgelehnt</div></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Georgslauf</strong> keine Berechtigung</span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-primary">Normal</div></td>
+									<td><span class="font-light">der Account ist ein normaler Account für Posten, Gruppen oder <strong>StaVos</strong></span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-accent">Admin</div></td>
+									<td><span class="font-light">der Account <strong>ist vom Stamm des Gastgebers und hat Zugriff auf die Admin Seiten</strong></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</details>
+				<div class="overflow-x-auto my-9">
+					if len(users) > 0 {
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Aktuelle Rolle</th>
+									<th>Neue Rolle</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, entry := range users {
+									<tr>
+										<td>
+											<div class="flex items-center gap-3">
+												if len(entry.Image) > 0 {
+													<div class="avatar">
+														<div class="mask mask-squircle w-12">
+															<img
+																src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(entry.Image) }
+																alt="Avatar"
+															/>
+														</div>
+													</div>
+												} else {
+													<div class="avatar placeholder">
+														<div class="bg-neutral text-neutral-content w-12 mask mask-squircle">
+															if entry.Firstname != "" && entry.Lastname != "" {
+																<span>{ strings.ToUpper(entry.Firstname[0:1] + entry.Lastname[0:1]) }</span>
+															} else {
+																<span>GL</span>
+															}
+														</div>
+													</div>
+												}
+												<div>
+													<div class="font-bold">{ entry.Email }</div>
+													<div class="text-sm opacity-50">{ entry.Firstname } { entry.Lastname }</div>
+												</div>
+											</div>
+										</td>
+										<td>
+											switch entry.Role {
+												case acl.View:
+													<div class="badge badge-primary">Normal</div>
+												case acl.Edit:
+													<div class="badge badge-accent">Admin</div>
+													// query excludes 0
+													// case acl.None:
+													// <div class="badge">Keine</div>
+												case acl.Denied:
+													<div class="badge badge-neutral">Abgelehnt</div>
+												case acl.Admin:
+													<div class="badge badge-accent">Admin</div>
+											}
+										</td>
+										<td>
+											// TODO swap
+											<form
+												class="flex gap-x-2"
+												hx-put="/host/users/role"
+												hx-swap="none"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<select name="role" class="select" autocomplete="off">
+													<option disabled>
+														Neue Rolle
+													</option>
+													switch entry.Role {
+														case acl.View:
+															<option value="-1">Abgelehnt</option>
+															<option value="1" selected>Normal</option>
+															<option value="2">Admin</option>
+														case acl.Edit:
+															<option value="-1">Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2" selected>Admin</option>
+														case acl.Denied:
+															<option value="-1" selected>Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2">Admin</option>
+														case acl.Admin:
+															<option value="-1">Abgelehnt</option>
+															<option value="1">Normal</option>
+															<option value="2" selected>Admin</option>
+													}
+												</select>
+												<button class="btn btn-neutral" type="submit" name="id" value={ strconv.FormatInt(entry.ID, 10) }>Speichern</button>
+											</form>
+										</td>
+									</tr>
+								}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Name</th>
+									<th>Aktuelle Rolle</th>
+									<th>Neue Rolle</th>
+								</tr>
+							</tfoot>
+						</table>
+					} else {
+						<p class="text-center">Noch keine Benutzer*innen freigeschaltet</p>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}

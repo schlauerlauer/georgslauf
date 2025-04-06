@@ -1,0 +1,387 @@
+package templates
+
+import (
+	"encoding/base64"
+	"georgslauf/acl"
+	"georgslauf/internal/db"
+	"georgslauf/session"
+	"strconv"
+	"strings"
+)
+
+templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string, tribeRoles []db.GetTribeRolesOpenRow, accounts map[int64][]db.GetTribeRolesAssignedRow, groups map[int64][]db.GetGroupsHostRow, stations map[int64][]db.GetStationsHostRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab tab-active" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				if len(tribeRoles) > 0 {
+					<div class="my-9">
+						<details class="collapse collapse-arrow bg-base-200 border-base-300 border" open>
+							<summary class="collapse-title font-semibold">Stamm Berechtigungsanfragen</summary>
+							<div class="collapse-content text-sm">
+								<p class="font-light">
+									Benutzer*innen die Zugang zu einem Stamm angefragt haben.
+								</p>
+								<ul class="mt-6 space-y-2">
+									for _, tribeRole := range tribeRoles {
+										<li>
+											<form
+												class="flex justify-between gap-x-3 items-center"
+												hx-put={ "/host/tribes/role" }
+												hx-swap="outerHTML"
+												hx-target="closest li"
+												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											>
+												<input type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
+												<div class="flex gap-x-2 items-center">
+													if len(tribeRole.UserIcon) > 0 {
+														<div class="avatar">
+															<div class="w-8 rounded-full">
+																<img
+																	src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(tribeRole.UserIcon) }
+																	alt="Avatar"
+																/>
+															</div>
+														</div>
+													} else {
+														<div class="avatar">
+															<div class="avatar placeholder">
+																<div class="bg-neutral text-neutral-content w-8 rounded-full">
+																	if tribeRole.Firstname != "" && tribeRole.Lastname != "" {
+																		<span>{ strings.ToUpper(tribeRole.Firstname[0:1] + tribeRole.Lastname[0:1]) }</span>
+																	} else {
+																		<span>GL</span>
+																	}
+																</div>
+															</div>
+														</div>
+													}
+													<div>
+														<div>{ tribeRole.UserEmail }</div>
+														<div class="font-light text-sm opacity-50">{ tribeRole.Firstname } { tribeRole.Lastname }</div>
+													</div>
+												</div>
+												<p>
+													für Stamm
+												</p>
+												<div class="flex gap-x-2 items-center">
+													if tribeRole.TribeIconID.Valid {
+														<label class="avatar">
+															<div class="w-8">
+																<img
+																	src={ "/icon/tribe/" + strconv.FormatInt(tribeRole.TribeIconID.Int64, 10) }
+																	alt={ tribeRole.TribeName + " Icon" }
+																/>
+															</div>
+														</label>
+													}
+													<p>{ tribeRole.TribeName }</p>
+												</div>
+												<div class="join">
+													<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+													<button class="join-item btn btn-sm btn-primary" type="submit" value="0" name="role">Normal</button>
+													// NTH
+													// <button class="join-item btn btn-sm btn-primary" type="submit" value="1" name="role">Lesen</button>
+													// <button class="join-item btn btn-sm btn-accent" type="submit" value="2" name="role">Schreiben</button>
+													<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">StaVo</button>
+												</div>
+											</form>
+										</li>
+									}
+								</ul>
+							</div>
+						</details>
+					</div>
+				}
+				<details class="my-6 collapse collapse-arrow bg-base-200 border-base-300 border">
+					<summary class="collapse-title font-semibold">Stamm Berechtigung Erklärung</summary>
+					<div class="collapse-content">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td><div class="badge badge-neutral">Abgelehnt</div></td>
+									<td><span class="font-light">der Account bekommt für den <strong>Stamm</strong> keine Berechtigung</span></td>
+								</tr>
+								<tr>
+									<td><div class="badge badge-primary">Normal</div></td>
+									<td><span class="font-light">der Account ist ein normaler Account für <strong>Posten und Gruppen</strong></span></td>
+								</tr>
+								// NTH
+								// <li>
+								// 	<div class="badge badge-primary">Lesen</div>
+								// 	<span class="ml-3 font-light">kann die eigenen angemeldeten Posten und Gruppen ansehen und ihre zugewiesenen Accounts ansehen</span>
+								// </li>
+								// <li>
+								// 	<div class="badge badge-accent">Schreiben</div>
+								// 	<span class="ml-3 font-light">kann die eigenen Posten und Gruppen bearbeiten und Benutzer*innen zu eigenen Posten hinzufügen oder entfernen</span>
+								// </li>
+								<tr>
+									<td><div class="badge badge-secondary">StaVo</div></td>
+									<td><span class="font-light">der Account kann im genannten Stamm <strong>Posten und Gruppen bearbeiten</strong> und Benutzer*innen zum eigenen Stamm oder Posten hinzufügen und entfernen und ihre <strong>Berechtigungen setzen</strong></span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</details>
+				<div class="overflow-x-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Gruppen</th>
+								<th>Posten</th>
+								<th>Berechtigungen</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, tribe := range tribes {
+								<tr>
+									<td>
+										<div class="flex items-center gap-3">
+											if tribe.Icon.Valid {
+												<form
+													hx-put={ "/host/tribes/icon/" + strconv.FormatInt(tribe.ID, 10) }
+													hx-trigger="change"
+													hx-encoding="multipart/form-data"
+													hx-swap="outerHTML"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<label class="avatar cursor-pointer">
+														<div class="h-12 w-12">
+															<input name="icon" type="file" class="hidden"/>
+															<img
+																src={ "/icon/tribe/" + strconv.FormatInt(tribe.ID, 10) }
+																alt={ tribe.Name + " Icon" }
+															/>
+														</div>
+													</label>
+												</form>
+											} else {
+												<form
+													hx-post={ "/host/tribes/icon/" + strconv.FormatInt(tribe.ID, 10) }
+													hx-trigger="change"
+													hx-encoding="multipart/form-data"
+													hx-swap="outerHTML"
+													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+												>
+													<label class="avatar placeholder cursor-pointer">
+														<input name="icon" type="file" class="hidden"/>
+														<div class="mask mask-squircle bg-neutral text-neutral-content w-12 h-12">
+															<span class="text-2xl icon-[uil--image-upload]"></span>
+														</div>
+													</label>
+												</form>
+											}
+											<div>
+												<div class="font-bold">{ tribe.Name }</div>
+												<div class="text-sm opacity-50">{ tribe.Short.String }</div>
+												<div class="text-sm opacity-50">{ tribe.EmailDomain.String }</div>
+											</div>
+										</div>
+									</td>
+									<td>
+										if rows, ok := groups[tribe.ID]; ok {
+											<div class="flex flex-col">
+												for _, row := range rows {
+													<div class="flex place-items-baseline">
+														switch row.Grouping {
+															case 0:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-orange-500"></div>
+															case 1:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-blue-700"></div>
+															case 2:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-emerald-700"></div>
+															case 3:
+																<div class="h-3 w-3 rounded-full mr-0.5 bg-red-700"></div>
+														}
+														<span>{ row.Name }</span>
+													</div>
+												}
+											</div>
+										} else {
+											<p class="font-light">keine</p>
+										}
+									</td>
+									<td>
+										if rows, ok := stations[tribe.ID]; ok {
+											<div class="flex flex-col gap-y-1">
+												for _, row := range rows {
+													<div class="badge badge-neutral badge-sm">{ row.Name }</div>
+												}
+											</div>
+										} else {
+											<p class="font-light">keine</p>
+										}
+									</td>
+									<td>
+										if rows, ok := accounts[tribe.ID]; ok {
+											<form
+												class="flex flex-col gap-y-1"
+												hx-get="/host/tribes/role"
+												hx-target="#modal-container"
+												hx-swap="innerHTML"
+											>
+												for _, row := range rows {
+													switch row.TribeRole {
+														case acl.None:
+															<button
+																type="submit"
+																class="btn btn-xs btn-primary"
+																name="id"
+																value={ strconv.FormatInt(row.ID, 10) }
+															>
+																{ row.Email }
+															</button>
+															// NTH acl.View acl.Edit
+														case acl.Admin:
+															<button
+																type="submit"
+																class="btn btn-xs btn-secondary"
+																name="id"
+																value={ strconv.FormatInt(row.ID, 10) }
+															>
+																{ row.Email }
+															</button>
+														default:
+															<button
+																type="submit"
+																class="btn btn-xs"
+																name="id"
+																value={ strconv.FormatInt(row.ID, 10) }
+															>
+																{ row.Email }
+															</button>
+													}
+												}
+											</form>
+										} else {
+											<p class="font-light">keine</p>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								<th>Gruppen</th>
+								<th>Posten</th>
+								<th>Berechtigungen</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div id="modal-container"></div>
+	}
+}
+
+templ TribeRoleModal(role db.GetTribeRoleByIdRow, csrf string) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Stamm Berechtigung</h3>
+			<div class="mt-6 space-y-6">
+				<div>
+					<h4 class="mb-3">Account</h4>
+					<div class="flex items-center gap-3">
+						if len(role.Image) > 0 {
+							<div class="avatar">
+								<div class="mask mask-squircle w-12">
+									<img
+										src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(role.Image) }
+										alt="Avatar"
+									/>
+								</div>
+							</div>
+						} else {
+							<div class="avatar placeholder">
+								<div class="bg-neutral text-neutral-content w-12 mask mask-squircle">
+									if role.Firstname != "" && role.Lastname != "" {
+										<span>{ strings.ToUpper(role.Firstname[0:1] + role.Lastname[0:1]) }</span>
+									} else {
+										<span>GL</span>
+									}
+								</div>
+							</div>
+						}
+						<div>
+							<div class="font-bold">{ role.Email }</div>
+							<div class="text-sm opacity-50">{ role.Firstname } { role.Lastname }</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<h4 class="mb-3">Stamm</h4>
+					<div class="flex items-center gap-3">
+						if role.TribeIcon.Valid {
+							<label class="avatar">
+								<div class="h-12 w-12">
+									<img
+										src={ "/icon/tribe/" + strconv.FormatInt(role.TribeIcon.Int64, 10) }
+										alt={ role.TribeName + " Icon" }
+									/>
+								</div>
+							</label>
+						} else {
+							<label class="avatar placeholder">
+								<div class="mask mask-squircle bg-neutral text-neutral-content w-12 h-12">
+									<span class="text-2xl icon-[uil--image-upload]"></span>
+								</div>
+							</label>
+						}
+						<div>
+							<div class="font-bold">{ role.TribeName }</div>
+							<div class="text-sm opacity-50">{ role.Short.String }</div>
+							<div class="text-sm opacity-50">{ role.EmailDomain.String }</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="flex mb-3 items-center justify-between">
+						<p>Aktuelle Rolle</p>
+						switch role.TribeRole {
+							case acl.Denied:
+								<div class="badge badge-neutral">Abgelehnt</div>
+							case acl.None:
+								<div class="badge badge-primary">Normal</div>
+							case acl.Admin:
+								<div class="badge badge-secondary">StaVo</div>
+								// NTH acl.View acl.Edit
+						}
+					</div>
+					<form
+						class="flex justify-between gap-x-3"
+						hx-put="/host/tribes/role"
+						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						hx-target="#modal-container"
+						hx-swap="innerHTML"
+					>
+						<p>Neue Rolle</p>
+						<input type="hidden" name="id" value={ strconv.FormatInt(role.ID, 10) }/>
+						<div class="join">
+							<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
+							<button class="join-item btn btn-sm btn-primary" type="submit" value="0" name="role">Normal</button>
+							<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">StaVo</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</dialog>
+}

@@ -1,0 +1,417 @@
+package templates
+
+import (
+	"georgslauf/internal/db"
+	"georgslauf/internal/settings"
+	"georgslauf/md"
+	"georgslauf/session"
+	"strconv"
+)
+
+templ HostStationCategory(csrf string, category db.GetStationCategoriesRow) {
+	<form
+		class="flex gap-x-3 items-end"
+		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+		hx-put={ "/host/stations/categories/" + strconv.FormatInt(category.ID, 10) }
+		hx-swap="outerHTML"
+		hx-target="this"
+	>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Name</span>
+			</div>
+			<input
+				autocomplete="off"
+				required
+				maxlength="30"
+				minlength="3"
+				name="name"
+				type="text"
+				placeholder="Name"
+				class="invalid:border-error input input-bordered w-full max-w-xs"
+				value={ category.Name }
+			/>
+		</label>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Max. Anzahl (angemeldet: <strong>{ strconv.FormatInt(category.Count, 10) }</strong>)</span>
+			</div>
+			<input autocomplete="off" name="max" min="0" type="number" value={ strconv.FormatInt(category.Max, 10) } required placeholder="Anzahl" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+		</label>
+		<button class="btn btn-primary">
+			<span class="text-lg icon-[mdi--content-save]"></span>
+		</button>
+		<form
+			hx-disinherit="*"
+		>
+			<button
+				hx-delete={ "/host/stations/categories/" + strconv.FormatInt(category.ID, 10) }
+				class="btn btn-error"
+			>
+				<span class="text-xl icon-[mdi--delete]"></span>
+			</button>
+		</form>
+	</form>
+}
+
+templ HostStationCategoryNew(csrf string) {
+	<form
+		class="flex gap-x-3 items-end"
+		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+		hx-post="/host/stations/categories"
+		hx-swap="outerHTML"
+		hx-target="this"
+	>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Name</span>
+			</div>
+			<input autocomplete="off" required maxlength="30" minlength="3" name="name" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" value=""/>
+		</label>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Max. Anzahl</span>
+			</div>
+			<input autocomplete="off" name="max" min="0" type="number" value="0" required placeholder="Anzahl" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+		</label>
+		<button class="btn btn-primary">
+			<span class="text-lg icon-[mdi--content-save]"></span>
+		</button>
+	</form>
+}
+
+templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.GetStationCategoriesRow, csrf string, home md.MdData, positions []db.GetStationPositionsStationRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6 space-y-6">
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Gruppen</summary>
+					<div class="collapse-content">
+						// TODO swap
+						<form
+							hx-put="/host/settings/groups"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<div class="label-text">
+										Gruppen erstellen
+										<div class="tooltip" data-tip="StaVos können Gruppen anlegen">
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</div>
+									<input
+										name="group-create"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowCreate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">
+										Gruppen verändern
+										<div class="tooltip" data-tip="StaVos können ihre Gruppen verändern">
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</span>
+									<input
+										name="group-update"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowUpdate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">
+										Gruppen löschen
+										<div class="tooltip" data-tip="StaVos können ihre Gruppen löschen">
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</span>
+									<input
+										name="group-delete"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">
+										Laufgruppe anzeigen
+										<div class="tooltip" data-tip='z.B. "Laufgruppe 2" den Posten und StaVos anzeigen'>
+											<span class="ml-2 w-6 h-6 align-bottom icon-[mdi--information-slab-symbol]"></span>
+										</div>
+									</span>
+									<input
+										name="group-abbr"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Groups.ShowAbbr {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Größe Minimum</span>
+								</div>
+								<input autocomplete="off" name="group-min" min="0" type="number" value={ strconv.FormatInt(set.Groups.Min, 10) } required placeholder="Type here" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Größe Maximum (muss größer als min. sein)</span>
+								</div>
+								<input autocomplete="off" name="group-max" min="0" type="number" value={ strconv.FormatInt(set.Groups.Max, 10) } required placeholder="Type here" class="invalid:border-error input input-bordered w-full max-w-xs"/>
+							</label>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Posten</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/stations"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten erstellen</span>
+									<input
+										name="station-create"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowCreate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten verändern</span>
+									<input
+										name="station-update"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowUpdate {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten löschen</span>
+									<input
+										name="station-delete"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowDelete {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten Kategorien verwenden</span>
+									<input
+										name="station-categories"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.EnableCategories {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten Standort anzeigen</span>
+									<input
+										name="station-abbr"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.ShowAbbr {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Posten Kategorien</summary>
+					<div class="collapse-content">
+						<p class="mb-3 font-light">Max. Anzahl 0 = kein Limit</p>
+						<div id="category-list">
+							for _, category := range categories {
+								@HostStationCategory(csrf, category)
+							}
+						</div>
+						<button
+							hx-get="/host/stations/categories/new"
+							hx-swap="beforeend"
+							hx-target="#category-list"
+							class="mt-3 btn btn-secondary"
+						>
+							Hinzufügen
+						</button>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Posten Standorte</summary>
+					<div class="collapse-content">
+						<ul>
+							for _, position := range positions {
+								if position.StationName.Valid {
+									<li><strong>{ position.PositionName }</strong> { position.StationName.String }</li>
+								} else {
+									<li><strong>{ position.PositionName }</strong> <span class="font-light">kein Posten</span></li>
+								}
+							}
+						</ul>
+					</div>
+				</details>
+				// <details class="collapse bg-base-200" open>
+				// 	<summary class="collapse-title text-xl font-medium">Zeitplan</summary>
+				// 	<div class="collapse-content">
+				// 		// TODO
+				// 		<ul>
+				// 			for _, scheduleEntry := range schedule {
+				// 				<li>{ strconv.FormatInt(scheduleEntry.ID, 10) } { scheduleEntry.Name }</li>
+				// 			}
+				// 		</ul>
+				// 	</div>
+				// </details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Startseite</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/home"
+							hx-trigger="change"
+							hx-swap="innerHTML"
+							hx-target="next article"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full">
+								<div class="label">
+									<span class="label-text">Titel</span>
+								</div>
+								<input autocomplete="off" maxlength="64" name="headline" type="text" placeholder="Georgslauf" class="input input-bordered w-full" value={ set.Home.Headline }/>
+							</label>
+							<label class="form-control">
+								<div class="label">
+									<span class="label-text">Startseite (markdown)</span>
+								</div>
+								<textarea autocomplete="off" maxlength="2048" name="intro" class="textarea textarea-bordered h-96" placeholder="">{ set.Home.Intro }</textarea>
+							</label>
+						</form>
+						<div class="mt-4">
+							<p class="mb-3">Vorschau</p>
+							<article class="prose bg-base-300 p-4 rounded-md max-w-full text-wrap">
+								@templ.Raw(string(home.Intro))
+							</article>
+						</div>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Anmeldung</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/login"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Titel nach Anmeldung</span>
+								</div>
+								<input autocomplete="off" maxlength="64" name="title" type="text" placeholder="Georgslauf" class="input input-bordered w-full max-w-xs" value={ set.Login.Title }/>
+							</label>
+							<label class="form-control">
+								<div class="label">
+									<span class="label-text">Nachricht nach Anmeldung</span>
+								</div>
+								<textarea autocomplete="off" maxlength="1024" name="welcome" class="textarea textarea-bordered h-24" placeholder="Nachricht">{ set.Login.Welcome }</textarea>
+							</label>
+						</form>
+					</div>
+				</details>
+				<details class="collapse bg-base-200" open>
+					<summary class="collapse-title text-xl font-medium">Hilfe</summary>
+					<div class="collapse-content">
+						<form
+							hx-put="/host/settings/help"
+							hx-trigger="change"
+							hx-swap="none"
+							class="space-y-3"
+							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						>
+							<label class="form-control w-full">
+								<div class="label">
+									<span class="label-text">Hilfe Link im Footer</span>
+								</div>
+								<input autocomplete="off" maxlength="128" name="footer" type="text" placeholder="https://..." class="input input-bordered w-full" value={ set.Help.Footer }/>
+							</label>
+						</form>
+					</div>
+				</details>
+			</div>
+		</div>
+	}
+}

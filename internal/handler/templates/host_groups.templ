@@ -1,0 +1,310 @@
+package templates
+
+import (
+	"encoding/base64"
+	"georgslauf/internal/db"
+	"georgslauf/internal/settings"
+	"georgslauf/session"
+	"strconv"
+	"time"
+)
+
+templ HostGroupUpdate(group db.GetGroupsDetailsRow) {
+	// the order matters
+	@HostGroupEntry(group)
+	@AlertSuccess("Gespeichert")
+	// NTH close modal instead for animation
+	<div hx-swap-oob="innerHTML:#modal-container"></div>
+}
+
+templ HostGroupEntry(group db.GetGroupsDetailsRow) {
+	<tr id={ "group-" + strconv.FormatInt(group.ID, 10) }>
+		<td>
+			<div class="font-bold">{ group.Name }</div>
+		</td>
+		<td>
+			{ group.Abbr.String }
+		</td>
+		<td>
+			@groupGrouping(group.Grouping)
+		</td>
+		<td>
+			<div class="flex gap-x-2 items-center">
+				if group.TribeIcon.Valid {
+					<label class="avatar">
+						<div class="w-6">
+							<img
+								src={ "/icon/tribe/" + strconv.FormatInt(group.TribeIcon.Int64, 10) }
+								alt={ group.Tribe.String + " Icon" }
+							/>
+						</div>
+					</label>
+				}
+				<p>{ group.Tribe.String }</p>
+			</div>
+		</td>
+		<td>{ strconv.FormatInt(group.Size.Int64, 10) }</td>
+		<td>
+			<form
+				hx-get={ "/host/groups/" + strconv.FormatInt(group.ID, 10) }
+				hx-swap="innerHTML"
+				hx-target="#modal-container"
+			>
+				<button type="submit" class="btn btn-ghost btn-sm">
+					<span class="icon-[mdi--eye-outline]"></span>
+				</button>
+			</form>
+		</td>
+	</tr>
+}
+
+templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, self bool, hasPicture bool, tribes []db.GetTribesNameRow) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Gruppe { group.Name }</h3>
+			<div class="mt-6 space-y-6">
+				// NTH (almost) duplicate from DashGroup
+				<form
+					class="space-y-6"
+					hx-put="/host/groups"
+					hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+					hx-swap="outerHTML"
+					hx-target={ "#group-" + strconv.FormatInt(group.ID, 10) }
+				>
+					<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(group.ID, 10) }/>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Name</span>
+						</div>
+						<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Name }/>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Stufe</span>
+						</div>
+						<select autocomplete="off" required name="grouping" class="invalid:border-error select select-bordered">
+							switch group.Grouping {
+								case 0:
+									<option selected value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option value="3">Rover</option>
+								case 1:
+									<option value="0">Wölflinge</option>
+									<option selected value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option value="3">Rover</option>
+								case 2:
+									<option value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option selected value="2">Pfadis</option>
+									<option value="3">Rover</option>
+								case 3:
+									<option value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option selected value="3">Rover</option>
+								default:
+									<option value="" selected disabled>Auswählen</option>
+									<option value="0">Wölflinge</option>
+									<option value="1">Jupfis</option>
+									<option value="2">Pfadis</option>
+									<option value="3">Rover</option>
+							}
+						</select>
+					</label>
+					<label class="form-control w-full">
+						<div class="label">
+							<span class="label-text">Gruppen Größe</span>
+						</div>
+						<input autocomplete="off" name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(max(group.Size.Int64, set.Min), 10) } class="range" step="1"/>
+						<div class="flex w-full justify-between px-2 pt-1 text-xs">
+							for num := range set.Max - set.Min + 1 {
+								<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
+							}
+						</div>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Anzahl Vegan</span>
+						</div>
+						<input autocomplete="off" name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(group.Vegan, 10) } step="1"/>
+					</label>
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Kommentar</span>
+						</div>
+						<textarea autocomplete="off" name="comment" class="textarea textarea-bordered h-24" placeholder="Kommentar">{ group.Comment.String }</textarea>
+						<div class="label">
+							<span class="label-text-alt">Allergien, Sonstiges</span>
+						</div>
+					</label>
+					<div class="py-4">
+						<hr/>
+					</div>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Laufgruppe</span>
+							<span class="label-text-alt">z.B. "2" - muss einmalig sein</span>
+						</div>
+						<input id="group-abbr" name="abbr" minlength="0" maxlength="3" type="text" placeholder="" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ group.Abbr.String }/>
+						<button
+							class="btn"
+							hx-get="/host/groups/abbr"
+							hx-swap="outerHTML"
+							hx-target="#group-abbr"
+						>
+							Auf erste freie Zahl setzen
+						</button>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Stamm</span>
+						</div>
+						<select autocomplete="off" required name="tribe" class="invalid:border-error select select-bordered">
+							<option selected value={ strconv.FormatInt(group.TribeID, 10) }>Beibehalten</option>
+							for _, tribe := range tribes {
+								if tribe.Short.Valid {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Short.String }</option>
+								} else {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Name }</option>
+								}
+							}
+						</select>
+					</label>
+					// TODO image
+					<div class="flex justify-between items-end flex-wrap gap-y-3">
+						<div class="flex gap-x-2">
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+							<form
+								hx-disinherit="*"
+							>
+								<button
+									hx-delete={ "/host/groups/" + strconv.FormatInt(group.ID, 10) }
+									hx-target={ "#group-" + strconv.FormatInt(group.ID, 10) }
+									hx-swap="outerHTML"
+									type="button"
+									class="btn btn-error"
+								>
+									Entfernen
+								</button>
+							</form>
+						</div>
+						<form method="dialog">
+							<button class="btn btn-neutral">Abbrechen</button>
+						</form>
+					</div>
+					<div class="flex">
+						<div class="badge badge-accent">
+							if t := time.Unix(group.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(group.UpdatedAt, 0).Format("02.01. 15:04") }
+							} else {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(group.UpdatedAt, 0).Format("15:04") }
+							}
+							if group.Firstname.Valid {
+								von { group.Firstname.String }
+								if len(group.UserImage) > 0 {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(group.UserImage) }
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								} else if self && hasPicture {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src="/icon/user"
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								}
+							}
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</dialog>
+}
+
+templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, csrf string, summary db.GetGroupOverviewRow) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab tab-active" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				<div class="mb-6 stats shadow bg-base-200">
+					<div class="stat">
+						<div class="stat-figure text-primary">
+							<span class="w-12 h-12 icon-[fluent--run-20-regular]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Gruppen</div>
+						<div class="stat-value text-primary">{ strconv.FormatInt(summary.Count, 10) }</div>
+					</div>
+					<div class="stat">
+						<div class="stat-figure text-secondary">
+							<span class="w-12 h-12 icon-[material-symbols--group-outline-rounded]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Personen</div>
+						<div class="stat-value text-secondary">{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</div>
+						<div class="stat-desc">{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) } davon Vegan</div>
+					</div>
+				</div>
+				<div class="overflow-x-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Laufgruppe</th>
+								<th>Stufe</th>
+								<th>Stamm</th>
+								<th>Personen</th>
+								<th>Details</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, entry := range groups {
+								@HostGroupEntry(entry)
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								<th>Laufgruppe</th>
+								<th>Stufe</th>
+								<th>Stamm</th>
+								<th>Personen</th>
+								<th>Details</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div id="modal-container"></div>
+	}
+}

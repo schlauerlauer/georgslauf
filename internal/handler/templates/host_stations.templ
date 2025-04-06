@@ -1,0 +1,314 @@
+package templates
+
+import (
+	"encoding/base64"
+	"fmt"
+	"georgslauf/internal/db"
+	"georgslauf/session"
+	"strconv"
+	"time"
+)
+
+templ HostStationUpdate(station db.GetStationsDetailsRow, enableCategories bool) {
+	// the order matters
+	@HostStationEntry(station, enableCategories)
+	@AlertSuccess("Gespeichert")
+	// NTH close modal instead for animation
+	<div hx-swap-oob="innerHTML:#modal-container"></div>
+}
+
+templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool) {
+	<tr id={ "station-" + strconv.FormatInt(station.ID, 10) }>
+		<td>
+			<div class="font-bold">{ station.Name }</div>
+		</td>
+		<td>
+			{ station.PositionName.String }
+		</td>
+		if enableCategories {
+			<td>
+				{ station.CategoryName.String }
+			</td>
+		}
+		<td>
+			<div class="flex gap-x-2 items-center">
+				if station.TribeIcon.Valid {
+					<label class="avatar">
+						<div class="w-6">
+							<img
+								src={ "/icon/tribe/" + strconv.FormatInt(station.TribeIcon.Int64, 10) }
+								alt={ station.Tribe.String + " Icon" }
+							/>
+						</div>
+					</label>
+				}
+				<p>{ station.Tribe.String }</p>
+			</div>
+		</td>
+		<td>{ strconv.FormatInt(station.Size, 10) }</td>
+		<td>
+			<form
+				hx-get={ "/host/stations/" + strconv.FormatInt(station.ID, 10) }
+				hx-swap="innerHTML"
+				hx-target="#modal-container"
+			>
+				<button type="submit" class="btn btn-ghost btn-sm">
+					<span class="icon-[mdi--eye-outline]"></span>
+				</button>
+			</form>
+		</td>
+	</tr>
+}
+
+templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow, tribes []db.GetTribesNameRow, positions []db.StationPosition) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Posten { station.Name }</h3>
+			<div class="mt-6 space-y-6">
+				// NTH (almost) duplicate from DashGroup
+				<form
+					class="space-y-4"
+					hx-put="/host/stations"
+					hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+					hx-swap="outerHTML"
+					hx-target={ "#station-" + strconv.FormatInt(station.ID, 10) }
+				>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Name</span>
+						</div>
+						<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Name }/>
+						<input type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
+					</label>
+					if enableCategories {
+						<label class="form-control w-full max-w-xs">
+							<div class="label">
+								<span class="label-text">Kategorie</span>
+							</div>
+							<select required name="category" class="invalid:border-error select select-bordered">
+								if station.CategoryID.Valid {
+									<option selected value={ strconv.FormatInt(station.CategoryID.Int64, 10) }>{ station.CategoryName.String }</option>
+								} else {
+									<option disabled selected value="">Keine</option>
+								}
+								for _, cat := range categories {
+									<option value={ strconv.FormatInt(cat.ID, 10) }>
+										if cat.Max > 0 {
+											{ cat.Name + fmt.Sprintf(" (%d/%d)", cat.Count, cat.Max) }
+										} else {
+											{ cat.Name }
+										}
+									</option>
+								}
+							</select>
+						</label>
+					}
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Anzahl Personen</span>
+						</div>
+						<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
+					</label>
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Beschreibung</span>
+						</div>
+						<textarea name="description" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+					</label>
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Kommentar</span>
+						</div>
+						<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+						<div class="label">
+							<span class="label-text-alt">Allergien, Benötigtes Material, Ort, Sonstiges</span>
+						</div>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Anzahl Vegan</span>
+						</div>
+						<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
+					</label>
+					<div class="py-4">
+						<hr/>
+					</div>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Posten Standort</span>
+							<span class="label-text-alt">
+								siehe
+								<a class="link" rel="noopener noreferrer" target="_blank" href="/res/Posten Standorte.pdf">
+									Dokument
+								</a>
+							</span>
+						</div>
+						<select
+							name="position"
+							class="invalid:border-error select select-bordered"
+							autocomplete="off"
+						>
+							if station.PositionID.Valid {
+								<option selected value={ strconv.FormatInt(station.PositionID.Int64, 10) }>{ station.PositionName.String }</option>
+							}
+							<option value="">Keinen</option>
+							for _, position := range positions {
+								<option value={ strconv.FormatInt(position.ID, 10) }>{ position.Name }</option>
+							}
+						</select>
+					</label>
+					<label class="form-control w-full max-w-xs">
+						<div class="label">
+							<span class="label-text">Stamm</span>
+						</div>
+						<select autocomplete="off" required name="tribe" class="invalid:border-error select select-bordered">
+							<option selected value={ strconv.FormatInt(station.TribeID, 10) }>Beibehalten</option>
+							for _, tribe := range tribes {
+								if tribe.Short.Valid {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Short.String }</option>
+								} else {
+									<option value={ strconv.FormatInt(tribe.ID, 10) }>{ tribe.Name }</option>
+								}
+							}
+						</select>
+					</label>
+					// TODO image
+					<div class="flex justify-between items-end flex-wrap gap-y-3">
+						<div class="flex gap-x-2">
+							<button type="submit" class="btn btn-primary">
+								Speichern
+							</button>
+							<form
+								hx-disinherit="*"
+							>
+								<button
+									type="button"
+									class="btn btn-error"
+									hx-delete={ "/host/stations/" + strconv.FormatInt(station.ID, 10) }
+									hx-target={ "#station-" + strconv.FormatInt(station.ID, 10) }
+									hx-swap="outerHTML"
+								>
+									Entfernen
+								</button>
+							</form>
+						</div>
+						<form method="dialog">
+							<button class="btn btn-neutral">Abbrechen</button>
+						</form>
+					</div>
+					<div class="flex">
+						<div class="badge badge-accent">
+							if t := time.Unix(station.UpdatedAt, 0); time.Since(t) > time.Hour * 12 {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(station.UpdatedAt, 0).Format("02.01. 15:04") }
+							} else {
+								<span class="hidden sm:block mr-1">Zuletzt geändert</span>
+								<span class="sm:hidden text-sm icon-[material-symbols--edit-outline-rounded] mr-1"></span>
+								{ time.Unix(station.UpdatedAt, 0).Format("15:04") }
+							}
+							if station.Firstname.Valid {
+								von { station.Firstname.String }
+								if len(station.UserImage) > 0 {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(station.UserImage) }
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								} else if self && hasPicture {
+									<div class="avatar ml-1">
+										<div class="w-4 rounded-full">
+											<img
+												src="/icon/user"
+												alt="Avatar"
+											/>
+										</div>
+									</div>
+								}
+							}
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</dialog>
+}
+
+templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetStationsDetailsRow, csrf string, summary db.GetStationOverviewRow, enableCategories bool) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a id="tab-stations" role="tab" class="tab tab-active" hx-get="/host/stations">Posten</a>
+				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<div class="mt-6">
+				<div class="mb-6 stats shadow bg-base-200">
+					<div class="stat">
+						<div class="stat-figure text-primary">
+							<span class="w-12 h-12 icon-[mdi--map-marker-outline]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Posten</div>
+						<div class="stat-value text-primary">{ strconv.FormatInt(summary.Count, 10) }</div>
+					</div>
+					<div class="stat">
+						<div class="stat-figure text-secondary">
+							<span class="w-12 h-12 icon-[material-symbols--group-outline-rounded]"></span>
+						</div>
+						<div class="stat-title">Angemeldete Personen</div>
+						<div class="stat-value text-secondary">{ strconv.FormatFloat(summary.Size.Float64, 'f', 0, 64) }</div>
+						<div class="stat-desc">{ strconv.FormatFloat(summary.Vegan.Float64, 'f', 0, 64) } davon Vegan</div>
+					</div>
+				</div>
+				<div class="overflow-x-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Standort</th>
+								if enableCategories {
+									<th>Kategorie</th>
+								}
+								<th>Stamm</th>
+								<th>Personen</th>
+								<th>Details</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, entry := range stations {
+								@HostStationEntry(entry, enableCategories)
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th>Name</th>
+								<th>Standort</th>
+								if enableCategories {
+									<th>Kategorie</th>
+								}
+								<th>Stamm</th>
+								<th>Personen</th>
+								<th>Details</th>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div id="modal-container"></div>
+	}
+}
