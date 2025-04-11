@@ -246,7 +246,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 					<div class="label">
 						<span class="label-text">Kommentar</span>
 					</div>
-					<textarea autocomplete="off" name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+					<textarea autocomplete="off" name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Requirements.String }</textarea>
 					<div class="label">
 						<span class="label-text-alt">Allergien, Benötigtes Material, Ort, Sonstiges</span>
 					</div>
