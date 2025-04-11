@@ -122,7 +122,7 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 						<div class="label">
 							<span class="label-text">Kommentar</span>
 						</div>
-						<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Description.String }</textarea>
+						<textarea name="requirements" maxlength="1024" class="textarea textarea-bordered h-24" placeholder="Beschreibung">{ station.Requirements.String }</textarea>
 						<div class="label">
 							<span class="label-text-alt">Allergien, Benötigtes Material, Ort, Sonstiges</span>
 						</div>
