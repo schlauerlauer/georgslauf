@@ -307,6 +307,19 @@ templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Gr
 	</div>
 	<div>
 		<h2 class="text-lg mb-3">Angemeldete Gruppen</h2>
+		if set.AllowUpdate && set.AllowDelete {
+			<h3 class="my-3 font-light">Du kannst Gruppen nach der Anmeldung bearbeiten und wieder abmelden</h3>
+		} else {
+			if set.AllowUpdate {
+				<h3 class="my-3 font-light">Du kannst Gruppen nach der Anmeldung bearbeiten, aber nicht wieder abmelden</h3>
+			}
+			if set.AllowDelete {
+				<h3 class="my-3 font-light">Du kannst Gruppen nach der Anmeldung wieder abmelden, aber nicht bearbeiten</h3>
+			}
+			if !(set.AllowUpdate || set.AllowDelete) {
+				<h3 class="my-3 font-light">Du kannst Gruppen nach der Anmeldung nicht mehr bearbeiten oder abmelden</h3>
+			}
+		}
 		<div class="space-y-3">
 			for _, group := range groups {
 				@DashGroup(group, csrf, tribeId, set, false, false)

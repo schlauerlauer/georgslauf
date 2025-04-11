@@ -349,6 +349,19 @@ templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set setti
 	</div>
 	<div>
 		<h2 class="text-lg mb-3">Angemeldete Posten</h2>
+		if set.AllowUpdate && set.AllowDelete {
+			<h3 class="my-3 font-light">Du kannst Posten nach der Anmeldung bearbeiten und wieder abmelden</h3>
+		} else {
+			if set.AllowUpdate {
+				<h3 class="my-3 font-light">Du kannst Posten nach der Anmeldung bearbeiten, aber nicht wieder abmelden</h3>
+			}
+			if set.AllowDelete {
+				<h3 class="my-3 font-light">Du kannst Posten nach der Anmeldung wieder abmelden, aber nicht bearbeiten</h3>
+			}
+			if !(set.AllowUpdate || set.AllowDelete) {
+				<h3 class="my-3 font-light">Du kannst Posten nach der Anmeldung nicht mehr bearbeiten oder abmelden</h3>
+			}
+		}
 		<div class="space-y-3">
 			for _, station := range stations {
 				@DashStation(station, csrf, tribeId, set, categories, false, false, positions)
