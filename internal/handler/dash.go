@@ -48,6 +48,7 @@ func (h *Handler) GetUserIcon(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("not ok") // TODO
 	}
 	if user == nil {
+		slog.Warn("user is empty")
 		return
 	}
 

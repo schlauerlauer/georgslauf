@@ -94,11 +94,10 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 				// TODO
 				// <div class="btn" hx-get="/logout">Logout</div>
 			} else {
-				<div
+				<a
 					class="btn"
-					hx-get="/login"
-					hx-swap="none"
-				>Anmelden</div>
+					href="/login"
+				>Anmelden</a>
 			}
 		</div>
 	</div>

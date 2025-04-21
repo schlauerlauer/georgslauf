@@ -9,6 +9,7 @@ oauth:
   endpoint: "https://..."
   clientID: "..."
   clientSecret: "..."
+  hash: [...]
 security:
   csrfAuthKey: [...]
 sessionKey: [...]

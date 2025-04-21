@@ -28,5 +28,6 @@ templ Login(user *session.UserData, set settings.Login) {
 				</div>
 			</div>
 		</div>
+		<div _="on load call window.history.replaceState('Login', '', '/')"></div>
 	}
 }
