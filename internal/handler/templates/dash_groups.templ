@@ -300,8 +300,7 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 }
 
 templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Groups, csrf string) {
-	// TODO station role
-	<div hx-swap-oob="innerHTML:#dash-tablist">
+	<div hx-swap-oob="innerHTML:#dash-tabs-tribe">
 		<a role="tab" class="tab tab-active" hx-get="/dash/groups">Gruppen</a>
 		<a role="tab" class="tab" hx-get="/dash/stations">Posten</a>
 	</div>

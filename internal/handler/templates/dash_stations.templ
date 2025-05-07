@@ -156,8 +156,13 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 	</details>
 }
 
-templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, self bool, hasPicture bool, positions []db.StationPosition) {
-	<details class="collapse collapse-arrow bg-base-200">
+templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, self bool, hasPicture bool, positions []db.StationPosition, open bool) {
+	<details
+		class="collapse collapse-arrow bg-base-200"
+		if open {
+			open
+		}
+	>
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
 				<span>{ station.Name }</span>
@@ -342,8 +347,7 @@ templ DashStation(station db.GetStationsByTribeRow, csrf string, tribeId int64, 
 }
 
 templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set settings.Stations, csrf string, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
-	// TODO station role different tabs
-	<div hx-swap-oob="innerHTML:#dash-tablist">
+	<div hx-swap-oob="innerHTML:#dash-tabs-tribe">
 		<a role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
 		<a role="tab" class="tab tab-active" hx-get="/dash/stations">Posten</a>
 	</div>
@@ -364,7 +368,7 @@ templ DashStations(tribeId int64, stations []db.GetStationsByTribeRow, set setti
 		}
 		<div class="space-y-3">
 			for _, station := range stations {
-				@DashStation(station, csrf, tribeId, set, categories, false, false, positions)
+				@DashStation(station, csrf, tribeId, set, categories, false, false, positions, false)
 			}
 			if set.AllowCreate {
 				<button

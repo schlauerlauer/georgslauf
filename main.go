@@ -115,6 +115,12 @@ func main() {
 	router.HandleFunc("GET /robots.txt", handlers.Robots)
 	router.HandleFunc("GET /.well-known/security.txt", handlers.Security)
 
+	// station routes
+	stationRouter := http.NewServeMux()
+	stationRouter.HandleFunc("GET /{$}", handlers.GetStationPoints)
+	stationRouter.HandleFunc("GET /settings", handlers.GetStationSettings)
+	router.Handle("/stations/", http.StripPrefix("/stations", sessionService.RequireRoleFunc(acl.ACLViewUp, stationRouter)))
+
 	// dash routes
 	dashRouter := http.NewServeMux()
 	router.Handle("GET /dash/{$}", sessionService.RequiredAuth(http.HandlerFunc(handlers.Dash))) // check for permissions

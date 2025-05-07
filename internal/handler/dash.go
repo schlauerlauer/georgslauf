@@ -406,7 +406,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		},
 		UserImage: []byte{}, // NTH
 		Vegan:     data.Vegan,
-	}, csrf.Token(r), data.TribeId, set.Stations, categories, true, user.HasPicture, positions).Render(ctx, w); err != nil {
+	}, csrf.Token(r), data.TribeId, set.Stations, categories, true, user.HasPicture, positions, true).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -1064,7 +1064,7 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 		return // TODO redirect?
 	}
 	if user == nil {
-		return
+		return // TODO
 	}
 
 	var tribeId sql.NullInt64
@@ -1080,11 +1080,10 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 	var tribeRole acl.ACL
 	var wasAccepted bool
 	var hasIcon bool
-	var tribeName string
 
 	if !tribeId.Valid {
 		if tmpRole, err := h.queries.GetTribeRoleWithIcon(ctx, user.ID); err != nil {
-			slog.Debug("GetUserCredentials", "err", err)
+			slog.Debug("GetTribeRoleWithIcon", "err", err)
 			if tribeName, ok := h.createTribeRequest(ctx, user.ID, user.Email); ok {
 				w.WriteHeader(http.StatusCreated)
 				// TODO tribe icon größer in der mitte
@@ -1135,7 +1134,6 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 			}
 			hasIcon = tmpRole.IconID.Valid
 			wasAccepted = tmpRole.AcceptedAt.Valid
-			tribeName = tmpRole.Name.String
 		}
 	} else {
 		if tmpRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
@@ -1159,7 +1157,6 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 			tribeRole = tmpRole.TribeRole
 			hasIcon = tmpRole.IconID.Valid
 			wasAccepted = tmpRole.AcceptedAt.Valid
-			tribeName = tmpRole.Name.String
 		}
 	}
 
@@ -1187,35 +1184,21 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	case acl.None:
-		if wasAccepted {
-			// TODO show different page, remove status code show tribe icon
-			// du wurdest noch keinem Posten zugeordnet
+		if !wasAccepted {
+			w.WriteHeader(http.StatusUnauthorized)
+			// TODO
 			if err := templates.ErrorPage(
 				htmxRequest,
 				user,
 				tribeId.Int64,
 				hasIcon,
 				http.StatusUnauthorized,
-				fmt.Sprintf("Du hast noch keine ausreichenden Rechte für %s", tribeName),
+				"Dein Account muss von uns noch bestätigt werden",
 			).Render(ctx, w); err != nil {
 				slog.Warn("templ", "err", err)
 			}
 			return
 		}
-
-		w.WriteHeader(http.StatusUnauthorized)
-		// TODO
-		if err := templates.ErrorPage(
-			htmxRequest,
-			user,
-			tribeId.Int64,
-			hasIcon,
-			http.StatusUnauthorized,
-			"Dein Account muss von uns noch bestätigt werden",
-		).Render(ctx, w); err != nil {
-			slog.Warn("templ", "err", err)
-		}
-		return
 	case acl.View:
 		// showUsers = false
 		if err := templates.ErrorPage(

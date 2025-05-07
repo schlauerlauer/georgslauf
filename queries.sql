@@ -229,7 +229,6 @@ select
 	,tr.tribe_id
 	,ti.id as icon_id
 	,tr.accepted_at
-	,t.name
 from tribe_roles tr
 left join tribe_icons ti on ti.id = tr.id
 left join tribes t on tr.tribe_id = t.id
@@ -264,7 +263,6 @@ select
 	tr.tribe_role
 	,ti.id as icon_id
 	,tr.accepted_at
-	,t.name
 from tribe_roles tr
 left join tribe_icons ti on ti.id = tr.id
 left join tribes t on tr.tribe_id = t.id
@@ -397,6 +395,15 @@ select
 from station_positions sp
 left join stations s
 	on sp.id = s.position_id;
+
+-- name: GetStationRoleByUser :one
+select
+	sr.station_id
+	,sr.station_role
+from station_roles sr
+where
+	sr.user_id = ?
+limit 1;
 
 -- name: GetStationsByTribe :many
 select
