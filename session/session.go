@@ -48,6 +48,7 @@ func NewSessionService(hash []byte, unauthorizedComponent templ.Component) *Sess
 
 	store.Options.HttpOnly = true
 	store.Options.SameSite = http.SameSiteStrictMode
+	store.Options.Secure = true
 
 	return &Session{
 		store:             store,

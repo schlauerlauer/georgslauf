@@ -55,6 +55,7 @@ func NewAuthHandler(cfg OAuthConfig, onCallback callback) (*authHandler, error) 
 
 	store.Options.HttpOnly = true
 	store.Options.SameSite = http.SameSiteLaxMode
+	store.Options.Secure = true
 	store.MaxAge(60 * 5)
 
 	h := authHandler{
@@ -109,7 +110,7 @@ func (h *authHandler) saveSession(w http.ResponseWriter, r *http.Request, state 
 	return nil
 }
 
-func (h authHandler) getSession(r *http.Request) (string, error) {
+func (h *authHandler) getSession(r *http.Request) (string, error) {
 	session, err := h.store.Get(r, sessionName)
 	if err != nil {
 		return "", err
@@ -145,12 +146,15 @@ func (h *authHandler) Callback(w http.ResponseWriter, r *http.Request) {
 
 	queryState := r.URL.Query().Get("state")
 
+	if state == "" || queryState == "" {
+		slog.Warn("state is empty", "state", state, "query", queryState)
+		return
+	}
+
 	if state != queryState {
 		slog.Warn("state does not match query", "state", state, "query", queryState)
 		return // TODO
 	}
-
-	slog.Debug("callback")
 
 	ctx := r.Context()
 
@@ -160,18 +164,15 @@ func (h *authHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	// TODO formvalue state
-	// TODO request context or background?
 	// NTH PKCE
 	tok, err := h.oauth.Exchange(ctx, code, oauth2.AccessTypeOnline)
 	if err != nil {
 		slog.Warn("Exchange", "err", err)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect) // TODO return to error page
-
 		return
 	}
 
-	// TODO add refresh func
+	// NTH add refresh func
 
 	if h.onCallback != nil {
 		h.onCallback.Callback(w, r, tok.AccessToken)
