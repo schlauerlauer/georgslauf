@@ -59,8 +59,6 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("formD", "f", formData, "user", user.ID, "station", stationId, "err", err)
-
 	set := h.settings.Get()
 
 	if !set.Stations.AllowScoring {
