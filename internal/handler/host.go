@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/csv"
 	"georgslauf/acl"
 	"georgslauf/htmx"
 	"georgslauf/internal/db"
@@ -624,6 +626,59 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetStationsDownload(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	stations, err := h.queries.GetStationsDownload(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	csvStations := [][]string{
+		{"Name", "Personen", "Vegan", "Beschreibung", "Material", "Position", "Stamm", "Kategorie"},
+	}
+
+	for _, entry := range stations {
+		csvStations = append(csvStations, []string{
+			entry.Name,
+			strconv.FormatInt(entry.Size, 10),
+			strconv.FormatInt(entry.Vegan, 10),
+			entry.Description.String,
+			entry.Requirements.String,
+			entry.Position.String,
+			entry.Tribe.String,
+			entry.Category.String,
+		})
+	}
+
+	var buffer bytes.Buffer
+	writer := csv.NewWriter(&buffer)
+
+	if err := writer.WriteAll(csvStations); err != nil {
+		slog.Error("csv error", "err", err)
+		return
+	}
+
+	writer.Flush()
+
+	w.Header().Set("Content-Disposition", "attachment; filename=posten.csv")
+	w.Header().Set("Content-Type", "text/csv")
+	w.Header().Set("Content-Length", strconv.FormatInt(int64(buffer.Len()), 10))
+	w.Write(buffer.Bytes())
+}
+
 func (h *Handler) GetStations(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()
@@ -1033,6 +1088,73 @@ func firstMissing(ordered []int64) int64 {
 	}
 
 	return int64(len(ordered) + 1)
+}
+
+func convertGrouping(grouping int64) string {
+	switch grouping {
+	case 0:
+		return "Wölflinge"
+	case 1:
+		return "Jupfis"
+	case 2:
+		return "Pfadis"
+	case 3:
+		return "Rover"
+	default:
+		return "Unbekannt"
+	}
+}
+
+func (h *Handler) GetGroupsDownload(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	groups, err := h.queries.GetGroupsDownload(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	csvGroups := [][]string{
+		{"Name", "Laufgruppe", "Personen", "Vegan", "Kommentar", "Stufe", "Stamm"},
+	}
+
+	for _, entry := range groups {
+		csvGroups = append(csvGroups, []string{
+			entry.Name,
+			entry.Abbr.String,
+			strconv.FormatInt(entry.Size.Int64, 10),
+			strconv.FormatInt(entry.Vegan, 10),
+			entry.Comment.String,
+			convertGrouping(entry.Grouping),
+			entry.Tribe.String,
+		})
+	}
+
+	var buffer bytes.Buffer
+	writer := csv.NewWriter(&buffer)
+
+	if err := writer.WriteAll(csvGroups); err != nil {
+		slog.Error("csv error", "err", err)
+		return
+	}
+
+	writer.Flush()
+
+	w.Header().Set("Content-Disposition", "attachment; filename=gruppen.csv")
+	w.Header().Set("Content-Type", "text/csv")
+	w.Header().Set("Content-Length", strconv.FormatInt(int64(buffer.Len()), 10))
+	w.Write(buffer.Bytes())
 }
 
 func (h *Handler) GetGroups(w http.ResponseWriter, r *http.Request) {

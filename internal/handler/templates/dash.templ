@@ -18,20 +18,57 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			// TODO change active tab; push-url
 			// hx-push-url="true"
-			<div
-				id="dash-tablist"
-				role="tablist"
-				class="tabs tabs-bordered"
-				hx-swap="innerHTML"
-				hx-target="#dash-tab"
-				hx-include="#tribe-id"
-			>
-				if isEdit || isAdmin {
-					<a role="tab" class="tab tab-active" hx-get="/dash/groups" hx-trigger="load once, click">Gruppen</a>
-					<a role="tab" class="tab" hx-get="/dash/stations">Posten</a>
-				}
-			</div>
-			<div id="dash-tab" class="pt-6"></div>
+			if isEdit || isAdmin {
+				<div role="tablist" class="tabs tabs-bordered">
+					<input autocomplete="off" type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Posten Ansicht"/>
+					<div role="tabpanel" class="tab-content p-6">
+						// station tab
+						// NTH posten tab (hidden)
+						<div
+							id="dash-tabs-station"
+							role="tablist"
+							class="tabs tabs-bordered hidden"
+							hx-swap="innerHTML"
+							hx-target="#station-tab"
+						>
+							// TODO add settings isEnabled
+							<a role="tab" class="tab tab-active" hx-get="/stations/" hx-trigger="load once">Bewertungen</a>
+							<a role="tab" class="tab" hx-get="/stations/settings">Posten</a>
+						</div>
+						<div id="station-tab" class="pt-6"></div>
+					</div>
+					<input autocomplete="off" type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Stamm Ansicht" checked="checked"/>
+					<div role="tabpanel" class="tab-content p-6">
+						// tribe tab
+						<div
+							id="dash-tabs-tribe"
+							role="tablist"
+							class="tabs tabs-bordered hidden"
+							hx-swap="innerHTML"
+							hx-target="#dash-tab"
+							hx-include="#tribe-id"
+						>
+							<a role="tab" class="tab tab-active" hx-get="/dash/groups" hx-trigger="load once">Gruppen</a>
+							<a role="tab" class="tab" hx-get="/dash/stations">Posten</a>
+						</div>
+						<div id="dash-tab" class="pt-6"></div>
+					</div>
+				</div>
+			} else {
+				// NTH posten tab (hidden)
+				<div
+					id="dash-tabs-station"
+					role="tablist"
+					class="tabs tabs-bordered hidden"
+					hx-swap="innerHTML"
+					hx-target="#station-tab"
+				>
+					// TODO add settings isEnabled
+					<a role="tab" class="tab tab-active" hx-get="/stations/" hx-trigger="load once, click">Bewertungen</a>
+					<a role="tab" class="tab" hx-get="/stations/settings">Posten</a>
+				</div>
+				<div id="station-tab" class="pt-6"></div>
+			}
 		</div>
 	}
 }

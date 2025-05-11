@@ -175,6 +175,35 @@ left join tribes t on g.tribe_id = t.id
 left join tribe_icons ti on ti.id = t.id
 order by g.created_at desc;
 
+-- name: GetGroupsDownload :many
+select
+	g.name
+	,g.abbr
+	,g.size
+	,g.vegan
+	,g.comment
+	,g.grouping
+	,t.name as tribe
+from groups g
+left join tribes t on g.tribe_id = t.id
+order by g.created_at asc;
+
+-- name: GetStationsDownload :many
+select
+	s.name
+	,s.size
+	,s.vegan
+	,s.description
+	,s.requirements
+	,sp.name as position
+	,t.name as tribe
+	,sc.name as category
+from stations s
+left join tribes t on s.tribe_id = t.id
+left join station_positions sp on s.position_id = sp.id
+left join station_categories sc on s.category_id = sc.id
+order by s.created_at asc;
+
 -- name: GetGroupsHost :many
 select
 	g.id

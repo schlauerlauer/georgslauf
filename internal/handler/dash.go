@@ -105,21 +105,9 @@ func (h *Handler) DeleteStation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: tribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
+	if err := h.checkTribeRole(user.ID, tribeId, acl.Edit); err != nil {
 		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("templ", "err", err)
-		}
-		return
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("templ", "err", err)
+			slog.Error("AlertError", "err", err)
 		}
 		return
 	}
@@ -179,21 +167,9 @@ func (h *Handler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: tribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
+	if err := h.checkTribeRole(user.ID, tribeId, acl.Edit); err != nil {
 		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("templ", "err", err)
-		}
-		return
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("templ", "err", err)
+			slog.Error("AlertError", "err", err)
 		}
 		return
 	}
@@ -254,19 +230,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: data.TribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
-		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("AlertError", "err", err)
-		}
-		return
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
+	if err := h.checkTribeRole(user.ID, data.TribeId, acl.Edit); err != nil {
 		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -456,6 +420,13 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := h.checkTribeRole(user.ID, data.TribeId, acl.Edit); err != nil {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
 	category := sql.NullInt64{}
 	categoryName := sql.NullString{}
 	if set.Stations.EnableCategories {
@@ -505,25 +476,6 @@ func (h *Handler) PutStation(w http.ResponseWriter, r *http.Request) {
 				Valid:  true,
 			}
 		}
-	}
-
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: data.TribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
-		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("AlertError", "err", err)
-		}
-		return
-	}
-
-	slog.Debug("test", "tribeRole", data)
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		slog.Debug("not enough rights")
-		return // TODO
 	}
 
 	updatedAt := time.Now()
@@ -616,20 +568,11 @@ func (h *Handler) PutGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: data.TribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
+	if err := h.checkTribeRole(user.ID, data.TribeId, acl.Edit); err != nil {
 		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
 		return
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		return // TODO
 	}
 
 	updatedAt := time.Now()
@@ -774,19 +717,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: data.TribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
-		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
-			slog.Error("AlertError", "err", err)
-		}
-		return
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
+	if err := h.checkTribeRole(user.ID, data.TribeId, acl.Edit); err != nil {
 		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -943,17 +874,11 @@ func (h *Handler) DashGroups(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: tribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
-		return // TODO
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		return // TODO
+	if err := h.checkTribeRole(user.ID, tribeId, acl.Edit); err != nil {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
 	}
 
 	groups, err := h.queries.GetGroupsByTribe(ctx, tribeId)
@@ -1005,17 +930,11 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tribeRole, err := h.queries.GetTribeRoleByTribe(ctx, db.GetTribeRoleByTribeParams{
-		UserID:  user.ID,
-		TribeID: tribeId,
-	})
-	if err != nil {
-		slog.Error("GetTribeRoleByTribe", "err", err)
-		return // TODO
-	}
-
-	if tribeRole.TribeRole < acl.Edit || !tribeRole.AcceptedAt.Valid {
-		return // TODO
+	if err := h.checkTribeRole(user.ID, tribeId, acl.Edit); err != nil {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
 	}
 
 	stations, err := h.queries.GetStationsByTribe(ctx, tribeId)
