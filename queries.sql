@@ -162,7 +162,9 @@ left join tribes t on s.tribe_id = t.id
 left join tribe_icons ti on ti.id = t.id
 left join station_categories sc on s.category_id = sc.id
 left join station_positions sp on s.position_id = sp.id
-order by s.created_at desc;
+order by
+	s.tribe_id asc
+	,s.created_at asc;
 
 -- name: GetTribeNameIcon :one
 select
