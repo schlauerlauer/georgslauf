@@ -88,6 +88,19 @@ select
 from groups
 limit 1;
 
+-- name: GetStationInfo :one
+select
+	s.name
+	,sp.name as position
+	,t.name as tribe
+from stations s
+left join station_positions sp
+	on s.id = ?
+	and s.position_id = sp.id
+left join tribes t
+	on s.tribe_id = t.id
+limit 1;
+
 -- name: GetStation :one
 select
 	s.id
@@ -432,14 +445,17 @@ select
 	,g.name
 	,g.abbr
 	,ptg.points
-	,t.name as 'tribe'
+	,t.short as 'tribe'
 	,g.grouping
+	,ti.id as 'tribe_icon'
 from groups g
 left join points_to_groups ptg
 	on ptg.station_id = ?
 	and ptg.group_id = g.id
 left join tribes t
-	on g.tribe_id = t.id;
+	on g.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = t.id;
 
 -- name: GetStationRoleByUser :one
 select

@@ -110,7 +110,7 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 						<div class="label">
 							<span class="label-text">Anzahl Personen</span>
 						</div>
-						<input name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
+						<input autocomplete="off" name="size" type="number" class="input input-bordered w-full max-w-xs" min="1" max="20" value={ strconv.FormatInt(max(station.Size, 1), 10) } step="1"/>
 					</label>
 					<label class="form-control">
 						<div class="label">

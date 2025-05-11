@@ -14,8 +14,6 @@ import (
 	"github.com/gorilla/csrf"
 )
 
-// FIXME
-
 type putStationPointForm struct {
 	GroupId int64 `schema:"group" validate:"gte=0"`
 	Points  int64 `schema:"points" validate:"gte=0,lte=100"`
@@ -92,7 +90,9 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("UPSERT")
+	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
 }
 
 func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) {
@@ -144,10 +144,17 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 		return // TODO
 	}
 
+	station, err := h.queries.GetStationInfo(ctx, stationId)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
 	if err := templates.StationPointsTab(
 		templates.PointsList(
 			points,
 			csrf.Token(r),
+			station,
 		),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)

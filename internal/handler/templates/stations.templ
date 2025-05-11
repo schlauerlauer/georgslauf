@@ -1,0 +1,104 @@
+package templates
+
+import (
+	"georgslauf/internal/db"
+	"georgslauf/internal/settings"
+	"strconv"
+)
+
+templ StationSettings(station db.GetStationsByTribeRow, set settings.Stations, csrf string, tribeId int64, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
+	<div hx-swap-oob="innerHTML:#dash-tabs-station">
+		// TODO add settings isEnabled
+		<a role="tab" class="tab" hx-get="/stations/">Bewertungen</a>
+		<a role="tab" class="tab tab-active" hx-get="/stations/settings">Posten</a>
+	</div>
+	@DashStation(station, csrf, tribeId, set, categories, false, false, positions, true)
+}
+
+templ StationPointsTab(children templ.Component) {
+	<div hx-swap-oob="innerHTML:#dash-tabs-station">
+		// TODO add settings isEnabled
+		<a role="tab" class="tab tab-active" hx-get="/stations/">Bewertungen</a>
+		<a role="tab" class="tab" hx-get="/stations/settings">Posten</a>
+	</div>
+	@children
+}
+
+templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow) {
+	<div class="mb-6 stats shadow bg-base-200">
+		<div class="stat">
+			<div class="stat-figure text-primary">
+				<span class="w-12 h-12 icon-[mdi--map-marker-outline]"></span>
+			</div>
+			<div class="stat-title">Posten { station.Position.String }</div>
+			<div class="stat-value text-primary">{ station.Name }</div>
+			<div class="stat-desc">{ station.Tribe.String }</div>
+		</div>
+	</div>
+	<div class="overflow-x-auto">
+		<table class="table">
+			<!-- head -->
+			<thead>
+				<tr>
+					<th>Laufgruppe</th>
+					<th>Gruppe</th>
+					<th>Punkte</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, entry := range points {
+					<tr>
+						// TODO if abbr enabled
+						<td>{ entry.Abbr.String }</td>
+						<td>
+							<div class="font-bold">{ entry.Name }</div>
+							<div class="flex items-center gap-x-3">
+								<div class="text-sm opacity-50">
+									switch entry.Grouping {
+										case 0:
+											Wölflinge
+										case 1:
+											Jupfis
+										case 2:
+											Pfadis
+										case 3:
+											Rover
+									}
+								</div>
+								<div class="badge badge-xs">
+									{ entry.Tribe.String }
+									if entry.TribeIcon.Valid {
+										<div class="avatar ml-1">
+											<div class="w-4 rounded-full">
+												<img
+													src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
+													alt="Avatar"
+												/>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						</td>
+						<td>
+							// TODO move hx attributes to parent
+							<form
+								hx-put="/stations/points"
+								hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+								hx-swap="none"
+								hx-trigger="input changed delay:250ms"
+							>
+								<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
+								if entry.Points.Valid {
+									<input autocomplete="off" class="input w-full max-w-xs font-bold" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
+								} else {
+									<input autocomplete="off" class="input w-full max-w-xs font-bold" type="number" name="points" max="100" min="0" value="0"/>
+								}
+							</form>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
