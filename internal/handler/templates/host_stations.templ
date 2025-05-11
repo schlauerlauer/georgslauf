@@ -81,7 +81,7 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 							<span class="label-text">Name</span>
 						</div>
 						<input required name="name" minlength="3" maxlength="30" type="text" placeholder="Name" class="invalid:border-error input input-bordered w-full max-w-xs" autocomplete="off" value={ station.Name }/>
-						<input type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
+						<input autocomplete="off" type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
 					</label>
 					if enableCategories {
 						<label class="form-control w-full max-w-xs">
@@ -131,7 +131,7 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 						<div class="label">
 							<span class="label-text">Anzahl Vegan</span>
 						</div>
-						<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(max(station.Vegan, 1), 10) } step="1"/>
+						<input autocomplete="off" name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" value={ strconv.FormatInt(station.Vegan, 10) } step="1"/>
 					</label>
 					<div class="py-4">
 						<hr/>

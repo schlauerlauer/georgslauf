@@ -121,7 +121,7 @@ templ TribeRoleSelect(htmxRequest bool, user *session.UserData, tribes []db.GetT
 											hx-swap="innerHTML"
 											hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 										>
-											<input type="hidden" name="tribe" value={ strconv.FormatInt(tribe.ID, 10) }/>
+											<input autocomplete="off" type="hidden" name="tribe" value={ strconv.FormatInt(tribe.ID, 10) }/>
 											<button class="btn btn-primary">Beitreten</button>
 										</form>
 									</th>

@@ -44,7 +44,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 												hx-target="closest li"
 												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 											>
-												<input type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
+												<input autocomplete="off" type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
 												<div class="flex gap-x-2 items-center">
 													if len(tribeRole.UserIcon) > 0 {
 														<div class="avatar">
@@ -373,7 +373,7 @@ templ TribeRoleModal(role db.GetTribeRoleByIdRow, csrf string) {
 						hx-swap="innerHTML"
 					>
 						<p>Neue Rolle</p>
-						<input type="hidden" name="id" value={ strconv.FormatInt(role.ID, 10) }/>
+						<input autocomplete="off" type="hidden" name="id" value={ strconv.FormatInt(role.ID, 10) }/>
 						<div class="join">
 							<button class="join-item btn btn-sm btn-neutral" type="submit" value="-1" name="role">Ablehnen</button>
 							<button class="join-item btn btn-sm btn-primary" type="submit" value="0" name="role">Normal</button>

@@ -33,7 +33,7 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 						</div>
 					</div>
 				}
-				<input id="tribe-id" type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+				<input autocomplete="off" id="tribe-id" type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
 			}
 			if user != nil {
 				<div class="tooltip tooltip-bottom mt-1" data-tip={ user.Firstname + " " + user.Lastname }>

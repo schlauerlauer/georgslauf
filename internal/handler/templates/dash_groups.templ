@@ -74,7 +74,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 				hx-swap="outerHTML"
 				hx-target="closest details"
 			>
-				<input type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
+				<input autocomplete="off" type="hidden" name="tribe" value={ strconv.FormatInt(tribeId, 10) }/>
 				<label class="form-control w-full max-w-xs">
 					<div class="label">
 						<span class="label-text">Name</span>
@@ -97,7 +97,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 					<div class="label">
 						<span class="label-text">Gruppen Größe</span>
 					</div>
-					<input name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(set.Min, 10) } class="range" step="1"/>
+					<input autocomplete="off" name="size" type="range" min={ strconv.FormatInt(set.Min, 10) } max={ strconv.FormatInt(set.Max, 10) } value={ strconv.FormatInt(set.Min, 10) } class="range" step="1"/>
 					<div class="flex w-full justify-between px-2 pt-1 text-xs">
 						for num := range set.Max - set.Min + 1 {
 							<span>{ strconv.FormatInt(num + set.Min, 10) }</span>
@@ -108,7 +108,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 					<div class="label">
 						<span class="label-text">Anzahl Vegan</span>
 					</div>
-					<input name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" step="1" value="0"/>
+					<input autocomplete="off" name="vegan" type="number" class="input input-bordered w-full max-w-xs" min="0" max="20" step="1" value="0"/>
 				</label>
 				<label class="form-control">
 					<div class="label">

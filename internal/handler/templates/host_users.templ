@@ -45,7 +45,7 @@ templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []d
 												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 											>
 												// TODO icon, update from tribe
-												<input type="hidden" name="id" value={ strconv.FormatInt(request.ID, 10) }/>
+												<input autocomplete="off" type="hidden" name="id" value={ strconv.FormatInt(request.ID, 10) }/>
 												<p>{ request.Email }</p>
 												<p>{ request.Firstname } { request.Lastname }</p>
 												<div class="join">
