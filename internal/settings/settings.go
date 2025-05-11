@@ -45,6 +45,7 @@ type Stations struct {
 	AllowDelete      bool `json:"d" schema:"station-delete"`
 	EnableCategories bool `json:"ca" schema:"station-categories"`
 	ShowAbbr         bool `json:"s" schema:"station-abbr"`
+	AllowScoring     bool `json:"x" schema:"station-scoring"`
 }
 
 type Help struct {

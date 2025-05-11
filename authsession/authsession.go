@@ -50,21 +50,49 @@ func (a2s *authToSession) Callback(w http.ResponseWriter, r *http.Request, token
 
 	userInfo, err := a2s.client.GetUser(token)
 	if err != nil {
-		// add var error returns in client to render different errors here
+		// NTH add var error returns in client to render different errors here
 		slog.Error("GetUser", "err", err)
-		return // TODO render
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.ErrorPageSlim(
+			http.StatusBadRequest,
+			"User info Fehler",
+		).Render(r.Context(), w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
 	}
 	if userInfo == nil {
-		slog.Warn("userInfo is nil")
-		return // TODO render
+		slog.Error("userInfo is nil")
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.ErrorPageSlim(
+			http.StatusBadRequest,
+			"User info nicht erhalten",
+		).Render(r.Context(), w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
 	}
 	if !userInfo.EmailVerified {
-		slog.Warn("userInfo.EmailVerified false")
-		return // TODO render
+		slog.Error("userInfo.EmailVerified false", "userInfo", userInfo)
+		w.WriteHeader(http.StatusUnauthorized)
+		if err := templates.ErrorPageSlim(
+			http.StatusUnauthorized,
+			"Email ist nicht verifiziert",
+		).Render(r.Context(), w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
 	}
 	if userInfo.ID == "" {
-		slog.Warn("userInfo.ID empty")
-		return // TODO
+		slog.Error("userInfo.ID empty", "userInfo", userInfo)
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.ErrorPageSlim(
+			http.StatusBadRequest,
+			"User ID ist leer",
+		).Render(r.Context(), w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
 	}
 
 	ctx := r.Context()

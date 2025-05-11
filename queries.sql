@@ -396,6 +396,22 @@ from station_positions sp
 left join stations s
 	on sp.id = s.position_id;
 
+-- NTH order by ?
+-- name: GetPointsToGroups :many
+select
+	g.id as 'group'
+	,g.name
+	,g.abbr
+	,ptg.points
+	,t.name as 'tribe'
+	,g.grouping
+from groups g
+left join points_to_groups ptg
+	on ptg.station_id = ?
+	and ptg.group_id = g.id
+left join tribes t
+	on g.tribe_id = t.id;
+
 -- name: GetStationRoleByUser :one
 select
 	sr.station_id
@@ -501,6 +517,13 @@ select
 from tribes
 where email_domain = ?
 limit 1;
+
+-- name: UpsertPointToGroup :exec
+insert into points_to_groups (created_by, updated_by, station_id, group_id, points)
+values (?,?,?,?,?)
+on conflict do update set
+	points = excluded.points
+	,updated_by = excluded.updated_by;
 
 -- name: CreateUserIcon :exec
 insert into user_icons (id, image)

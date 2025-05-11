@@ -117,8 +117,9 @@ func main() {
 
 	// station routes
 	stationRouter := http.NewServeMux()
-	stationRouter.HandleFunc("GET /{$}", handlers.GetStationPoints)
+	stationRouter.HandleFunc("GET /{$}", handlers.GetStationGroupPoints)
 	stationRouter.HandleFunc("GET /settings", handlers.GetStationSettings)
+	stationRouter.HandleFunc("PUT /points", handlers.PutStationGroupPoint)
 	router.Handle("/stations/", http.StripPrefix("/stations", sessionService.RequireRoleFunc(acl.ACLViewUp, stationRouter)))
 
 	// dash routes

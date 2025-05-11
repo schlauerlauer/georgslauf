@@ -1,7 +1,8 @@
-h1:2qU7ULhggsoAPhgRGa3okuaV1SqAzAU2N0fq0gFPnso=
+h1:Y02ZUXX8SpHpO3cv/EIFKniS+8ttVioY1oqqdU5g9gM=
 20250308120733_init.sql h1:vzAqWRXhwIL7e2Hw6CU8JixhUNXuw3XJdLW9aBKuatA=
 20250315140748_add_vegan.sql h1:9DWo6wAe2V9d24rjJi3cYqlLpOc43B3ZKC/HxUC+v1M=
 20250401121945_add_station_pref.sql h1:e3VBeytX50b3UjneOszhndmD958/J4GFwmC533FU1bQ=
 20250401195316_add_station_loc.sql h1:jQ5WwdcALlA651+LLMRtVYpZUDC+V0DghC+vlGhdCPk=
 20250401200831_update_stations.sql h1:3ACwzdhhhBtETc8LKcf5Jx4NzejOXfY7TBOp7aqhfoI=
 20250401201837_add_position_unique.sql h1:6hBprjfAuekIlwsEO5WvAyZ1qDBIIN9S8iWClXpbCZU=
+20250509222157_add_points.sql h1:QNyKvws+j5vCANYuv9YqNFGbphxxQkLLOBePVqAtn3g=

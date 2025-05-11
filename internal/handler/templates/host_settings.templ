@@ -288,6 +288,21 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 									/>
 								</label>
 							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Bewertungen freischalten</span>
+									<input
+										name="station-scoring"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.AllowScoring {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
 						</form>
 					</div>
 				</details>

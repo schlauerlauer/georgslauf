@@ -538,6 +538,11 @@ table "points_to_stations" {
 		type = integer
 	}
 
+	column "points" {
+		null = false
+		type = integer
+	}
+
 	primary_key {
 		columns = [column.id]
 	}
@@ -613,6 +618,11 @@ table "points_to_groups" {
 	}
 
 	column "group_id" {
+		null = false
+		type = integer
+	}
+
+	column "points" {
 		null = false
 		type = integer
 	}
