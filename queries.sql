@@ -3,8 +3,8 @@ select
 	t.*
 	,ti.id as icon
 from tribes t
-left join tribe_icons ti on ti.id = t.id
-;
+left join tribe_icons ti
+	on ti.id = t.id;
 
 -- name: GetTribesName :many
 select
@@ -20,7 +20,8 @@ select
 	,sc.max
 	,count(s.id) as count
 from station_categories sc
-left join stations s on s.category_id = sc.id
+left join stations s
+	on s.category_id = sc.id
 group by sc.id;
 
 -- name: GetCategoryOfStation :one
@@ -28,7 +29,8 @@ select
 	s.category_id
 	,sc.name
 from stations s
-left join station_categories sc on s.category_id = sc.id
+left join station_categories sc
+	on s.category_id = sc.id
 where s.id = ?
 limit 1;
 
@@ -67,8 +69,10 @@ select
 	,u.firstname
 	,ui.image as user_image
 from groups g
-left join users u on g.updated_by = u.id
-left join user_icons ui on g.updated_by = ui.id
+left join users u
+	on g.updated_by = u.id
+left join user_icons ui
+	on g.updated_by = ui.id
 where g.tribe_id = ?
 order by g.created_at desc;
 
@@ -95,10 +99,10 @@ select
 	,t.name as tribe
 from stations s
 left join station_positions sp
-	on s.id = ?
-	and s.position_id = sp.id
+	on s.position_id = sp.id
 left join tribes t
 	on s.tribe_id = t.id
+where s.id = ?
 limit 1;
 
 -- name: GetStationName :one
@@ -128,10 +132,14 @@ select
 	,u.firstname
 	,ui.image as user_image
 from stations s
-left join station_categories sc on category_id = sc.id
-left join station_positions sp on position_id = sp.id
-left join users u on s.updated_by = u.id
-left join user_icons ui on s.updated_by = ui.id
+left join station_categories sc
+	on category_id = sc.id
+left join station_positions sp
+	on position_id = sp.id
+left join users u
+	on s.updated_by = u.id
+left join user_icons ui
+	on s.updated_by = ui.id
 where s.id = ?
 limit 1;
 
@@ -151,8 +159,10 @@ select
 	,u.firstname
 	,ui.image as user_image
 from groups g
-left join users u on g.updated_by = u.id
-left join user_icons ui on g.updated_by = ui.id
+left join users u
+	on g.updated_by = u.id
+left join user_icons ui
+	on g.updated_by = ui.id
 where g.id = ?
 limit 1;
 
@@ -176,10 +186,14 @@ select
 	,s.size
 	,ti.id as tribe_icon
 from stations s
-left join tribes t on s.tribe_id = t.id
-left join tribe_icons ti on ti.id = t.id
-left join station_categories sc on s.category_id = sc.id
-left join station_positions sp on s.position_id = sp.id
+left join tribes t
+	on s.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = t.id
+left join station_categories sc
+	on s.category_id = sc.id
+left join station_positions sp
+	on s.position_id = sp.id
 order by
 	s.tribe_id asc
 	,s.created_at asc;
@@ -189,7 +203,8 @@ select
 	t.name
 	,ti.id as tribe_icon
 from tribes t
-left join tribe_icons ti on ti.id = t.id
+left join tribe_icons ti
+	on ti.id = t.id
 where
 	t.id = ?
 limit 1;
@@ -204,8 +219,10 @@ select
 	,t.name as tribe
 	,ti.id as tribe_icon
 from groups g
-left join tribes t on g.tribe_id = t.id
-left join tribe_icons ti on ti.id = t.id
+left join tribes t
+	on g.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = t.id
 order by
 	g.tribe_id asc
 	,g.grouping asc
@@ -221,7 +238,8 @@ select
 	,g.grouping
 	,t.name as tribe
 from groups g
-left join tribes t on g.tribe_id = t.id
+left join tribes t
+	on g.tribe_id = t.id
 order by g.created_at asc;
 
 -- name: GetStationsDownload :many
@@ -235,9 +253,12 @@ select
 	,t.name as tribe
 	,sc.name as category
 from stations s
-left join tribes t on s.tribe_id = t.id
-left join station_positions sp on s.position_id = sp.id
-left join station_categories sc on s.category_id = sc.id
+left join tribes t
+	on s.tribe_id = t.id
+left join station_positions sp
+	on s.position_id = sp.id
+left join station_categories sc
+	on s.category_id = sc.id
 order by s.created_at asc;
 
 -- name: GetGroupsHost :many
@@ -295,8 +316,10 @@ select
 	,ti.id as icon_id
 	,tr.accepted_at
 from tribe_roles tr
-left join tribe_icons ti on ti.id = tr.id
-left join tribes t on tr.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = tr.id
+left join tribes t
+	on tr.tribe_id = t.id
 where
 	tr.user_id = ?
 limit 1;
@@ -311,9 +334,12 @@ select
 	,u.lastname
 	,s.name as station_name
 from station_roles sr
-inner join users u on sr.user_id = u.id
-inner join stations s on sr.station_id = s.id
-left join user_icons ui on ui.id = sr.user_id
+inner join users u
+	on sr.user_id = u.id
+inner join stations s
+	on sr.station_id = s.id
+left join user_icons ui
+	on ui.id = sr.user_id
 where
 	sr.id = ?
 limit 1;
@@ -332,10 +358,14 @@ select
 	,t.email_domain
 	,ti.id as tribe_icon
 from tribe_roles tr
-inner join users u on tr.user_id = u.id
-inner join tribes t on tr.tribe_id = t.id
-left join user_icons ui on ui.id = tr.user_id
-left join tribe_icons ti on ti.id = tr.tribe_id
+inner join users u
+	on tr.user_id = u.id
+inner join tribes t
+	on tr.tribe_id = t.id
+left join user_icons ui
+	on ui.id = tr.user_id
+left join tribe_icons ti
+	on ti.id = tr.tribe_id
 where
 	tr.id = ?
 limit 1;
@@ -346,8 +376,10 @@ select
 	,ti.id as icon_id
 	,tr.accepted_at
 from tribe_roles tr
-left join tribe_icons ti on ti.id = tr.id
-left join tribes t on tr.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = tr.id
+left join tribes t
+	on tr.tribe_id = t.id
 where
 	tr.user_id = ?
 	and tr.tribe_id = ?
@@ -414,7 +446,8 @@ select
 	,u.lastname
 	,ui.image
 from users u
-left join user_icons ui on ui.id = u.id
+left join user_icons ui
+	on ui.id = u.id
 where u.role > 0;
 
 -- name: GetUsersRoleNone :many
@@ -440,10 +473,14 @@ select
 	,ui.image as user_icon
 	,ti.id as tribe_icon_id
 from tribe_roles tr
-inner join users u on u.id = tr.user_id
-inner join tribes t on t.id = tr.tribe_id
-left join user_icons ui on ui.id = tr.user_id
-left join tribe_icons ti on ti.id = tr.tribe_id
+inner join users u
+	on u.id = tr.user_id
+inner join tribes t
+	on t.id = tr.tribe_id
+left join user_icons ui
+	on ui.id = tr.user_id
+left join tribe_icons ti
+	on ti.id = tr.tribe_id
 where
 	tribe_role = 0
 	and accepted_at is null
@@ -456,7 +493,8 @@ select
 	,u.email
 	,tr.tribe_role
 from tribe_roles tr
-inner join users u on u.id = tr.user_id
+inner join users u
+	on u.id = tr.user_id
 where
 	accepted_at is not null
 	or tr.tribe_role = -1
@@ -515,12 +553,13 @@ select
 	,ti.id as 'tribe_icon'
 from groups g
 left join points_to_groups ptg
-	on ptg.station_id = ?
-	and ptg.group_id = g.id
+	on ptg.group_id = g.id
 left join tribes t
 	on g.tribe_id = t.id
 left join tribe_icons ti
-	on ti.id = t.id;
+	on ti.id = t.id
+where
+	ptg.station_id = ?;
 
 -- name: GetStationRoleByUser :one
 select
@@ -555,10 +594,14 @@ select
 	,u.firstname
 	,ui.image as user_image
 from stations s
-left join station_categories sc on category_id = sc.id
-left join station_positions sp on position_id = sp.id
-left join users u on s.updated_by = u.id
-left join user_icons ui on s.updated_by = ui.id
+left join station_categories sc
+	on category_id = sc.id
+left join station_positions sp
+	on position_id = sp.id
+left join users u
+	on s.updated_by = u.id
+left join user_icons ui
+	on s.updated_by = ui.id
 where s.tribe_id = ?
 order by s.created_at desc;
 
