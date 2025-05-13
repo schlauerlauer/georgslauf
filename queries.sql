@@ -553,13 +553,12 @@ select
 	,ti.id as 'tribe_icon'
 from groups g
 left join points_to_groups ptg
-	on ptg.group_id = g.id
+	on ptg.station_id = ?
+	and ptg.group_id = g.id
 left join tribes t
 	on g.tribe_id = t.id
 left join tribe_icons ti
-	on ti.id = t.id
-where
-	ptg.station_id = ?;
+	on ti.id = t.id;
 
 -- name: GetStationRoleByUser :one
 select
