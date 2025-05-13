@@ -153,6 +153,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 			points,
 			csrf.Token(r),
 			station,
+			set.Groups.ShowAbbr,
 		),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)

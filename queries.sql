@@ -101,6 +101,14 @@ left join tribes t
 	on s.tribe_id = t.id
 limit 1;
 
+-- name: GetStationName :one
+select
+	s.id
+	,s.name
+from stations s
+where s.id = ?
+limit 1;
+
 -- name: GetStation :one
 select
 	s.id
@@ -148,6 +156,16 @@ left join user_icons ui on g.updated_by = ui.id
 where g.id = ?
 limit 1;
 
+-- name: GetStationRoles :many
+select
+	sr.id
+	,sr.station_id
+	,sr.station_role
+	,u.email
+from station_roles sr
+left join users u
+	on sr.user_id = u.id;
+
 -- name: GetStationsDetails :many
 select
 	s.id
@@ -188,7 +206,10 @@ select
 from groups g
 left join tribes t on g.tribe_id = t.id
 left join tribe_icons ti on ti.id = t.id
-order by g.created_at desc;
+order by
+	g.tribe_id asc
+	,g.grouping asc
+	,g.created_at asc;
 
 -- name: GetGroupsDownload :many
 select
@@ -280,6 +301,23 @@ where
 	tr.user_id = ?
 limit 1;
 
+-- name: GetStationRoleById :one
+select
+	sr.id
+	,sr.station_role
+	,u.email
+	,ui.image
+	,u.firstname
+	,u.lastname
+	,s.name as station_name
+from station_roles sr
+inner join users u on sr.user_id = u.id
+inner join stations s on sr.station_id = s.id
+left join user_icons ui on ui.id = sr.user_id
+where
+	sr.id = ?
+limit 1;
+
 -- name: GetTribeRoleById :one
 select
 	tr.id
@@ -319,6 +357,18 @@ limit 1;
 insert into tribe_roles (user_id, tribe_id, tribe_role, created_by, accepted_at)
 values (?,?,?,?,?);
 
+-- name: CreateStationRole :exec
+insert into station_roles (user_id, station_id, station_role, created_by)
+values (?,?,?,?);
+
+-- name: UpdateStationRole :exec
+update station_roles
+set
+	station_role = ?
+	,updated_by = ?
+	,updated_at = ?
+where id = ?;
+
 -- name: UpdateTribeRole :exec
 update tribe_roles
 set
@@ -339,6 +389,19 @@ select
 from users
 where id = ?
 limit 1;
+
+-- name: GetUsersOrdered :many
+select
+	u.id
+	,u.email
+	,t.short as tribe_name
+from users u
+left join tribe_roles tr
+	on tr.user_id = u.id
+left join tribes t
+	on tr.tribe_id = t.id
+order by
+	tr.tribe_id asc;
 
 -- name: GetUsersRoleLargerNone :many
 select
@@ -466,6 +529,13 @@ select
 from station_roles sr
 where
 	sr.user_id = ?
+limit 1;
+
+-- name: CountStationRoleByUser :one
+select
+	count(id)
+from station_roles
+where user_id = ?
 limit 1;
 
 -- name: GetStationsByTribe :many
@@ -638,6 +708,10 @@ where id = ?;
 
 -- name: DeleteStationCategory :exec
 delete from station_categories
+where id = ?;
+
+-- name: DeleteStationRole :exec
+delete from station_roles
 where id = ?;
 
 -- name: InsertStationCateogy :one

@@ -3,21 +3,23 @@ package templates
 import (
 	"encoding/base64"
 	"fmt"
+	"georgslauf/acl"
 	"georgslauf/internal/db"
 	"georgslauf/session"
 	"strconv"
+	"strings"
 	"time"
 )
 
-templ HostStationUpdate(station db.GetStationsDetailsRow, enableCategories bool) {
+templ HostStationUpdate(station db.GetStationsDetailsRow, enableCategories bool, roles []db.GetStationRolesRow) {
 	// the order matters
-	@HostStationEntry(station, enableCategories)
+	@HostStationEntry(station, enableCategories, roles)
 	@AlertSuccess("Gespeichert")
 	// NTH close modal instead for animation
 	<div hx-swap-oob="innerHTML:#modal-container"></div>
 }
 
-templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool) {
+templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool, roles []db.GetStationRolesRow) {
 	<tr id={ "station-" + strconv.FormatInt(station.ID, 10) }>
 		<td>
 			<div class="font-bold">{ station.Name }</div>
@@ -46,6 +48,55 @@ templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool) 
 			</div>
 		</td>
 		<td>{ strconv.FormatInt(station.Size, 10) }</td>
+		<td>
+			<form
+				class="flex flex-col gap-y-1"
+				hx-get="/host/stations/role"
+				hx-target="#modal-container"
+				hx-swap="innerHTML"
+			>
+				for _, row := range roles {
+					switch row.StationRole {
+						case acl.Edit:
+							<button
+								type="submit"
+								class="btn btn-xs btn-primary"
+								name="id"
+								value={ strconv.FormatInt(row.ID, 10) }
+							>
+								{ row.Email.String }
+							</button>
+						case acl.Admin:
+							<button
+								type="submit"
+								class="btn btn-xs btn-secondary"
+								name="id"
+								value={ strconv.FormatInt(row.ID, 10) }
+							>
+								{ row.Email.String }
+							</button>
+						default:
+							<button
+								type="submit"
+								class="btn btn-xs"
+								name="id"
+								value={ strconv.FormatInt(row.ID, 10) }
+							>
+								{ row.Email.String }
+							</button>
+					}
+				}
+			</form>
+			<form
+				hx-get={ "/host/stations/role/create/" + strconv.FormatInt(station.ID, 10) }
+				hx-swap="innerHTML"
+				hx-target="#modal-container"
+			>
+				<button type="submit" class="btn btn-ghost btn-sm">
+					<span class="icon-[mdi--account-add]"></span>
+				</button>
+			</form>
+		</td>
 		<td>
 			<form
 				hx-get={ "/host/stations/" + strconv.FormatInt(station.ID, 10) }
@@ -237,10 +288,21 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 				</form>
 			</div>
 		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
 	</dialog>
 }
 
-templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetStationsDetailsRow, csrf string, summary db.GetStationOverviewRow, enableCategories bool) {
+templ HostStations(
+	htmxRequest bool,
+	user *session.UserData,
+	stations []db.GetStationsDetailsRow,
+	csrf string,
+	summary db.GetStationOverviewRow,
+	enableCategories bool,
+	roles map[int64][]db.GetStationRolesRow,
+) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			<div
@@ -285,12 +347,17 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 								}
 								<th>Stamm</th>
 								<th>Personen</th>
+								<th>Berechtigungen</th>
 								<th>Details</th>
 							</tr>
 						</thead>
 						<tbody>
 							for _, entry := range stations {
-								@HostStationEntry(entry, enableCategories)
+								if accounts, ok := roles[entry.ID]; ok {
+									@HostStationEntry(entry, enableCategories, accounts)
+								} else {
+									@HostStationEntry(entry, enableCategories, []db.GetStationRolesRow{})
+								}
 							}
 						</tbody>
 						<tfoot>
@@ -302,6 +369,7 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 								}
 								<th>Stamm</th>
 								<th>Personen</th>
+								<th>Berechtigungen</th>
 								<th>Details</th>
 							</tr>
 						</tfoot>
@@ -320,4 +388,153 @@ templ HostStations(htmxRequest bool, user *session.UserData, stations []db.GetSt
 		</div>
 		<div id="modal-container"></div>
 	}
+}
+
+templ CreateStationRoleModal(accounts map[string][]db.GetUsersOrderedRow, station db.GetStationNameRow, csrf string) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Account zu Posten zuordnen</h3>
+			<form
+				class="mt-6 space-y-6"
+				hx-post="/host/stations/roles"
+				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+				hx-target="#modal-container"
+				hx-swap="innerHTML"
+			>
+				<div>
+					<h4 class="mb-3">Account</h4>
+					<select autocomplete="off" required name="user" class="invalid:border-error select select-bordered">
+						<option disabled selected value="">Keine</option>
+						for key, values := range accounts {
+							<optgroup label={ key }>
+								for _, entry := range values {
+									<option value={ strconv.FormatInt(entry.ID, 10) }>
+										{ entry.Email }
+									</option>
+								}
+							</optgroup>
+						}
+					</select>
+				</div>
+				<div>
+					<h4 class="mb-3">Posten</h4>
+					<div class="flex items-center gap-3">
+						<div>
+							<div class="font-bold">{ station.Name }</div>
+						</div>
+					</div>
+				</div>
+				<div class="flex justify-between gap-x-3">
+					<p>Neue Rolle</p>
+					<input autocomplete="off" type="hidden" name="station" value={ strconv.FormatInt(station.ID, 10) }/>
+					<div class="join">
+						<button class="join-item btn btn-sm btn-primary" type="submit" value="2" name="role">Normal</button>
+						<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">Erweitert</button>
+					</div>
+				</div>
+				<div>
+					<p class="font-light">
+						"Erweitert" kann andere zum eigenen Posten hinzufügen / entfernen
+					</p>
+				</div>
+			</form>
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
+}
+
+templ StationRoleModal(role db.GetStationRoleByIdRow, csrf string) {
+	<dialog class="modal" _="on load me.showModal()">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			<h3 class="text-lg">Posten Berechtigung</h3>
+			<div class="mt-6 space-y-6">
+				<div>
+					<h4 class="mb-3">Account</h4>
+					<div class="flex items-center gap-3">
+						if len(role.Image) > 0 {
+							<div class="avatar">
+								<div class="mask mask-squircle w-12">
+									<img
+										src={ "data:image/png;base64, " + base64.StdEncoding.EncodeToString(role.Image) }
+										alt="Avatar"
+									/>
+								</div>
+							</div>
+						} else {
+							<div class="avatar placeholder">
+								<div class="bg-neutral text-neutral-content w-12 mask mask-squircle">
+									if role.Firstname != "" && role.Lastname != "" {
+										<span>{ strings.ToUpper(role.Firstname[0:1] + role.Lastname[0:1]) }</span>
+									} else {
+										<span>GL</span>
+									}
+								</div>
+							</div>
+						}
+						<div>
+							<div class="font-bold">{ role.Email }</div>
+							<div class="text-sm opacity-50">{ role.Firstname } { role.Lastname }</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<h4 class="mb-3">Posten</h4>
+					<div class="flex items-center gap-3">
+						<div>
+							<div class="font-bold">{ role.StationName }</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="flex mb-3 items-center justify-between">
+						<p>Aktuelle Rolle</p>
+						switch role.StationRole {
+							case acl.Edit:
+								<div class="badge badge-primary">Normal</div>
+							case acl.Admin:
+								<div class="badge badge-secondary">Erweitert</div>
+							default:
+								<div class="badge">Unbekannt</div>
+								// NTH acl.View acl.Edit
+						}
+					</div>
+					<form
+						class="flex justify-between gap-x-3"
+						hx-put="/host/stations/role"
+						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+						hx-target="#modal-container"
+						hx-swap="innerHTML"
+					>
+						<p>Neue Rolle</p>
+						<input autocomplete="off" type="hidden" name="id" value={ strconv.FormatInt(role.ID, 10) }/>
+						<div class="join">
+							<button class="join-item btn btn-sm btn-primary" type="submit" value="2" name="role">Normal</button>
+							<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">Erweitert</button>
+						</div>
+					</form>
+					<button
+						class="mt-6 btn btn-sm btn-warning"
+						type="button"
+						hx-delete={ "/host/stations/role/" + strconv.FormatInt(role.ID, 10) }
+						hx-target="#modal-container"
+						hx-swap="innerHTML"
+						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+					>
+						Entfernen
+					</button>
+				</div>
+			</div>
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
 }

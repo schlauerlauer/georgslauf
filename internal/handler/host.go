@@ -159,6 +159,118 @@ func (h *Handler) GetStationCategoryNew(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+func (h *Handler) GetCreateStationRoleModal(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	stationId, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	station, err := h.queries.GetStationName(ctx, stationId)
+	if err != nil {
+		slog.Warn("GetStationName", "err", err)
+		w.WriteHeader(http.StatusNotFound)
+		if err := templates.AlertError("Posten nicht gefunden").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	accounts, err := h.queries.GetUsersOrdered(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		if err := templates.AlertError("Accounts nicht gefunden").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	groupedAccounts := map[string][]db.GetUsersOrderedRow{}
+	for _, entry := range accounts {
+		if entry.TribeName.Valid {
+			groupedAccounts[entry.TribeName.String] = append(groupedAccounts[entry.TribeName.String], entry)
+		} else {
+			groupedAccounts["Kein Stamm"] = append(groupedAccounts["Kein Stamm"], entry)
+		}
+	}
+
+	if err := templates.CreateStationRoleModal(
+		groupedAccounts,
+		station,
+		csrf.Token(r),
+	).Render(ctx, w); err != nil {
+		slog.Error("templ", "err", err)
+	}
+}
+
+type postRole struct {
+	UserID    int64 `schema:"user" validate:"gte=0"`
+	StationID int64 `schema:"station" validate:"gte=0"`
+	Role      int64 `schema:"role" validate:"gte=-1,lte=3"`
+}
+
+func (h *Handler) PostStationRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var data postRole
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		return // TODO
+	}
+
+	if count, err := h.queries.CountStationRoleByUser(ctx, data.UserID); err != nil {
+		slog.Warn("CountStationRoleByUser", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		if err := templates.AlertError("Ein Fehler ist aufgetreten").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	} else {
+		if count > 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			if err := templates.AlertWarning("Der Account ist bereits einem Posten zugeordnet").Render(ctx, w); err != nil {
+				slog.Error("templ", "err", err)
+			}
+			return
+		}
+	}
+
+	if err := h.queries.CreateStationRole(ctx, db.CreateStationRoleParams{
+		UserID:      data.UserID,
+		StationID:   data.StationID,
+		StationRole: acl.ACL(data.Role),
+		CreatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+	}); err != nil {
+		slog.Error("UpdateStationRole", "err", err)
+		return // TODO
+	}
+
+	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 type upsertStationCategory struct {
 	Name string `schema:"name" validate:"required,min=3,max=30" mod:"trim,sanitize"`
 	Max  int64  `schema:"max" validate:"gte=0"`
@@ -238,6 +350,31 @@ func (h *Handler) PutStationCategory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) DeleteStationRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.DeleteStationRole(ctx, id); err != nil {
+		slog.Warn("sqlc", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := templates.AlertSuccess("Gelöscht").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 func (h *Handler) DeleteStationCategory(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -258,7 +395,7 @@ func (h *Handler) DeleteStationCategory(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+	if err := templates.AlertSuccess("Gelöscht").Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -308,19 +445,28 @@ func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("PutUserRole", "data", data)
 }
 
-func (h *Handler) GetTribeRoleModal(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetStationRoleModal(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var user *session.UserData
-	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
-		user = userData
-	} else {
-		slog.Warn("not ok")
-		return // TODO redirect?
+	id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		return // TODO
 	}
-	if user == nil {
-		return
+
+	stationRole, err := h.queries.GetStationRoleById(ctx, id)
+	if err != nil {
+		slog.Warn("GetStationRoleById", "err", err)
+		return // TODO
 	}
+
+	if err := templates.StationRoleModal(stationRole, csrf.Token(r)).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) GetTribeRoleModal(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 
 	id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
 	if err != nil {
@@ -339,9 +485,47 @@ func (h *Handler) GetTribeRoleModal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type putTribeRole struct {
-	TribeRoleID int64 `schema:"id" validate:"gte=0"`
-	TribeRole   int64 `schema:"role" validate:"gte=-1,lte=3"`
+func (h *Handler) PutStationRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var data putRole
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		return // TODO
+	}
+
+	if err := h.queries.UpdateStationRole(ctx, db.UpdateStationRoleParams{
+		ID:          data.RoleID,
+		StationRole: acl.ACL(data.Role),
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		slog.Error("UpdateStationRole", "err", err)
+		return // TODO
+	}
+
+	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+type putRole struct {
+	RoleID int64 `schema:"id" validate:"gte=0"`
+	Role   int64 `schema:"role" validate:"gte=-1,lte=3"`
 }
 
 func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
@@ -358,21 +542,21 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var data putTribeRole
+	var data putRole
 	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
 		slog.Error("ProcessForm", "err", err)
 		return // TODO
 	}
 
 	accepted := sql.NullInt64{}
-	if data.TribeRole >= int64(acl.None) {
+	if data.Role >= int64(acl.None) {
 		accepted.Int64 = time.Now().Unix()
 		accepted.Valid = true
 	}
 
 	if err := h.queries.UpdateTribeRole(ctx, db.UpdateTribeRoleParams{
-		ID:         data.TribeRoleID,
-		TribeRole:  acl.ACL(data.TribeRole),
+		ID:         data.RoleID,
+		TribeRole:  acl.ACL(data.Role),
 		AcceptedAt: accepted,
 		UpdatedBy: sql.NullInt64{
 			Int64: user.ID,
@@ -384,7 +568,6 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	slog.Debug("PutTribeRole", "data", data)
 	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
@@ -706,10 +889,28 @@ func (h *Handler) GetStations(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
+	roleRows, err := h.queries.GetStationRoles(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+	roles := make(map[int64][]db.GetStationRolesRow)
+	for _, row := range roleRows {
+		roles[row.StationID] = append(roles[row.StationID], row)
+	}
+
 	set := h.settings.Get()
 
 	w.WriteHeader(http.StatusOK)
-	if err := templates.HostStations(htmxRequest, user, stations, csrf.Token(r), summary, set.Stations.EnableCategories).Render(ctx, w); err != nil {
+	if err := templates.HostStations(
+		htmxRequest,
+		user,
+		stations,
+		csrf.Token(r),
+		summary,
+		set.Stations.EnableCategories,
+		roles,
+	).Render(ctx, w); err != nil {
 		slog.Warn("HostStations", "err", err)
 	}
 }
@@ -848,7 +1049,7 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 		pos, err := h.queries.GetStationPosition(ctx, data.PositionId)
 		if err != nil {
 			slog.Error("sqlc", "err", err)
-			return
+			return // TODO
 		}
 
 		positionName = sql.NullString{
@@ -857,18 +1058,27 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	templates.HostStationUpdate(db.GetStationsDetailsRow{
-		ID:           data.StationId,
-		Name:         data.Name,
-		CategoryName: categoryName,
-		Tribe: sql.NullString{
-			String: tribe.Name,
-			Valid:  true,
+	roles, err := h.queries.GetStationRoles(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	templates.HostStationUpdate(
+		db.GetStationsDetailsRow{
+			ID:           data.StationId,
+			Name:         data.Name,
+			CategoryName: categoryName,
+			Tribe: sql.NullString{
+				String: tribe.Name,
+				Valid:  true,
+			},
+			Size:         data.Size,
+			TribeIcon:    tribe.TribeIcon,
+			PositionName: positionName,
 		},
-		Size:         data.Size,
-		TribeIcon:    tribe.TribeIcon,
-		PositionName: positionName,
-	}, set.Stations.EnableCategories,
+		set.Stations.EnableCategories,
+		roles,
 	).Render(ctx, w)
 }
 

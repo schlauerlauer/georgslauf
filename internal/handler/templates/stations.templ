@@ -24,7 +24,7 @@ templ StationPointsTab(children templ.Component) {
 	@children
 }
 
-templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow) {
+templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow, showAbbr bool) {
 	<div class="mb-6 stats shadow bg-base-200">
 		<div class="stat">
 			<div class="stat-figure text-primary">
@@ -40,7 +40,9 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 			<!-- head -->
 			<thead>
 				<tr>
-					<th>Laufgruppe</th>
+					if showAbbr {
+						<th>Laufgruppe</th>
+					}
 					<th>Gruppe</th>
 					<th>Punkte</th>
 				</tr>
@@ -48,8 +50,9 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 			<tbody>
 				for _, entry := range points {
 					<tr>
-						// TODO if abbr enabled
-						<td>{ entry.Abbr.String }</td>
+						if showAbbr {
+							<td>{ entry.Abbr.String }</td>
+						}
 						<td>
 							<div class="font-bold">{ entry.Name }</div>
 							<div class="flex items-center gap-x-3">
@@ -90,9 +93,9 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 							>
 								<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
 								if entry.Points.Valid {
-									<input autocomplete="off" class="input w-full max-w-xs font-bold" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
+									<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
 								} else {
-									<input autocomplete="off" class="input w-full max-w-xs font-bold" type="number" name="points" max="100" min="0" value="0"/>
+									<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value="0"/>
 								}
 							</form>
 						</td>
