@@ -214,6 +214,7 @@ type postRole struct {
 	UserID    int64 `schema:"user" validate:"gte=0"`
 	StationID int64 `schema:"station" validate:"gte=0"`
 	Role      int64 `schema:"role" validate:"gte=-1,lte=3"`
+	TribeID   int64 `schema:"tribe" validate:"gte=0"` // used for dash
 }
 
 func (h *Handler) PostStationRole(w http.ResponseWriter, r *http.Request) {
@@ -524,8 +525,9 @@ func (h *Handler) PutStationRole(w http.ResponseWriter, r *http.Request) {
 }
 
 type putRole struct {
-	RoleID int64 `schema:"id" validate:"gte=0"`
-	Role   int64 `schema:"role" validate:"gte=-1,lte=3"`
+	RoleID  int64 `schema:"id" validate:"gte=0"`
+	Role    int64 `schema:"role" validate:"gte=-1,lte=3"`
+	TribeID int64 `schema:"tribe" validate:"gte=0"` // used for dash
 }
 
 func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {

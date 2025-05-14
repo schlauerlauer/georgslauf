@@ -435,11 +435,9 @@ templ CreateStationRoleModal(accounts map[string][]db.GetUsersOrderedRow, statio
 						<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">Erweitert</button>
 					</div>
 				</div>
-				<div>
-					<p class="font-light">
-						"Erweitert" kann andere zum eigenen Posten hinzufügen / entfernen
-					</p>
-				</div>
+				<p class="mt-3 font-light text-sm">
+					"Erweitert" kann andere zum eigenen Posten hinzufügen / entfernen
+				</p>
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
@@ -520,6 +518,9 @@ templ StationRoleModal(role db.GetStationRoleByIdRow, csrf string) {
 							<button class="join-item btn btn-sm btn-secondary" type="submit" value="3" name="role">Erweitert</button>
 						</div>
 					</form>
+					<p class="mt-3 font-light text-sm">
+						"Erweitert" kann andere zum eigenen Posten hinzufügen / entfernen
+					</p>
 					<button
 						class="mt-6 btn btn-sm btn-warning"
 						type="button"

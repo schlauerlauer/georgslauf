@@ -12,7 +12,8 @@ templ StationSettings(station db.GetStationsByTribeRow, set settings.Stations, c
 		<a role="tab" class="tab" hx-get="/stations/">Bewertungen</a>
 		<a role="tab" class="tab tab-active" hx-get="/stations/settings">Posten</a>
 	</div>
-	@DashStation(station, csrf, tribeId, set, categories, false, false, positions, true)
+	// FIXME stations own view
+	@DashStation(station, csrf, tribeId, set, categories, false, false, positions, true, []db.GetStationRolesDashRow{})
 }
 
 templ StationPointsTab(children templ.Component) {
@@ -24,7 +25,7 @@ templ StationPointsTab(children templ.Component) {
 	@children
 }
 
-templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow, showAbbr bool) {
+templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow, showAbbr bool, scoringEnabled bool, testScoring bool) {
 	<div class="mb-6 stats shadow bg-base-200">
 		<div class="stat">
 			<div class="stat-figure text-primary">
@@ -35,73 +36,80 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 			<div class="stat-desc">{ station.Tribe.String }</div>
 		</div>
 	</div>
-	<div class="overflow-x-auto">
-		<table class="table">
-			<!-- head -->
-			<thead>
-				<tr>
-					if showAbbr {
-						<th>Laufgruppe</th>
-					}
-					<th>Gruppe</th>
-					<th>Punkte</th>
-				</tr>
-			</thead>
-			<tbody>
-				for _, entry := range points {
+	if scoringEnabled || testScoring {
+		if testScoring {
+			<h1 class="my-6 text-xl font-bold tracking-tight sm:text-2xl">Die Bewertungen sind zum testen freigeschaltet</h1>
+		}
+		<div class="overflow-x-auto">
+			<table class="table">
+				<!-- head -->
+				<thead>
 					<tr>
 						if showAbbr {
-							<td>{ entry.Abbr.String }</td>
+							<th>Laufgruppe</th>
 						}
-						<td>
-							<div class="font-bold">{ entry.Name }</div>
-							<div class="flex items-center gap-x-3">
-								<div class="text-sm opacity-50">
-									switch entry.Grouping {
-										case 0:
-											Wölflinge
-										case 1:
-											Jupfis
-										case 2:
-											Pfadis
-										case 3:
-											Rover
-									}
-								</div>
-								<div class="badge badge-xs">
-									{ entry.Tribe.String }
-									if entry.TribeIcon.Valid {
-										<div class="avatar ml-1">
-											<div class="w-4 rounded-full">
-												<img
-													src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
-													alt="Avatar"
-												/>
-											</div>
-										</div>
-									}
-								</div>
-							</div>
-						</td>
-						<td>
-							// TODO move hx attributes to parent
-							<form
-								hx-put="/stations/points"
-								hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
-								hx-swap="none"
-								hx-trigger="input changed delay:250ms"
-							>
-								<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
-								if entry.Points.Valid {
-									<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
-								} else {
-									<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value="0"/>
-								}
-							</form>
-						</td>
+						<th>Gruppe</th>
+						<th>Punkte</th>
 					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+				</thead>
+				<tbody>
+					for _, entry := range points {
+						<tr>
+							if showAbbr {
+								<td>{ entry.Abbr.String }</td>
+							}
+							<td>
+								<div class="font-bold">{ entry.Name }</div>
+								<div class="flex items-center gap-x-3">
+									<div class="text-sm opacity-50">
+										switch entry.Grouping {
+											case 0:
+												Wölflinge
+											case 1:
+												Jupfis
+											case 2:
+												Pfadis
+											case 3:
+												Rover
+										}
+									</div>
+									<div class="badge badge-xs">
+										{ entry.Tribe.String }
+										if entry.TribeIcon.Valid {
+											<div class="avatar ml-1">
+												<div class="w-4 rounded-full">
+													<img
+														src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
+														alt="Avatar"
+													/>
+												</div>
+											</div>
+										}
+									</div>
+								</div>
+							</td>
+							<td>
+								// TODO move hx attributes to parent
+								<form
+									hx-put="/stations/points"
+									hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+									hx-swap="none"
+									hx-trigger="input changed delay:250ms"
+								>
+									<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
+									if entry.Points.Valid {
+										<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
+									} else {
+										<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value="0"/>
+									}
+								</form>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	} else {
+		@ErrorMessage("Die Bewertungen sind ausgestellt")
+	}
 }

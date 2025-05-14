@@ -28,6 +28,14 @@ func (h *Handler) checkTribeRole(userId int64, tribeId int64, requiredRole acl.A
 	return nil
 }
 
+func (h *Handler) checkStationRoleIsTribe(roleId int64, tribeId int64) error {
+	_, err := h.queries.GetCheckStationRoleIsTribe(context.Background(), db.GetCheckStationRoleIsTribeParams{
+		RoleID:  roleId,
+		TribeID: tribeId,
+	})
+	return err
+}
+
 // single role only
 func (h *Handler) checkStationRole(userId int64, requireRole acl.ACL) (int64, error) {
 	stationRole, err := h.queries.GetStationRoleByUser(context.Background(), userId)

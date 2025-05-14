@@ -20,7 +20,7 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 			// hx-push-url="true"
 			if isEdit || isAdmin {
 				<div role="tablist" class="tabs tabs-bordered">
-					<input autocomplete="off" type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Posten Ansicht"/>
+					<input autocomplete="off" type="radio" name="dash_view" role="tab" class="tab" aria-label="Posten Ansicht" checked="checked"/>
 					<div role="tabpanel" class="tab-content p-6">
 						// station tab
 						// NTH posten tab (hidden)
@@ -37,19 +37,19 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 						</div>
 						<div id="station-tab" class="pt-6"></div>
 					</div>
-					<input autocomplete="off" type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Stamm Ansicht" checked="checked"/>
+					<input autocomplete="off" type="radio" name="dash_view" role="tab" class="tab" aria-label="Stamm Ansicht"/>
 					<div role="tabpanel" class="tab-content p-6">
 						// tribe tab
 						<div
 							id="dash-tabs-tribe"
 							role="tablist"
-							class="tabs tabs-bordered hidden"
+							class="tabs tabs-bordered"
 							hx-swap="innerHTML"
 							hx-target="#dash-tab"
 							hx-include="#tribe-id"
 						>
-							<a role="tab" class="tab tab-active" hx-get="/dash/groups" hx-trigger="load once">Gruppen</a>
-							<a role="tab" class="tab" hx-get="/dash/stations">Posten</a>
+							<a role="tab" class="tab" hx-get="/dash/groups">Gruppen</a>
+							<a role="tab" class="tab tab-active" hx-trigger="load once" hx-get="/dash/stations">Posten</a>
 						</div>
 						<div id="dash-tab" class="pt-6"></div>
 					</div>

@@ -61,7 +61,7 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 
 	set := h.settings.Get()
 
-	if !set.Stations.AllowScoring {
+	if !set.Stations.AllowScoring && !set.Stations.TestScoring {
 		if err := templates.StationPointsTab(
 			templates.ErrorMessage("Die Bewertungen sind ausgestellt"),
 		).Render(ctx, w); err != nil {
@@ -126,11 +126,24 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 
 	set := h.settings.Get()
 
-	if !set.Stations.AllowScoring {
+	station, err := h.queries.GetStationInfo(ctx, stationId)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	if !set.Stations.AllowScoring && !set.Stations.TestScoring {
 		if err := templates.StationPointsTab(
-			templates.ErrorMessage("Die Bewertungen sind ausgestellt"),
+			templates.PointsList(
+				[]db.GetPointsToGroupsRow{},
+				csrf.Token(r),
+				station,
+				set.Groups.ShowAbbr,
+				false,
+				false,
+			),
 		).Render(ctx, w); err != nil {
-			slog.Warn("templ", "err", err)
+			slog.Error("templ", "err", err)
 		}
 		return
 	}
@@ -142,18 +155,14 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 		return // TODO
 	}
 
-	station, err := h.queries.GetStationInfo(ctx, stationId)
-	if err != nil {
-		slog.Error("sqlc", "err", err)
-		return // TODO
-	}
-
 	if err := templates.StationPointsTab(
 		templates.PointsList(
 			points,
 			csrf.Token(r),
 			station,
 			set.Groups.ShowAbbr,
+			true,
+			set.Stations.TestScoring,
 		),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)

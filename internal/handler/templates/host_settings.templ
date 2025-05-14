@@ -303,6 +303,37 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 									/>
 								</label>
 							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Bewertungen zum testen freischalten</span>
+									<input
+										name="station-test-scoring"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.TestScoring {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							// FIXME add station view setting
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">StaVos können Accounts an Posten verändern</span>
+									<input
+										name="station-accounts"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.EditAccounts {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
 						</form>
 					</div>
 				</details>

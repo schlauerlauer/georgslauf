@@ -166,6 +166,19 @@ left join user_icons ui
 where g.id = ?
 limit 1;
 
+-- name: GetStationRolesDash :many
+select
+	sr.id
+	,sr.station_id
+	,sr.station_role
+	,u.email
+from station_roles sr
+inner join stations s
+	on sr.station_id = s.id
+	and s.tribe_id = ?
+inner join users u
+	on sr.user_id = u.id;
+
 -- name: GetStationRoles :many
 select
 	sr.id
@@ -422,6 +435,40 @@ from users
 where id = ?
 limit 1;
 
+-- name: GetUserWithTribeRole :one
+select
+	count(u.id)
+from users u
+inner join tribe_roles tr
+	on tr.user_id = u.id
+	and tr.tribe_id = ?
+	and u.id = ?
+limit 1;
+
+-- name: GetStationByIdAndTribe :one
+select
+	count(id)
+from stations
+where id = ?
+and tribe_id = ?
+limit 1;
+
+-- name: GetStationRoleStation :one
+select
+	station_id
+from station_roles
+where id = ?
+limit 1;
+
+-- name: GetUsersByTribeRole :many
+select
+	u.id
+	,u.email
+from users u
+inner join tribe_roles tr
+	on tr.user_id = u.id
+	and tr.tribe_id = ?;
+
 -- name: GetUsersOrdered :many
 select
 	u.id
@@ -567,6 +614,18 @@ select
 from station_roles sr
 where
 	sr.user_id = ?
+limit 1;
+
+-- name: GetCheckStationRoleIsTribe :one
+select
+	count(sr.id)
+from station_roles sr
+inner join stations s
+	on sr.station_id = s.id
+	and sr.id = sqlc.arg(role_id)
+inner join tribes t
+	on s.tribe_id = t.id
+	and t.id = sqlc.arg(tribe_id)
 limit 1;
 
 -- name: CountStationRoleByUser :one
