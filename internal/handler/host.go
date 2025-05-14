@@ -864,6 +864,214 @@ func (h *Handler) GetStationsDownload(w http.ResponseWriter, r *http.Request) {
 	w.Write(buffer.Bytes())
 }
 
+type putHostPointForm struct {
+	GroupId   int64 `schema:"group" validate:"gte=1"`   // sqlite
+	StationId int64 `schema:"station" validate:"gte=1"` // sqlite
+	Points    int64 `schema:"points" validate:"gte=0,lte=100"`
+}
+
+func (h *Handler) HostPutPointsToStation(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var formData putHostPointForm
+	if err := h.formProcessor.ProcessForm(&formData, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.UpsertPointToStation(ctx, db.UpsertPointToStationParams{
+		CreatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		GroupID:   formData.GroupId,
+		StationID: formData.StationId,
+		Points:    formData.Points,
+	}); err != nil {
+		// TODO
+		slog.Error("sqlc", "err", err)
+		return
+	}
+
+	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) HostPutPointsToGroup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var formData putHostPointForm
+	if err := h.formProcessor.ProcessForm(&formData, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.UpsertPointToGroup(ctx, db.UpsertPointToGroupParams{
+		CreatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		StationID: formData.StationId,
+		GroupID:   formData.GroupId,
+		Points:    formData.Points,
+	}); err != nil {
+		// TODO
+		slog.Error("sqlc", "err", err)
+		return
+	}
+
+	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) HostGetPointsDetails(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	queries := r.URL.Query()
+
+	if stationStr := queries.Get("station"); stationStr != "" {
+		stationId, err := strconv.ParseInt(stationStr, 10, 64)
+		if err != nil {
+			slog.Warn("ParseInt", "err", err)
+			return
+		}
+
+		station, err := h.queries.GetStationInfo(ctx, stationId)
+		if err != nil {
+			slog.Error("sqlc", "err", err)
+			return // TODO
+		}
+
+		set := h.settings.Get()
+
+		// points from station to group
+		points, err := h.queries.GetPointsToGroups(ctx, stationId)
+		if err != nil {
+			slog.Error("sqlc", "err", err)
+			return // TODO
+		}
+
+		if err := templates.HostPointsToGroup(
+			station,
+			set.Groups.ShowAbbr,
+			csrf.Token(r),
+			points,
+		).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+
+	if groupStr := queries.Get("group"); groupStr != "" {
+		groupId, err := strconv.ParseInt(groupStr, 10, 64)
+		if err != nil {
+			slog.Warn("ParseInt", "err", err)
+			return
+		}
+
+		group, err := h.queries.GetGroupInfo(ctx, groupId)
+		if err != nil {
+			slog.Warn("sqlc", "err", err)
+			return // TODO
+		}
+
+		set := h.settings.Get()
+
+		// points from station to group
+		points, err := h.queries.GetPointsToStations(ctx, groupId)
+		if err != nil {
+			slog.Error("sqlc", "err", err)
+			return // TODO
+		}
+
+		if err := templates.HostPointsToStation(
+			group,
+			csrf.Token(r),
+			points,
+			set.Stations.ShowAbbr,
+		).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+}
+
+func (h *Handler) HostGetPoints(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	stations, err := h.queries.GetStationsHost(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return
+	}
+
+	groups, err := h.queries.GetGroupsHost(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if err := templates.HostPoints(
+		htmxRequest,
+		user,
+		csrf.Token(r),
+		stations,
+		groups,
+	).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 func (h *Handler) GetStations(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()

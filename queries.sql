@@ -105,6 +105,17 @@ left join tribes t
 where s.id = ?
 limit 1;
 
+-- name: GetGroupInfo :one
+select
+	g.name
+	,g.abbr
+	,t.name as tribe
+from groups g
+left join tribes t
+	on g.tribe_id = t.id
+where g.id = ?
+limit 1;
+
 -- name: GetStationName :one
 select
 	s.id
@@ -588,6 +599,27 @@ from station_positions sp
 left join stations s
 	on sp.id = s.position_id;
 
+-- NTH order by?
+-- name: GetPointsToStations :many
+select
+	s.id as 'station'
+	,s.name
+	-- TODO category
+	,pts.points
+	,ti.id as 'tribe_icon'
+	,t.short as 'tribe'
+	,sp.name as 'position'
+from stations s
+left join points_to_stations pts
+	on pts.group_id = ?
+	and pts.station_id = s.id
+left join tribes t
+	on s.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = t.id
+left join station_positions sp
+	on s.position_id = sp.id;
+
 -- NTH order by ?
 -- name: GetPointsToGroups :many
 select
@@ -735,6 +767,13 @@ select
 from tribes
 where email_domain = ?
 limit 1;
+
+-- name: UpsertPointToStation :exec
+insert into points_to_stations (created_by, updated_by, group_id, station_id, points)
+values (?,?,?,?,?)
+on conflict do update set
+	points = excluded.points
+	,updated_by = excluded.updated_by;
 
 -- name: UpsertPointToGroup :exec
 insert into points_to_groups (created_by, updated_by, station_id, group_id, points)

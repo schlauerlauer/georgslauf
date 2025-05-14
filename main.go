@@ -181,6 +181,10 @@ func main() {
 	hostRouter.HandleFunc("POST /stations/categories", handlers.PostStationCategory)
 	hostRouter.HandleFunc("PUT /stations/categories/{id}", handlers.PutStationCategory)
 	hostRouter.HandleFunc("DELETE /stations/categories/{id}", handlers.DeleteStationCategory)
+	hostRouter.HandleFunc("GET /points", handlers.HostGetPoints)
+	hostRouter.HandleFunc("GET /points/details", handlers.HostGetPointsDetails)
+	hostRouter.HandleFunc("PUT /points/group", handlers.HostPutPointsToGroup)
+	hostRouter.HandleFunc("PUT /points/station", handlers.HostPutPointsToStation)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
