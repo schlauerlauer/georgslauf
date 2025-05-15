@@ -1,0 +1,228 @@
+package templates
+
+import (
+	"georgslauf/internal/db"
+	"georgslauf/session"
+	"strconv"
+)
+
+type GroupResult struct {
+	Rank        int64
+	Shared      bool
+	GroupRank   int64
+	GroupShared bool
+	Row         db.GetResultsGroupsRow
+}
+
+templ HostResultsGroups(
+	htmxRequest bool,
+	user *session.UserData,
+	csrf string,
+	results []GroupResult,
+	showAbbr bool,
+) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a role="tab" class="tab" hx-get="/host/points">Bewertungen</a>
+				<a role="tab" class="tab tab-active" hx-get="/host/results/groups">Auswertung</a>
+				<a role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<form
+				class="mt-6 w-full max-w-xs"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<div class="form-control">
+					<label class="label cursor-pointer">
+						<span class="label-text">Posten Auswertung</span>
+						<input autocomplete="off" type="radio" hx-get="/host/results/stations" class="radio radio-primary"/>
+					</label>
+				</div>
+				<div class="form-control">
+					<label class="label cursor-pointer">
+						<span class="label-text">Gruppen Auswertung</span>
+						<input autocomplete="off" type="radio" hx-get="/host/results/groups" class="radio radio-primary" checked="checked"/>
+					</label>
+				</div>
+			</form>
+			<div class="overflow-x-auto mt-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Platz</th>
+							<th>Stufen Platz</th>
+							if showAbbr {
+								<th>Laufgruppe</th>
+							}
+							<th>Gruppe</th>
+							<th>Punkte</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, entry := range results {
+							<tr>
+								if entry.Shared {
+									<td class="font-bold text-warning">{ strconv.FormatInt(entry.Rank, 10) }</td>
+								} else {
+									<td class="font-bold">{ strconv.FormatInt(entry.Rank, 10) }</td>
+								}
+								if entry.GroupShared {
+									<td class="font-bold text-warning">{ strconv.FormatInt(entry.GroupRank, 10) }</td>
+								} else {
+									<td class="font-bold">{ strconv.FormatInt(entry.GroupRank, 10) }</td>
+								}
+								if showAbbr {
+									<td>{ entry.Row.Abbr.String }</td>
+								}
+								<td>
+									<div class="font-bold">{ entry.Row.Name }</div>
+									<div class="flex items-center gap-x-3">
+										<div class="text-sm opacity-50">
+											switch entry.Row.Grouping {
+												case 0:
+													Wölflinge
+												case 1:
+													Jupfis
+												case 2:
+													Pfadis
+												case 3:
+													Rover
+											}
+										</div>
+										<div class="badge badge-xs">
+											{ entry.Row.Tribe.String }
+											if entry.Row.TribeIcon.Valid {
+												<div class="avatar ml-1">
+													<div class="w-4 rounded-full">
+														<img
+															src={ "/icon/tribe/" + strconv.FormatInt(entry.Row.TribeIcon.Int64, 10) }
+															alt="Avatar"
+														/>
+													</div>
+												</div>
+											}
+										</div>
+									</div>
+								</td>
+								<td>
+									<p class="font-bold">
+										{ strconv.FormatFloat(entry.Row.Sum.Float64, 'f', 0, 64) }
+									</p>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
+}
+
+type StationResult struct {
+	Rank   int64
+	Shared bool
+	Row    db.GetResultsStationsRow
+}
+
+templ HostResultsStations(
+	htmxRequest bool,
+	user *session.UserData,
+	csrf string,
+	results []StationResult,
+) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a role="tab" class="tab" hx-get="/host/points">Bewertungen</a>
+				<a role="tab" class="tab tab-active" hx-get="/host/results/stations">Auswertung</a>
+				<a role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<form
+				class="mt-6 w-full max-w-xs"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<div class="form-control">
+					<label class="label cursor-pointer">
+						<span class="label-text">Posten Auswertung</span>
+						<input autocomplete="off" type="radio" hx-get="/host/results/stations" class="radio radio-primary" checked="checked"/>
+					</label>
+				</div>
+				<div class="form-control">
+					<label class="label cursor-pointer">
+						<span class="label-text">Gruppen Auswertung</span>
+						<input autocomplete="off" type="radio" hx-get="/host/results/groups" class="radio radio-primary"/>
+					</label>
+				</div>
+			</form>
+			<div class="overflow-x-auto mt-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Platz</th>
+							<th>Posten</th>
+							<th>Position</th>
+							<th>Punkte</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, entry := range results {
+							<tr>
+								if entry.Shared {
+									<td class="font-bold text-warning">{ strconv.FormatInt(entry.Rank, 10) }</td>
+								} else {
+									<td class="font-bold">{ strconv.FormatInt(entry.Rank, 10) }</td>
+								}
+								<td>
+									<div class="font-bold">{ entry.Row.Name }</div>
+									<div class="badge badge-xs">
+										{ entry.Row.Tribe.String }
+										if entry.Row.TribeIcon.Valid {
+											<div class="avatar ml-1">
+												<div class="w-4 rounded-full">
+													<img
+														src={ "/icon/tribe/" + strconv.FormatInt(entry.Row.TribeIcon.Int64, 10) }
+														alt="Avatar"
+													/>
+												</div>
+											</div>
+										}
+									</div>
+								</td>
+								<td>{ entry.Row.Position.String }</td>
+								<td>
+									<p class="font-bold">
+										{ strconv.FormatFloat(entry.Row.Sum.Float64, 'f', 0, 64) }
+									</p>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
+}

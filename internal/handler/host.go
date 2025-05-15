@@ -814,17 +814,6 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetStationsDownload(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var user *session.UserData
-	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
-		user = userData
-	} else {
-		slog.Warn("not ok")
-		return // TODO redirect?
-	}
-	if user == nil {
-		return
-	}
-
 	stations, err := h.queries.GetStationsDownload(ctx)
 	if err != nil {
 		slog.Error("sqlc", "err", err)
@@ -832,11 +821,12 @@ func (h *Handler) GetStationsDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	csvStations := [][]string{
-		{"Name", "Personen", "Vegan", "Beschreibung", "Material", "Position", "Stamm", "Kategorie"},
+		{"ID", "Name", "Personen", "Vegan", "Beschreibung", "Material", "Position", "Stamm", "Kategorie"},
 	}
 
 	for _, entry := range stations {
 		csvStations = append(csvStations, []string{
+			strconv.FormatInt(entry.ID, 10),
 			entry.Name,
 			strconv.FormatInt(entry.Size, 10),
 			strconv.FormatInt(entry.Vegan, 10),
@@ -1031,6 +1021,122 @@ func (h *Handler) HostGetPointsDetails(w http.ResponseWriter, r *http.Request) {
 			slog.Warn("templ", "err", err)
 		}
 		return
+	}
+}
+
+func (h *Handler) HostGetResultsGroups(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	set := h.settings.Get()
+
+	results, err := h.queries.GetResultsGroups(ctx)
+	if err != nil {
+		slog.Warn("sqlc", "err", err)
+		return
+	}
+
+	var rank int64
+	var score int64 = 9223372036854775807
+	groupingRank := [4]int64{}
+	groupingScore := [4]int64{9223372036854775807, 9223372036854775807, 9223372036854775807, 9223372036854775807} // NTH grouping size dependend
+	resultsCalc := make([]templates.GroupResult, len(results))
+	for idx, row := range results {
+		tmp := int64(row.Sum.Float64)
+		shared := tmp == score
+		if tmp < score {
+			rank += 1
+			score = tmp
+		}
+
+		// set grouping
+		if int(row.Grouping) >= len(groupingScore) {
+			slog.Warn("grouping unknown", "group", row.ID)
+			templates.AlertError("Gruppe hat eine unbekannte Stufe").Render(ctx, w)
+			return
+		}
+		groupShared := tmp == groupingScore[int(row.Grouping)]
+		if tmp < groupingScore[int(row.Grouping)] {
+			groupingRank[int(row.Grouping)] += 1
+			groupingScore[int(row.Grouping)] = tmp
+		}
+
+		resultsCalc[idx] = templates.GroupResult{
+			Rank:        rank,
+			Shared:      shared,
+			GroupRank:   groupingRank[int(row.Grouping)],
+			GroupShared: groupShared,
+			Row:         row,
+		}
+	}
+
+	if err := templates.HostResultsGroups(
+		htmxRequest,
+		user,
+		csrf.Token(r),
+		resultsCalc,
+		set.Groups.ShowAbbr,
+	).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) HostGetResultsStations(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	results, err := h.queries.GetResultsStations(ctx)
+	if err != nil {
+		slog.Warn("sqlc", "err", err)
+		return
+	}
+
+	var rank int64
+	var score int64 = 9223372036854775807
+	resultsCalc := make([]templates.StationResult, len(results))
+	for idx, row := range results {
+		tmp := int64(row.Sum.Float64)
+		shared := tmp == score
+		if tmp < score {
+			rank += 1
+			score = tmp
+		}
+		resultsCalc[idx] = templates.StationResult{
+			Rank:   rank,
+			Row:    row,
+			Shared: shared,
+		}
+	}
+
+	if err := templates.HostResultsStations(
+		htmxRequest,
+		user,
+		csrf.Token(r),
+		resultsCalc,
+	).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
 	}
 }
 
@@ -1528,17 +1634,6 @@ func convertGrouping(grouping int64) string {
 func (h *Handler) GetGroupsDownload(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var user *session.UserData
-	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
-		user = userData
-	} else {
-		slog.Warn("not ok")
-		return // TODO redirect?
-	}
-	if user == nil {
-		return
-	}
-
 	groups, err := h.queries.GetGroupsDownload(ctx)
 	if err != nil {
 		slog.Error("sqlc", "err", err)
@@ -1546,11 +1641,12 @@ func (h *Handler) GetGroupsDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	csvGroups := [][]string{
-		{"Name", "Laufgruppe", "Personen", "Vegan", "Kommentar", "Stufe", "Stamm"},
+		{"ID", "Name", "Laufgruppe", "Personen", "Vegan", "Kommentar", "Stufe", "Stamm"},
 	}
 
 	for _, entry := range groups {
 		csvGroups = append(csvGroups, []string{
+			strconv.FormatInt(entry.ID, 10),
 			entry.Name,
 			entry.Abbr.String,
 			strconv.FormatInt(entry.Size.Int64, 10),

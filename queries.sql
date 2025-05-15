@@ -177,6 +177,18 @@ left join user_icons ui
 where g.id = ?
 limit 1;
 
+-- name: GetStationRolesInStation :many
+select
+	sr.id
+	,sr.station_role
+	,u.firstname
+	,u.lastname
+from station_roles sr
+inner join users u
+	on sr.user_id = u.id
+where sr.station_id = ?;
+
+-- NTH join station required?
 -- name: GetStationRolesDash :many
 select
 	sr.id
@@ -252,9 +264,49 @@ order by
 	,g.grouping asc
 	,g.created_at asc;
 
+-- name: GetResultsGroups :many
+select
+	g.id
+	,g.name
+	,sum(ptg.points)
+	,g.grouping
+	,g.abbr
+	,t.name as tribe
+	,ti.id as tribe_icon
+from groups g
+left join points_to_groups ptg
+	on ptg.group_id = g.id
+left join tribes t
+	on g.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = t.id
+group by g.id
+order by 3 desc;
+
+-- name: GetResultsStations :many
+select
+	s.id
+	,s.name
+	,sum(pts.points)
+	,sp.name as position
+	,t.name as tribe
+	,ti.id as tribe_icon
+from stations s
+left join points_to_stations pts
+	on pts.station_id = s.id
+left join station_positions sp
+	on s.position_id = sp.id
+left join tribes t
+	on s.tribe_id = t.id
+left join tribe_icons ti
+	on ti.id = t.id
+group by s.id
+order by 3 desc;
+
 -- name: GetGroupsDownload :many
 select
-	g.name
+	g.id
+	,g.name
 	,g.abbr
 	,g.size
 	,g.vegan
@@ -268,7 +320,8 @@ order by g.created_at asc;
 
 -- name: GetStationsDownload :many
 select
-	s.name
+	s.id
+	,s.name
 	,s.size
 	,s.vegan
 	,s.description
@@ -402,8 +455,6 @@ select
 from tribe_roles tr
 left join tribe_icons ti
 	on ti.id = tr.id
-left join tribes t
-	on tr.tribe_id = t.id
 where
 	tr.user_id = ?
 	and tr.tribe_id = ?
@@ -599,7 +650,6 @@ from station_positions sp
 left join stations s
 	on sp.id = s.position_id;
 
--- NTH order by?
 -- name: GetPointsToStations :many
 select
 	s.id as 'station'
@@ -618,7 +668,8 @@ left join tribes t
 left join tribe_icons ti
 	on ti.id = t.id
 left join station_positions sp
-	on s.position_id = sp.id;
+	on s.position_id = sp.id
+order by sp.name asc;
 
 -- NTH order by ?
 -- name: GetPointsToGroups :many
@@ -637,7 +688,10 @@ left join points_to_groups ptg
 left join tribes t
 	on g.tribe_id = t.id
 left join tribe_icons ti
-	on ti.id = t.id;
+	on ti.id = t.id
+order by
+	t.short asc
+	,g.grouping asc;
 
 -- name: GetStationRoleByUser :one
 select

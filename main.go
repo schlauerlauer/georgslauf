@@ -59,7 +59,7 @@ func main() {
 
 	sessionService := session.NewSessionService(
 		cfg.SessionKey,
-		templates.ErrorUnauthorized(false, nil),
+		templates.ErrorUnauthorized(false, nil), // FIXME #135
 	)
 
 	settings := settings.New(repository.Queries)
@@ -120,6 +120,7 @@ func main() {
 	stationRouter.HandleFunc("GET /{$}", handlers.GetStationGroupPoints)
 	stationRouter.HandleFunc("GET /settings", handlers.GetStationSettings)
 	stationRouter.HandleFunc("PUT /points", handlers.PutStationGroupPoint)
+	stationRouter.HandleFunc("GET /roles", handlers.GetStationAccounts)
 	router.Handle("/stations/", http.StripPrefix("/stations", sessionService.RequireRoleFunc(acl.ACLViewUp, stationRouter)))
 
 	// dash routes
@@ -185,6 +186,8 @@ func main() {
 	hostRouter.HandleFunc("GET /points/details", handlers.HostGetPointsDetails)
 	hostRouter.HandleFunc("PUT /points/group", handlers.HostPutPointsToGroup)
 	hostRouter.HandleFunc("PUT /points/station", handlers.HostPutPointsToStation)
+	hostRouter.HandleFunc("GET /results/stations", handlers.HostGetResultsStations)
+	hostRouter.HandleFunc("GET /results/groups", handlers.HostGetResultsGroups)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
