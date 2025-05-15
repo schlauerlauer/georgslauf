@@ -20,7 +20,7 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 			// hx-push-url="true"
 			if isEdit || isAdmin {
 				<div role="tablist" class="tabs tabs-bordered">
-					<input autocomplete="off" type="radio" name="dash_view" role="tab" class="tab" aria-label="Posten Ansicht" checked="checked"/>
+					<input autocomplete="off" type="radio" name="dash_view" role="tab" class="tab whitespace-nowrap" aria-label="Posten Ansicht" checked="checked"/>
 					<div role="tabpanel" class="tab-content p-6">
 						// station tab
 						// NTH posten tab (hidden)
@@ -37,7 +37,7 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 						</div>
 						<div id="station-tab" class="pt-6"></div>
 					</div>
-					<input autocomplete="off" type="radio" name="dash_view" role="tab" class="tab" aria-label="Stamm Ansicht"/>
+					<input autocomplete="off" type="radio" name="dash_view" role="tab" class="tab whitespace-nowrap" aria-label="Stamm Ansicht"/>
 					<div role="tabpanel" class="tab-content p-6">
 						// tribe tab
 						<div
