@@ -90,12 +90,12 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 				hx-target="main"
 				hx-push-url="true"
 			>
-				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
-				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
-				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
-				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
-				<a id="tab-points" role="tab" class="tab" hx-get="/host/points">Bewertungen</a>
-				<a id="tab-settings" role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
+				<a role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a role="tab" class="tab" hx-get="/host/points">Bewertungen</a>
+				<a role="tab" class="tab tab-active" hx-get="/host/settings">Einstellungen</a>
 			</div>
 			<div class="mt-6 space-y-6">
 				<details class="collapse bg-base-200" open>
@@ -319,7 +319,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 									/>
 								</label>
 							</div>
-							// FIXME add station view setting
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
 									<span class="label-text">StaVos können Accounts an Posten verändern</span>
@@ -330,6 +329,21 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 										value="true"
 										autocomplete="off"
 										if set.Stations.EditAccounts {
+											checked="checked"
+										}
+									/>
+								</label>
+							</div>
+							<div class="form-control max-w-xs">
+								<label class="label cursor-pointer">
+									<span class="label-text">Posten können Accounts an ihren Posten verändern</span>
+									<input
+										name="station-accounts-self"
+										type="checkbox"
+										class="toggle"
+										value="true"
+										autocomplete="off"
+										if set.Stations.EditAccountsStation {
 											checked="checked"
 										}
 									/>

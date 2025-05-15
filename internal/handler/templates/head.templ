@@ -24,6 +24,7 @@ templ base(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 				<main class="min-h-screen">
 					@navbar(user, tribeId, hasIcon)
 					{ children... }
+					<div id="modal-container"></div>
 				</main>
 				@footer()
 			</body>
@@ -31,5 +32,6 @@ templ base(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 	} else {
 		@navbar(user, tribeId, hasIcon)
 		{ children... }
+		<div id="modal-container"></div>
 	}
 }

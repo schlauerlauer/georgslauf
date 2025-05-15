@@ -22,7 +22,7 @@ templ HostPointsToGroup(
 			<div class="stat-desc">{ station.Tribe.String }</div>
 		</div>
 	</div>
-	<h2 class="mb-3">Punkte von Posten { station.Name } an die Gruppen</h2>
+	<h2 class="mb-3">Bewertungen von Posten { station.Name } an die Gruppen</h2>
 	// NTH almost copy of PointsList
 	<div class="overflow-x-auto">
 		<table class="table">
@@ -32,7 +32,7 @@ templ HostPointsToGroup(
 						<th>Laufgruppe</th>
 					}
 					<th>Gruppe</th>
-					<th>Punkte</th>
+					<th>Bewertungen</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -79,6 +79,7 @@ templ HostPointsToGroup(
 								hx-swap="none"
 								hx-trigger="input changed delay:250ms"
 								hx-include="#station-select"
+								_="on keydown[key is 'Enter'] halt the event"
 							>
 								<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
 								if entry.Points.Valid {
@@ -111,7 +112,7 @@ templ HostPointsToStation(
 			<div class="stat-desc">{ group.Tribe.String }</div>
 		</div>
 	</div>
-	<h2 class="mb-3">Punkte von Gruppe { group.Name } an die Posten</h2>
+	<h2 class="mb-3">Bewertungen von Gruppe { group.Name } an die Posten</h2>
 	// NTH almost copy of PointsList
 	<div class="overflow-x-auto">
 		<table class="table">
@@ -122,7 +123,7 @@ templ HostPointsToStation(
 					// <th>Kategorie</th>
 					// }
 					<th>Posten</th>
-					<th>Punkte</th>
+					<th>Bewertungen</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -156,6 +157,7 @@ templ HostPointsToStation(
 								hx-swap="none"
 								hx-trigger="input changed delay:250ms"
 								hx-include="#group-select"
+								_="on keydown[key is 'Enter'] halt the event"
 							>
 								<input autocomplete="off" type="hidden" name="station" value={ strconv.FormatInt(entry.Station, 10) }/>
 								if entry.Points.Valid {
@@ -188,12 +190,12 @@ templ HostPoints(
 				hx-target="main"
 				hx-push-url="true"
 			>
-				<a id="tab-tribes" role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
-				<a id="tab-groups" role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
-				<a id="tab-stations" role="tab" class="tab" hx-get="/host/stations">Posten</a>
-				<a id="tab-users" role="tab" class="tab" hx-get="/host/users">Accounts</a>
-				<a id="tab-points" role="tab" class="tab tab-active" hx-get="/host/points">Punkte</a>
-				<a id="tab-settings" role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+				<a role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a role="tab" class="tab tab-active" hx-get="/host/points">Bewertungen</a>
+				<a role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
 			</div>
 			<div class="mt-6">
 				<form

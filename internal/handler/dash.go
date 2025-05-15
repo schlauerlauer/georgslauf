@@ -1133,20 +1133,24 @@ func (h *Handler) GetCreateStationRoleModalDash(w http.ResponseWriter, r *http.R
 		return // TODO redirect?
 	}
 	if user == nil {
+		slog.Warn("user is empty")
 		return
 	}
 
 	var tribeId int64
 	if query := r.URL.Query().Get("tribe"); query == "" {
+		slog.Warn("tribe query empty")
 		return // TODO
 	} else {
 		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			slog.Warn("ParseInt", "err", err)
 			return // TODO
 		} else {
 			tribeId = id
 		}
 	}
 	if tribeId <= 0 {
+		slog.Warn("tribeId <= 0")
 		return // TODO
 	}
 
