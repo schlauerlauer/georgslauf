@@ -37,15 +37,15 @@ func (h *Handler) checkStationRoleIsTribe(roleId int64, tribeId int64) error {
 }
 
 // single role only
-func (h *Handler) checkStationRole(userId int64, requireRole acl.ACL) (int64, error) {
+func (h *Handler) checkStationRole(userId int64, requireRole acl.ACL) (int64, acl.ACL, error) {
 	stationRole, err := h.queries.GetStationRoleByUser(context.Background(), userId)
 	if err != nil {
-		return 0, err
+		return 0, acl.None, err
 	}
 
 	if stationRole.StationRole < requireRole {
-		return 0, ErrorStationRoleNotSufficient
+		return 0, acl.None, ErrorStationRoleNotSufficient
 	}
 
-	return stationRole.StationID, nil
+	return stationRole.StationID, stationRole.StationRole, nil
 }

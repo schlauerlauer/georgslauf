@@ -40,14 +40,15 @@ type Groups struct {
 }
 
 type Stations struct {
-	AllowCreate      bool `json:"c" schema:"station-create"`
-	AllowUpdate      bool `json:"u" schema:"station-update"`
-	AllowDelete      bool `json:"d" schema:"station-delete"`
-	EnableCategories bool `json:"ca" schema:"station-categories"`
-	ShowAbbr         bool `json:"s" schema:"station-abbr"`
-	AllowScoring     bool `json:"x" schema:"station-scoring"`
-	TestScoring      bool `json:"t" schema:"station-test-scoring"`
-	EditAccounts     bool `json:"e" schema:"station-accounts"`
+	AllowCreate         bool `json:"c" schema:"station-create"`
+	AllowUpdate         bool `json:"u" schema:"station-update"`
+	AllowDelete         bool `json:"d" schema:"station-delete"`
+	EnableCategories    bool `json:"ca" schema:"station-categories"`
+	ShowAbbr            bool `json:"s" schema:"station-abbr"`
+	AllowScoring        bool `json:"x" schema:"station-scoring"`
+	TestScoring         bool `json:"t" schema:"station-test-scoring"`
+	EditAccounts        bool `json:"e" schema:"station-accounts"`
+	EditAccountsStation bool `json:"es" schema:"station-accounts-self"`
 }
 
 type Help struct {
