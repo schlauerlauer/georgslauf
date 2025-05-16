@@ -93,8 +93,12 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 										name="id"
 										value={ strconv.FormatInt(row.ID, 10) }
 									>
-										{ row.Firstname }
-										{ row.Lastname }
+										if row.Firstname == "" {
+											{ row.Email }
+										} else {
+											{ row.Firstname }
+											{ row.Lastname }
+										}
 									</button>
 								case acl.Admin:
 									<button
@@ -107,8 +111,12 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 										name="id"
 										value={ strconv.FormatInt(row.ID, 10) }
 									>
-										{ row.Firstname }
-										{ row.Lastname }
+										if row.Firstname == "" {
+											{ row.Email }
+										} else {
+											{ row.Firstname }
+											{ row.Lastname }
+										}
 									</button>
 								default:
 									<button
@@ -121,8 +129,12 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 										name="id"
 										value={ strconv.FormatInt(row.ID, 10) }
 									>
-										{ row.Firstname }
-										{ row.Lastname }
+										if row.Firstname == "" {
+											{ row.Email }
+										} else {
+											{ row.Firstname }
+											{ row.Lastname }
+										}
 									</button>
 							}
 						}
