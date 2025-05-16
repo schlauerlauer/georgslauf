@@ -246,6 +246,12 @@ where
 	t.id = ?
 limit 1;
 
+-- name: Debug :one
+select
+	id
+from users
+limit 1;
+
 -- name: GetGroupsDetails :many
 select
 	g.id

@@ -51,7 +51,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	repository, err := db.NewLibsql(&cfg.Database)
+	repository, err := db.NewSqlite(&cfg.Database)
 	if err != nil {
 		slog.Error("error connecting repository", "err", err)
 		os.Exit(1)
@@ -110,6 +110,7 @@ func main() {
 
 	// public pages
 	router.Handle("GET /{$}", sessionService.OptionalAuth(http.HandlerFunc(handlers.GetHome)))
+	router.HandleFunc("GET /debug", handlers.Debug)
 	router.HandleFunc("GET /ping", handlers.Ping)
 	router.HandleFunc("GET /version", handlers.Version)
 	router.HandleFunc("GET /robots.txt", handlers.Robots)

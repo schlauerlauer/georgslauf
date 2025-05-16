@@ -63,3 +63,13 @@ func (h *Handler) GetHome(w http.ResponseWriter, r *http.Request) {
 		slog.Warn("Home", "err", err)
 	}
 }
+
+func (h *Handler) Debug(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	x, err := h.queries.Debug(ctx)
+	if err != nil {
+		slog.Error("Debug", "err", err)
+		return
+	}
+	_ = x
+}
