@@ -42,29 +42,29 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 						switch row.StationRole {
 							case acl.Edit:
 								<div class="badge badge-primary">
-									if row.Firstname == "" {
-										{ row.Email }
-									} else {
+									if row.Firstname != "" || row.Lastname != "" {
 										{ row.Firstname }
 										{ row.Lastname }
+									} else {
+										{ row.Email }
 									}
 								</div>
 							case acl.Admin:
 								<div class="badge badge-secondary">
-									if row.Firstname == "" {
-										{ row.Email }
-									} else {
+									if row.Firstname != "" || row.Lastname != "" {
 										{ row.Firstname }
 										{ row.Lastname }
+									} else {
+										{ row.Email }
 									}
 								</div>
 							default:
 								<div class="badge">
-									if row.Firstname == "" {
-										{ row.Email }
-									} else {
+									if row.Firstname != "" || row.Lastname != "" {
 										{ row.Firstname }
 										{ row.Lastname }
+									} else {
+										{ row.Email }
 									}
 								</div>
 						}
@@ -93,11 +93,11 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 										name="id"
 										value={ strconv.FormatInt(row.ID, 10) }
 									>
-										if row.Firstname == "" {
-											{ row.Email }
-										} else {
+										if row.Firstname != "" || row.Lastname != "" {
 											{ row.Firstname }
 											{ row.Lastname }
+										} else {
+											{ row.Email }
 										}
 									</button>
 								case acl.Admin:
@@ -111,11 +111,11 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 										name="id"
 										value={ strconv.FormatInt(row.ID, 10) }
 									>
-										if row.Firstname == "" {
-											{ row.Email }
-										} else {
+										if row.Firstname != "" || row.Lastname != "" {
 											{ row.Firstname }
 											{ row.Lastname }
+										} else {
+											{ row.Email }
 										}
 									</button>
 								default:
@@ -129,11 +129,11 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 										name="id"
 										value={ strconv.FormatInt(row.ID, 10) }
 									>
-										if row.Firstname == "" {
-											{ row.Email }
-										} else {
+										if row.Firstname != "" || row.Lastname != "" {
 											{ row.Firstname }
 											{ row.Lastname }
+										} else {
+											{ row.Email }
 										}
 									</button>
 							}
