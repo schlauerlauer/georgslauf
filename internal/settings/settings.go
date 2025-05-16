@@ -46,7 +46,6 @@ type Stations struct {
 	EnableCategories    bool `json:"ca" schema:"station-categories"`
 	ShowAbbr            bool `json:"s" schema:"station-abbr"`
 	AllowScoring        bool `json:"x" schema:"station-scoring"`
-	TestScoring         bool `json:"t" schema:"station-test-scoring"`
 	EditAccounts        bool `json:"e" schema:"station-accounts"`
 	EditAccountsStation bool `json:"es" schema:"station-accounts-self"`
 }

@@ -245,7 +245,7 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 
 templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, csrf string, summary db.GetGroupOverviewRow) {
 	@base(htmxRequest, user, -1, false) {
-		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
 				role="tablist"
 				class="tabs tabs-bordered"

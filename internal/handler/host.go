@@ -214,7 +214,7 @@ type postRole struct {
 	UserID    int64 `schema:"user" validate:"gte=0"`
 	StationID int64 `schema:"station" validate:"gte=0"`
 	Role      int64 `schema:"role" validate:"gte=-1,lte=3"`
-	TribeID   int64 `schema:"tribe" validate:"gte=0"` // used for dash
+	TribeID   int64 `schema:"tribe" validate:"gte=0"` // used for dash and station
 }
 
 func (h *Handler) PostStationRole(w http.ResponseWriter, r *http.Request) {
@@ -1024,6 +1024,82 @@ func (h *Handler) HostGetPointsDetails(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// NTH duplicate
+func (h *Handler) HostGetResultsGroupsDownload(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	results, err := h.queries.GetResultsGroups(ctx)
+	if err != nil {
+		slog.Warn("sqlc", "err", err)
+		return
+	}
+
+	var rank int64
+	var score int64 = 9223372036854775807
+	groupingRank := [4]int64{}
+	groupingScore := [4]int64{9223372036854775807, 9223372036854775807, 9223372036854775807, 9223372036854775807} // NTH grouping size dependend
+	resultsCalc := make([]templates.GroupResult, len(results))
+	for idx, row := range results {
+		tmp := int64(row.Sum.Float64)
+		shared := tmp == score
+		if tmp < score {
+			rank += 1
+			score = tmp
+		}
+
+		// set grouping
+		if int(row.Grouping) >= len(groupingScore) {
+			slog.Warn("grouping unknown", "group", row.ID)
+			templates.AlertError("Gruppe hat eine unbekannte Stufe").Render(ctx, w)
+			return
+		}
+		groupShared := tmp == groupingScore[int(row.Grouping)]
+		if tmp < groupingScore[int(row.Grouping)] {
+			groupingRank[int(row.Grouping)] += 1
+			groupingScore[int(row.Grouping)] = tmp
+		}
+
+		resultsCalc[idx] = templates.GroupResult{
+			Rank:        rank,
+			Shared:      shared,
+			GroupRank:   groupingRank[int(row.Grouping)],
+			GroupShared: groupShared,
+			Row:         row,
+		}
+	}
+
+	csvData := [][]string{
+		{"ID", "Platzierung", "Stufenplatzierung", "Name", "Summe", "Stufe", "Stamm"},
+	}
+
+	for _, entry := range resultsCalc {
+		csvData = append(csvData, []string{
+			strconv.FormatInt(entry.Row.ID, 10),
+			strconv.FormatInt(entry.Rank, 10),
+			strconv.FormatInt(entry.GroupRank, 10),
+			entry.Row.Name,
+			strconv.FormatFloat(entry.Row.Sum.Float64, 'f', 0, 64),
+			convertGrouping(entry.Row.Grouping),
+			entry.Row.Tribe.String,
+		})
+	}
+
+	var buffer bytes.Buffer
+	writer := csv.NewWriter(&buffer)
+
+	if err := writer.WriteAll(csvData); err != nil {
+		slog.Error("csv error", "err", err)
+		return
+	}
+
+	writer.Flush()
+
+	w.Header().Set("Content-Disposition", "attachment; filename=auswertung_gruppen.csv")
+	w.Header().Set("Content-Type", "text/csv")
+	w.Header().Set("Content-Length", strconv.FormatInt(int64(buffer.Len()), 10))
+	w.Write(buffer.Bytes())
+}
+
 func (h *Handler) HostGetResultsGroups(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	ctx := r.Context()
@@ -1090,6 +1166,64 @@ func (h *Handler) HostGetResultsGroups(w http.ResponseWriter, r *http.Request) {
 	).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
+}
+
+// NTH duplicate
+func (h *Handler) HostGetResultsStationsDownload(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	results, err := h.queries.GetResultsStations(ctx)
+	if err != nil {
+		slog.Warn("sqlc", "err", err)
+		return
+	}
+
+	var rank int64
+	var score int64 = 9223372036854775807
+	resultsCalc := make([]templates.StationResult, len(results))
+	for idx, row := range results {
+		tmp := int64(row.Sum.Float64)
+		shared := tmp == score
+		if tmp < score {
+			rank += 1
+			score = tmp
+		}
+		resultsCalc[idx] = templates.StationResult{
+			Rank:   rank,
+			Row:    row,
+			Shared: shared,
+		}
+	}
+
+	csvData := [][]string{
+		{"ID", "Platz", "Name", "Punkte", "Position", "Stamm"},
+	}
+
+	for _, entry := range resultsCalc {
+		csvData = append(csvData, []string{
+			strconv.FormatInt(entry.Row.ID, 10),
+			strconv.FormatInt(entry.Rank, 10),
+			entry.Row.Name,
+			strconv.FormatFloat(entry.Row.Sum.Float64, 'f', 0, 64),
+			entry.Row.Position.String,
+			entry.Row.Tribe.String,
+		})
+	}
+
+	var buffer bytes.Buffer
+	writer := csv.NewWriter(&buffer)
+
+	if err := writer.WriteAll(csvData); err != nil {
+		slog.Error("csv error", "err", err)
+		return
+	}
+
+	writer.Flush()
+
+	w.Header().Set("Content-Disposition", "attachment; filename=auswertung_posten.csv")
+	w.Header().Set("Content-Type", "text/csv")
+	w.Header().Set("Content-Length", strconv.FormatInt(int64(buffer.Len()), 10))
+	w.Write(buffer.Bytes())
 }
 
 func (h *Handler) HostGetResultsStations(w http.ResponseWriter, r *http.Request) {

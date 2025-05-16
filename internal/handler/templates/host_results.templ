@@ -22,7 +22,7 @@ templ HostResultsGroups(
 	showAbbr bool,
 ) {
 	@base(htmxRequest, user, -1, false) {
-		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
 				role="tablist"
 				class="tabs tabs-bordered"
@@ -126,6 +126,15 @@ templ HostResultsGroups(
 					</tbody>
 				</table>
 			</div>
+			<a
+				download
+				class="btn btn-secondary mt-9"
+				href="/host/results/groups/download"
+				title="Gruppen Auswertung runterladen"
+			>
+				<span class="text-xl icon-[mdi--download]"></span>
+				Gruppen Auswertung
+			</a>
 		</div>
 	}
 }
@@ -143,7 +152,7 @@ templ HostResultsStations(
 	results []StationResult,
 ) {
 	@base(htmxRequest, user, -1, false) {
-		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
 				role="tablist"
 				class="tabs tabs-bordered"
@@ -223,6 +232,15 @@ templ HostResultsStations(
 					</tbody>
 				</table>
 			</div>
+			<a
+				download
+				class="btn btn-secondary mt-9"
+				href="/host/results/stations/download"
+				title="Posten Auswertung runterladen"
+			>
+				<span class="text-xl icon-[mdi--download]"></span>
+				Posten Auswertung
+			</a>
 		</div>
 	}
 }

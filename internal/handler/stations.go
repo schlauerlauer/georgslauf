@@ -10,9 +10,401 @@ import (
 	"georgslauf/session"
 	"log/slog"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/csrf"
 )
+
+func (h *Handler) StationPostStationRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	var data postRole
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		return // TODO
+	}
+
+	set := h.settings.Get()
+	if !set.Stations.EditAccountsStation {
+		if err := templates.AlertError("Rollen bearbeitung ist ausgestellt").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.checkTribeRole(user.ID, data.TribeID, acl.None); err != nil {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	stationId, _, err := h.checkStationRole(user.ID, acl.Admin)
+	if err != nil {
+		slog.Warn("checkStationRole", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+	if stationId != data.StationID {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if count, err := h.queries.GetUserWithTribeRole(ctx, db.GetUserWithTribeRoleParams{
+		ID:      data.UserID,
+		TribeID: data.TribeID,
+	}); err != nil || count == 0 {
+		slog.Warn("GetUserWithTribeRole", "err", err)
+		if err := templates.AlertError("Account gehört nicht zum Stamm").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if count, err := h.queries.CountStationRoleByUser(ctx, data.UserID); err != nil {
+		slog.Warn("CountStationRoleByUser", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		if err := templates.AlertError("Ein Fehler ist aufgetreten").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	} else {
+		if count > 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			if err := templates.AlertWarning("Der Account ist bereits einem Posten zugeordnet").Render(ctx, w); err != nil {
+				slog.Error("templ", "err", err)
+			}
+			return
+		}
+	}
+
+	if err := h.queries.CreateStationRole(ctx, db.CreateStationRoleParams{
+		UserID:      data.UserID,
+		StationID:   data.StationID,
+		StationRole: acl.ACL(data.Role),
+		CreatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+	}); err != nil {
+		slog.Error("UpdateStationRole", "err", err)
+		return // TODO
+	}
+
+	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+// userRole view, tribeRole none, stationRole admin
+func (h *Handler) StationPutStationRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	set := h.settings.Get()
+	if !set.Stations.EditAccountsStation {
+		if err := templates.AlertError("Rollen bearbeitung ist ausgestellt").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	var data putRole
+	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
+		slog.Error("ProcessForm", "err", err)
+		return // TODO
+	}
+
+	if err := h.checkTribeRole(user.ID, data.TribeID, acl.None); err != nil {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	stationId, _, err := h.checkStationRole(user.ID, acl.Admin)
+	if err != nil {
+		slog.Warn("checkStationRole", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	roleStation, err := h.queries.GetStationRoleStationWithUser(ctx, data.RoleID)
+	if err != nil {
+		slog.Warn("role not found", "err", err)
+		return
+	}
+
+	if stationId != roleStation.StationID {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if count, err := h.queries.GetUserWithTribeRole(ctx, db.GetUserWithTribeRoleParams{
+		ID:      roleStation.UserID,
+		TribeID: data.TribeID,
+	}); err != nil || count == 0 {
+		slog.Warn("GetUserWithTribeRole", "err", err)
+		if err := templates.AlertError("Account gehört nicht zum Stamm").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.UpdateStationRole(ctx, db.UpdateStationRoleParams{
+		ID:          data.RoleID,
+		StationRole: acl.ACL(data.Role),
+		UpdatedBy: sql.NullInt64{
+			Int64: user.ID,
+			Valid: true,
+		},
+		UpdatedAt: time.Now().Unix(),
+	}); err != nil {
+		slog.Error("UpdateStationRole", "err", err)
+		return // TODO
+	}
+
+	if err := templates.AlertSuccess("Berechtigung gesetzt").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) StationDeleteStationRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		slog.Warn("ParseInt", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	set := h.settings.Get()
+	if !set.Stations.EditAccountsStation {
+		if err := templates.AlertError("Rollen bearbeitung ist ausgestellt").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	var tribeId int64
+	if query := r.URL.Query().Get("tribe"); query == "" {
+		return // TODO
+	} else {
+		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			return // TODO
+		} else {
+			tribeId = id
+		}
+	}
+	if tribeId <= 0 {
+		return // TODO
+	}
+
+	if err := h.checkTribeRole(user.ID, tribeId, acl.None); err != nil {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	stationId, _, err := h.checkStationRole(user.ID, acl.Admin)
+	if err != nil {
+		slog.Warn("checkStationRole", "err", err)
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	roleStation, err := h.queries.GetStationRoleStation(ctx, id)
+	if err != nil {
+		slog.Warn("role not found", "err", err)
+		return
+	}
+
+	if stationId != roleStation {
+		if err := templates.AlertError("Keine Berechtigung").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := h.queries.DeleteStationRole(ctx, id); err != nil {
+		slog.Warn("sqlc", "err", err)
+		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
+			slog.Error("AlertError", "err", err)
+		}
+		return
+	}
+
+	if err := templates.AlertSuccess("Gelöscht").Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
+func (h *Handler) GetStationAccounts(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	if !htmxRequest {
+		slog.Debug("not htmx")
+		return
+	}
+
+	ctx := r.Context()
+
+	var tribeId int64
+	if query := r.URL.Query().Get("tribe"); query == "" {
+		slog.Warn("tribe query empty")
+		return // TODO
+	} else {
+		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			slog.Warn("ParseInt", "err", err)
+			return // TODO
+		} else {
+			tribeId = id
+		}
+	}
+	if tribeId <= 0 {
+		slog.Warn("tribeId <= 0")
+		return // TODO
+	}
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	if err := h.checkTribeRole(user.ID, tribeId, acl.None); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		if err := templates.AlertError("Keine Berechtigung für den Stamm").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	stationId, stationRole, err := h.checkStationRole(user.ID, acl.View)
+	if err != nil {
+		// // no tribe access and no station roles
+		if err := templates.StationPointsTab(
+			templates.ErrorMessage("Du wurdest noch keinem Posten zugeordnet"),
+		).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+
+	station, err := h.queries.GetStationName(ctx, stationId)
+	if err != nil {
+		slog.Warn("GetStationName", "err", err)
+		w.WriteHeader(http.StatusNotFound)
+		if err := templates.AlertError("Posten nicht gefunden").Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	// query single role
+	var roleId sql.NullInt64
+	if query := r.URL.Query().Get("id"); query != "" {
+		if id, err := strconv.ParseInt(query, 10, 64); err != nil {
+			slog.Warn("ParseInt", "err", err)
+			return // TODO
+		} else {
+			roleId.Int64 = id
+			roleId.Valid = true
+		}
+	}
+	if roleId.Valid {
+		userRole, err := h.queries.GetStationRoleById(ctx, roleId.Int64)
+		if err != nil {
+			slog.Warn("role not found", "err", err)
+			return
+		}
+
+		if err := templates.StationRoleModalStation(
+			userRole,
+			csrf.Token(r),
+		).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+
+	// query all roles
+	users, err := h.queries.GetUsersByTribeRole(ctx, tribeId)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	userRoles, err := h.queries.GetStationRolesInStation(ctx, stationId)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	set := h.settings.Get()
+
+	if err := templates.StationRolesModal(
+		users,
+		station,
+		csrf.Token(r),
+		stationRole,
+		userRoles,
+		set.Stations.EditAccountsStation,
+	).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
 
 type putStationPointForm struct {
 	GroupId int64 `schema:"group" validate:"gte=0"`
@@ -48,7 +440,7 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stationId, err := h.checkStationRole(user.ID, acl.Edit)
+	stationId, _, err := h.checkStationRole(user.ID, acl.Edit)
 	if err != nil {
 		// // no tribe access and no station roles
 		if err := templates.StationPointsTab(
@@ -61,7 +453,7 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 
 	set := h.settings.Get()
 
-	if !set.Stations.AllowScoring && !set.Stations.TestScoring {
+	if !set.Stations.AllowScoring {
 		if err := templates.StationPointsTab(
 			templates.ErrorMessage("Die Bewertungen sind ausgestellt"),
 		).Render(ctx, w); err != nil {
@@ -93,6 +485,79 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// NTH duplicate
+func (h *Handler) GetStationGroupPointsReload(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	if !htmxRequest {
+		slog.Debug("not htmx")
+		return
+	}
+
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	stationId, stationRole, err := h.checkStationRole(user.ID, acl.Edit)
+	if err != nil {
+		// // no tribe access and no station roles
+		if err := templates.StationPointsTab(
+			templates.ErrorMessage("Du wurdest noch keinem Posten zugeordnet"),
+		).Render(ctx, w); err != nil {
+			slog.Warn("templ", "err", err)
+		}
+		return
+	}
+
+	set := h.settings.Get()
+
+	station, err := h.queries.GetStationInfo(ctx, stationId)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	if !set.Stations.AllowScoring {
+		if err := templates.PointsList(
+			[]db.GetPointsToGroupsRow{},
+			csrf.Token(r),
+			station,
+			set.Groups.ShowAbbr,
+			false,
+			stationRole,
+		).Render(ctx, w); err != nil {
+			slog.Error("templ", "err", err)
+		}
+		return
+	}
+
+	// points from station to group
+	points, err := h.queries.GetPointsToGroups(ctx, stationId)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+		return // TODO
+	}
+
+	if err := templates.PointsList(
+		points,
+		csrf.Token(r),
+		station,
+		set.Groups.ShowAbbr,
+		true,
+		stationRole,
+	).Render(ctx, w); err != nil {
+		slog.Error("templ", "err", err)
+	}
+}
+
 func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) {
 	htmxRequest := htmx.IsHTMX(r)
 	if !htmxRequest {
@@ -113,7 +578,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	stationId, err := h.checkStationRole(user.ID, acl.Edit)
+	stationId, stationRole, err := h.checkStationRole(user.ID, acl.Edit)
 	if err != nil {
 		// // no tribe access and no station roles
 		if err := templates.StationPointsTab(
@@ -132,7 +597,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 		return // TODO
 	}
 
-	if !set.Stations.AllowScoring && !set.Stations.TestScoring {
+	if !set.Stations.AllowScoring {
 		if err := templates.StationPointsTab(
 			templates.PointsList(
 				[]db.GetPointsToGroupsRow{},
@@ -140,7 +605,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 				station,
 				set.Groups.ShowAbbr,
 				false,
-				false,
+				stationRole,
 			),
 		).Render(ctx, w); err != nil {
 			slog.Error("templ", "err", err)
@@ -162,7 +627,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 			station,
 			set.Groups.ShowAbbr,
 			true,
-			set.Stations.TestScoring,
+			stationRole,
 		),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)

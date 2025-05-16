@@ -1443,8 +1443,6 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 
 	var isAdmin, isEdit bool
 
-	slog.Debug("role", "acl", int64(tribeRole), "test", tribeRole, "accepted", wasAccepted)
-
 	switch tribeRole {
 	case acl.Denied:
 		w.WriteHeader(http.StatusUnauthorized)

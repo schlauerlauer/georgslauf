@@ -82,7 +82,7 @@ templ HostStationCategoryNew(csrf string) {
 
 templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.GetStationCategoriesRow, csrf string, home md.MdData, positions []db.GetStationPositionsStationRow) {
 	@base(htmxRequest, user, -1, false) {
-		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
 				role="tablist"
 				class="tabs tabs-bordered"
@@ -300,21 +300,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 										value="true"
 										autocomplete="off"
 										if set.Stations.AllowScoring {
-											checked="checked"
-										}
-									/>
-								</label>
-							</div>
-							<div class="form-control max-w-xs">
-								<label class="label cursor-pointer">
-									<span class="label-text">Bewertungen zum testen freischalten</span>
-									<input
-										name="station-test-scoring"
-										type="checkbox"
-										class="toggle"
-										value="true"
-										autocomplete="off"
-										if set.Stations.TestScoring {
 											checked="checked"
 										}
 									/>

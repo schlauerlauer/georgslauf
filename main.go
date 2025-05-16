@@ -118,9 +118,13 @@ func main() {
 	// station routes
 	stationRouter := http.NewServeMux()
 	stationRouter.HandleFunc("GET /{$}", handlers.GetStationGroupPoints)
+	stationRouter.HandleFunc("GET /reload", handlers.GetStationGroupPointsReload)
 	stationRouter.HandleFunc("GET /settings", handlers.GetStationSettings)
 	stationRouter.HandleFunc("PUT /points", handlers.PutStationGroupPoint)
 	stationRouter.HandleFunc("GET /roles", handlers.GetStationAccounts)
+	stationRouter.HandleFunc("POST /roles", handlers.StationPostStationRole)
+	stationRouter.HandleFunc("DELETE /roles/{id}", handlers.StationDeleteStationRole)
+	stationRouter.HandleFunc("PUT /roles", handlers.StationPutStationRole)
 	router.Handle("/stations/", http.StripPrefix("/stations", sessionService.RequireRoleFunc(acl.ACLViewUp, stationRouter)))
 
 	// dash routes
@@ -187,7 +191,9 @@ func main() {
 	hostRouter.HandleFunc("PUT /points/group", handlers.HostPutPointsToGroup)
 	hostRouter.HandleFunc("PUT /points/station", handlers.HostPutPointsToStation)
 	hostRouter.HandleFunc("GET /results/stations", handlers.HostGetResultsStations)
+	hostRouter.HandleFunc("GET /results/stations/download", handlers.HostGetResultsStationsDownload)
 	hostRouter.HandleFunc("GET /results/groups", handlers.HostGetResultsGroups)
+	hostRouter.HandleFunc("GET /results/groups/download", handlers.HostGetResultsGroupsDownload)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))

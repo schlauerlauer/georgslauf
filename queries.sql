@@ -183,6 +183,7 @@ select
 	,sr.station_role
 	,u.firstname
 	,u.lastname
+	,u.email
 from station_roles sr
 inner join users u
 	on sr.user_id = u.id
@@ -522,6 +523,14 @@ from station_roles
 where id = ?
 limit 1;
 
+-- name: GetStationRoleStationWithUser :one
+select
+	station_id
+	,user_id
+from station_roles
+where id = ?
+limit 1;
+
 -- name: GetUsersByTribeRole :many
 select
 	u.id
@@ -671,7 +680,6 @@ left join station_positions sp
 	on s.position_id = sp.id
 order by sp.name asc;
 
--- NTH order by ?
 -- name: GetPointsToGroups :many
 select
 	g.id as 'group'

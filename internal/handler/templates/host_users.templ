@@ -11,7 +11,7 @@ import (
 
 templ HostUsers(htmxRequest bool, user *session.UserData, csrf string, users []db.GetUsersRoleLargerNoneRow, requests []db.GetUsersRoleNoneRow) {
 	@base(htmxRequest, user, -1, false) {
-		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
+		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
 				role="tablist"
 				class="tabs tabs-bordered"
