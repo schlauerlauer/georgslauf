@@ -533,10 +533,16 @@ func (h *Handler) GetStationGroupPointsReload(w http.ResponseWriter, r *http.Req
 			set.Groups.ShowAbbr,
 			false,
 			stationRole,
+			false,
 		).Render(ctx, w); err != nil {
 			slog.Error("templ", "err", err)
 		}
 		return
+	}
+
+	onlyMissing := false
+	if query := r.URL.Query().Get("missing"); query == "true" {
+		onlyMissing = true
 	}
 
 	// points from station to group
@@ -553,6 +559,7 @@ func (h *Handler) GetStationGroupPointsReload(w http.ResponseWriter, r *http.Req
 		set.Groups.ShowAbbr,
 		true,
 		stationRole,
+		onlyMissing,
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)
 	}
@@ -606,6 +613,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 				set.Groups.ShowAbbr,
 				false,
 				stationRole,
+				false,
 			),
 		).Render(ctx, w); err != nil {
 			slog.Error("templ", "err", err)
@@ -628,6 +636,7 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 			set.Groups.ShowAbbr,
 			true,
 			stationRole,
+			false,
 		),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)

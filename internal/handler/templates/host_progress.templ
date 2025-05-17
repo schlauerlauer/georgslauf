@@ -1,0 +1,82 @@
+package templates
+
+import (
+	"database/sql"
+	"georgslauf/session"
+	"strconv"
+)
+
+type HostStatsAverage struct {
+	Name  string
+	Tribe string
+	Other sql.NullFloat64
+	Same  sql.NullFloat64
+}
+
+templ HostStats(
+	htmxRequest bool,
+	user *session.UserData,
+	csrf string,
+	averages map[int64]HostStatsAverage,
+) {
+	@base(htmxRequest, user, -1, false) {
+		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
+			<div
+				role="tablist"
+				class="tabs tabs-bordered"
+				hx-swap="innerHTML"
+				hx-target="main"
+				hx-push-url="true"
+			>
+				<a role="tab" class="tab" hx-get="/host/tribes">Übersicht</a>
+				<a role="tab" class="tab" hx-get="/host/groups">Gruppen</a>
+				<a role="tab" class="tab" hx-get="/host/stations">Posten</a>
+				<a role="tab" class="tab" hx-get="/host/users">Accounts</a>
+				<a role="tab" class="tab" hx-get="/host/points">Bewertungen</a>
+				<a role="tab" class="tab tab-active" hx-get="/host/stats">Statistik</a>
+				<a role="tab" class="tab" hx-get="/host/results/groups">Auswertung</a>
+				<a role="tab" class="tab" hx-get="/host/settings">Einstellungen</a>
+			</div>
+			<p class="mt-9 mb-3 text-xl">
+				Wächterwanze
+				<span class="align-middle text-2xl icon-[vaadin--bug-o] text-success"></span>
+			</p>
+			<div class="overflow-x-auto">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Posten</th>
+							<th>Stamm</th>
+							<th>⌀ eigener Stamm</th>
+							<th>⌀ andere Stämme</th>
+							<th>Differenz</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, entry := range averages {
+							<tr>
+								<td>{ entry.Name }</td>
+								<td>{ entry.Tribe }</td>
+								<td>
+									if entry.Same.Valid {
+										{ strconv.FormatFloat(entry.Same.Float64, 'f', 0, 64) }
+									}
+								</td>
+								<td>
+									if entry.Other.Valid {
+										{ strconv.FormatFloat(entry.Other.Float64, 'f', 0, 64) }
+									}
+								</td>
+								<td>
+									if entry.Same.Valid && entry.Other.Valid {
+										{ strconv.FormatFloat(entry.Same.Float64 - entry.Other.Float64, 'f', 0, 64) }
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
+}

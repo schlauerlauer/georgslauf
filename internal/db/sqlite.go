@@ -2,8 +2,10 @@ package db
 
 import (
 	"database/sql"
+	"log/slog"
 
-	_ "github.com/tursodatabase/go-libsql"
+	// _ "github.com/tursodatabase/go-libsql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Repository struct {
@@ -14,8 +16,9 @@ type DatabaseConfig struct {
 	Path string `yaml:"path"`
 }
 
-func NewLibsql(config *DatabaseConfig) (*Repository, error) {
-	sqlDb, err := sql.Open("libsql", "file:"+config.Path)
+func NewSqlite(config *DatabaseConfig) (*Repository, error) {
+	// sqlDb, err := sql.Open("libsql", "file:"+config.Path)
+	sqlDb, err := sql.Open("sqlite3", config.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -33,15 +36,18 @@ func NewLibsql(config *DatabaseConfig) (*Repository, error) {
 	}
 
 	if row := sqlDb.QueryRow("PRAGMA synchronous = NORMAL;"); row.Err() != nil {
-		return nil, err
+		slog.Error("pragma synchronous", "err", row.Err())
+		return nil, row.Err()
 	}
 
-	if row := sqlDb.QueryRow("PRAGMA foreign_keys = on;"); row.Err() != nil {
-		return nil, err
+	if row := sqlDb.QueryRow("PRAGMA foreign_keys = 1;"); row.Err() != nil {
+		slog.Error("pragma foreign_keys", "err", row.Err())
+		return nil, row.Err()
 	}
 
 	if row := sqlDb.QueryRow("PRAGMA wal_checkpoint(TRUNCATE);"); row.Err() != nil {
-		return nil, err
+		slog.Error("pragma wal_checkpoint", "err", row.Err())
+		return nil, row.Err()
 	}
 
 	return &Repository{

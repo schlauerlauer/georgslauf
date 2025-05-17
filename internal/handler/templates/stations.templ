@@ -195,7 +195,7 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 	</dialog>
 }
 
-templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow, showAbbr bool, scoringEnabled bool, stationRole acl.ACL) {
+templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow, showAbbr bool, scoringEnabled bool, stationRole acl.ACL, onlyMissing bool) {
 	<div id="points-list">
 		<div class="mb-6">
 			<div class="stats shadow bg-base-200">
@@ -225,15 +225,35 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 				}
 			</button>
 			<button
+				id="points-reload"
 				hx-get="/stations/reload"
 				hx-swap="outerHTML"
 				hx-target="#points-list"
 				class="btn btn-secondary join-item"
+				hx-include="#missing"
+				hx-trigger="click, issueRequest"
 			>
 				Bewertungen Neuladen
 			</button>
 		</div>
 		if scoringEnabled {
+			<div class="my-3 form-control w-full max-w-sm">
+				<label class="label cursor-pointer">
+					<span class="label-text">Nur fehlende Bewertungen anzeigen</span>
+					<input
+						id="missing"
+						autocomplete="off"
+						name="missing"
+						value="true"
+						type="checkbox"
+						class="toggle toggle-primary"
+						if onlyMissing {
+							checked="checked"
+						}
+						_="on change send issueRequest to #points-reload"
+					/>
+				</label>
+			</div>
 			<div class="overflow-x-auto">
 				<table class="table">
 					<thead>
@@ -247,58 +267,60 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 					</thead>
 					<tbody>
 						for _, entry := range points {
-							<tr>
-								if showAbbr {
-									<td>{ entry.Abbr.String }</td>
-								}
-								<td>
-									<div class="font-bold">{ entry.Name }</div>
-									<div class="flex items-center gap-x-3">
-										<div class="text-sm opacity-50">
-											switch entry.Grouping {
-												case 0:
-													Wölflinge
-												case 1:
-													Jupfis
-												case 2:
-													Pfadis
-												case 3:
-													Rover
-											}
-										</div>
-										<div class="badge badge-xs">
-											{ entry.Tribe.String }
-											if entry.TribeIcon.Valid {
-												<div class="avatar ml-1">
-													<div class="w-4 rounded-full">
-														<img
-															src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
-															alt="Avatar"
-														/>
+							if (onlyMissing && (!entry.Points.Valid || entry.Points.Int64 == 0)) || !onlyMissing {
+								<tr>
+									if showAbbr {
+										<td>{ entry.Abbr.String }</td>
+									}
+									<td>
+										<div class="font-bold">{ entry.Name }</div>
+										<div class="flex items-center gap-x-3">
+											<div class="text-sm opacity-50">
+												switch entry.Grouping {
+													case 0:
+														Wölflinge
+													case 1:
+														Jupfis
+													case 2:
+														Pfadis
+													case 3:
+														Rover
+												}
+											</div>
+											<div class="badge badge-xs">
+												{ entry.Tribe.String }
+												if entry.TribeIcon.Valid {
+													<div class="avatar ml-1">
+														<div class="w-4 rounded-full">
+															<img
+																src={ "/icon/tribe/" + strconv.FormatInt(entry.TribeIcon.Int64, 10) }
+																alt="Avatar"
+															/>
+														</div>
 													</div>
-												</div>
-											}
+												}
+											</div>
 										</div>
-									</div>
-								</td>
-								<td>
-									// TODO move hx attributes to parent
-									<form
-										hx-put="/stations/points"
-										hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
-										hx-swap="none"
-										hx-trigger="input changed delay:250ms"
-										_="on keydown[key is 'Enter'] halt the event"
-									>
-										<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
-										if entry.Points.Valid {
-											<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
-										} else {
-											<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value="0"/>
-										}
-									</form>
-								</td>
-							</tr>
+									</td>
+									<td>
+										// TODO move hx attributes to parent
+										<form
+											hx-put="/stations/points"
+											hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
+											hx-swap="none"
+											hx-trigger="input changed delay:250ms"
+											_="on keydown[key is 'Enter'] halt the event"
+										>
+											<input autocomplete="off" type="hidden" name="group" value={ strconv.FormatInt(entry.Group, 10) }/>
+											if entry.Points.Valid {
+												<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value={ strconv.FormatInt(entry.Points.Int64, 10) }/>
+											} else {
+												<input autocomplete="off" class="input w-full max-w-xs font-bold invalid:border-error" type="number" name="points" max="100" min="0" value="0"/>
+											}
+										</form>
+									</td>
+								</tr>
+							}
 						}
 					</tbody>
 				</table>

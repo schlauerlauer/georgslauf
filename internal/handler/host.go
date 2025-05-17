@@ -20,6 +20,66 @@ import (
 	"github.com/gorilla/csrf"
 )
 
+func (h *Handler) HostStats(w http.ResponseWriter, r *http.Request) {
+	htmxRequest := htmx.IsHTMX(r)
+	ctx := r.Context()
+
+	var user *session.UserData
+	if userData, ok := ctx.Value(session.ContextKey).(*session.UserData); ok {
+		user = userData
+	} else {
+		slog.Warn("not ok")
+		return // TODO redirect?
+	}
+	if user == nil {
+		return
+	}
+
+	avgOther, err := h.queries.GetStationPointsAverageOther(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+	}
+
+	avgSame, err := h.queries.GetStationPointsAverageSame(ctx)
+	if err != nil {
+		slog.Error("sqlc", "err", err)
+	}
+
+	averages := map[int64]templates.HostStatsAverage{}
+
+	for _, row := range avgOther {
+		averages[row.ID] = templates.HostStatsAverage{
+			Name:  row.Name,
+			Tribe: row.Tribe,
+			Other: row.Avg,
+		}
+	}
+
+	for _, row := range avgSame {
+		if entry, ok := averages[row.ID]; ok {
+			entry.Same = row.Avg
+			averages[row.ID] = entry
+		} else {
+			averages[row.ID] = templates.HostStatsAverage{
+				Name:  row.Name,
+				Tribe: row.Tribe,
+				Same:  row.Avg,
+			}
+		}
+	}
+
+	slog.Debug("stats", "avgOther", avgOther, "avgSame", avgSame)
+
+	if err := templates.HostStats(
+		htmxRequest,
+		user,
+		csrf.Token(r),
+		averages,
+	).Render(ctx, w); err != nil {
+		slog.Warn("templ", "err", err)
+	}
+}
+
 func (h *Handler) PutTribeIcon(w http.ResponseWriter, r *http.Request) {
 	// TODO allow for tribes
 

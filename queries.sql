@@ -24,6 +24,42 @@ left join stations s
 	on s.category_id = sc.id
 group by sc.id;
 
+-- filters non set points
+-- name: GetStationPointsAverageOther :many
+select
+	s.id
+	,s.name
+	,t.name as 'tribe'
+	,avg(ptg.points) as 'avg'
+from points_to_groups ptg
+inner join stations s
+	on ptg.station_id = s.id
+inner join tribes t
+	on s.tribe_id = t.id
+inner join groups g
+	on ptg.group_id = g.id
+	and g.tribe_id != s.tribe_id
+group by
+	s.id;
+
+-- filters non set points
+-- name: GetStationPointsAverageSame :many
+select
+	s.id
+	,s.name
+	,t.name as 'tribe'
+	,avg(ptg.points) as 'avg'
+from points_to_groups ptg
+inner join stations s
+	on ptg.station_id = s.id
+inner join tribes t
+	on s.tribe_id = t.id
+inner join groups g
+	on ptg.group_id = g.id
+	and g.tribe_id = s.tribe_id
+group by
+	s.id;
+
 -- name: GetCategoryOfStation :one
 select
 	s.category_id
