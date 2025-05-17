@@ -68,8 +68,6 @@ func (h *Handler) HostStats(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	slog.Debug("stats", "avgOther", avgOther, "avgSame", avgSame)
-
 	if err := templates.HostStats(
 		htmxRequest,
 		user,

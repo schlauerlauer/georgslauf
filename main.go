@@ -195,6 +195,7 @@ func main() {
 	hostRouter.HandleFunc("GET /results/stations/download", handlers.HostGetResultsStationsDownload)
 	hostRouter.HandleFunc("GET /results/groups", handlers.HostGetResultsGroups)
 	hostRouter.HandleFunc("GET /results/groups/download", handlers.HostGetResultsGroupsDownload)
+	hostRouter.HandleFunc("GET /stats", handlers.HostStats)
 	router.Handle("/host/", http.StripPrefix("/host", sessionService.RequireRoleFunc(acl.ACLEditUp, hostRouter)))
 
 	router.Handle("GET /icon/user", sessionService.RequiredAuth(http.HandlerFunc(handlers.GetUserIcon)))
