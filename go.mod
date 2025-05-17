@@ -7,18 +7,15 @@ require (
 	github.com/gorilla/csrf v1.7.3
 	github.com/gorilla/sessions v1.4.0
 	github.com/lmittmann/tint v1.0.7
+	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/schlauerlauer/go-forms v1.0.2
 	github.com/schlauerlauer/go-middleware v1.0.1
-	github.com/tursodatabase/go-libsql v0.0.0-20250416102726-983f7e9acb0e
 	github.com/yuin/goldmark v1.7.10
 	golang.org/x/oauth2 v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/PuerkitoBio/goquery v1.10.3 // indirect
-	github.com/andybalholm/cascadia v1.3.3 // indirect
-	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -31,15 +28,12 @@ require (
 	github.com/gosimple/slug v1.15.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
-	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240721121621-c0bdc870f11c // indirect
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/segmentio/go-camelcase v0.0.0-20160726192923-7085f1e3c734 // indirect
 	github.com/segmentio/go-snakecase v1.2.0 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.24.0 // indirect

@@ -12,4 +12,7 @@ LDFLAGS=(
 	'-extldflags "-static"'
 )
 
-CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS[*]}" -o /app/build/georgslauf -v .
+# suggested on https://github.com/mattn/go-sqlite3/tree/master?tab=readme-ov-file#arm
+CGO_ENABLED=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="${LDFLAGS[*]}" -o /app/build/georgslauf -v .
+
+# CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS[*]}" -o /app/build/georgslauf -v .
