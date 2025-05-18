@@ -77,7 +77,7 @@ func (a2s *authToSession) Callback(w http.ResponseWriter, r *http.Request, token
 		w.WriteHeader(http.StatusUnauthorized)
 		if err := templates.ErrorPageSlim(
 			http.StatusUnauthorized,
-			"Email ist nicht verifiziert",
+			"Email ist nicht verifiziert. Bitte aus Mattermost abmelden und neu anmelden, um die Bestätigungsmail zu erhalten",
 		).Render(r.Context(), w); err != nil {
 			slog.Warn("templ", "err", err)
 		}
