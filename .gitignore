@@ -1,17 +1,10 @@
 /.vscode/*
 !/.vscode/launch.json
-/*.code-workspace
 /tmp
 /config.yaml
 /config_live.yaml
 /georgslauf.db*
 /node_modules
-*_templ.go
-/resources/main.js
-/resources/main.css
-/internal/db/db.go
-/internal/db/models.go
-/internal/db/queries.sql.go
 /uploads
 /init_data.sql
 /georgslauf.tar.gz
