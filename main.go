@@ -13,19 +13,15 @@ import (
 	"georgslauf/internal/settings"
 	"georgslauf/session"
 	"io/fs"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 	_ "time/tzdata"
 
-	"github.com/gorilla/csrf"
 	"github.com/lmittmann/tint"
 	"github.com/schlauerlauer/go-middleware"
-)
-
-const (
-	csrfCookieName = "georgslauf.csrf"
 )
 
 //go:generate sqlc generate -f ./sqlc.yaml
@@ -67,8 +63,12 @@ func main() {
 
 	handlers, err := handler.NewHandler(repository.Queries, sessionService, settings)
 	if err != nil {
-		slog.Error("NewHandler", "err", err)
-		os.Exit(1)
+		log.Fatalf("failed to create handlers: %v", err)
+	}
+
+	csrfProtection := http.NewCrossOriginProtection()
+	if err := csrfProtection.AddTrustedOrigin(cfg.Server.PublicUrl); err != nil {
+		log.Fatalf("failed to add trusted origin: %v", err)
 	}
 
 	a2s := authsession.New(
@@ -81,8 +81,7 @@ func main() {
 
 	authHandler, err := auth.NewAuthHandler(cfg.OAuth, a2s)
 	if err != nil {
-		slog.Error("NewAuthHandler", "err", err)
-		os.Exit(1)
+		log.Fatalf("failed to create authHandler: %v", err)
 	}
 
 	router := http.NewServeMux()
@@ -94,16 +93,14 @@ func main() {
 	// ./uploads => /res/
 	upl, err := os.OpenRoot(cfg.UploadDir)
 	if err != nil {
-		slog.Error("os.OpenRoot", "err", err)
-		os.Exit(1)
+		log.Fatalf("failed to open upload dir: %v", err)
 	}
 	router.Handle("GET /res/", http.StripPrefix("/res", http.FileServer(neuteredFileSystem{http.FS(upl.FS())})))
 
 	// ./resources => /dist/
 	subDist, err := fs.Sub(embedRes, "resources")
 	if err != nil {
-		slog.Error("fs.Sub", "err", err)
-		os.Exit(1)
+		log.Fatalf("failed to open embedded resources: %v", err)
 	}
 	distServer := http.FileServer(http.FS(subDist))
 	router.Handle("GET /dist/", http.StripPrefix("/dist", neuter(distServer)))
@@ -203,13 +200,7 @@ func main() {
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
-		csrf.Protect(
-			cfg.CsrfKey,
-			csrf.Secure(true),
-			csrf.SameSite(csrf.SameSiteStrictMode),
-			csrf.Path("/"),
-			csrf.CookieName(csrfCookieName),
-		),
+		csrfProtection.Handler,
 	)
 
 	server := http.Server{
@@ -219,7 +210,6 @@ func main() {
 
 	slog.Info("server starting", "host", cfg.Server.Host, "port", cfg.Server.Port)
 	if err := server.ListenAndServe(); err != nil {
-		slog.Error("server error", "err", err)
-		os.Exit(1)
+		log.Fatalf("failed to start server: %v", err)
 	}
 }

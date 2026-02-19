@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string, tribeRoles []db.GetTribeRolesOpenRow, accounts map[int64][]db.GetTribeRolesAssignedRow, groups map[int64][]db.GetGroupsHostRow, stations map[int64][]db.GetStationsHostRow) {
+templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, tribeRoles []db.GetTribeRolesOpenRow, accounts map[int64][]db.GetTribeRolesAssignedRow, groups map[int64][]db.GetGroupsHostRow, stations map[int64][]db.GetStationsHostRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
@@ -45,7 +45,6 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 												hx-put={ "/host/tribes/role" }
 												hx-swap="outerHTML"
 												hx-target="closest li"
-												hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 											>
 												<input autocomplete="off" type="hidden" name="id" value={ strconv.FormatInt(tribeRole.ID, 10) }/>
 												<div class="flex gap-x-2 items-center">
@@ -159,7 +158,6 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 													hx-trigger="change"
 													hx-encoding="multipart/form-data"
 													hx-swap="outerHTML"
-													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 												>
 													<label class="avatar cursor-pointer">
 														<div class="h-12 w-12">
@@ -177,7 +175,6 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 													hx-trigger="change"
 													hx-encoding="multipart/form-data"
 													hx-swap="outerHTML"
-													hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 												>
 													<label class="avatar placeholder cursor-pointer">
 														<input name="icon" type="file" class="hidden"/>
@@ -291,7 +288,7 @@ templ HostTribes(htmxRequest bool, user *session.UserData, tribes []db.GetTribes
 	}
 }
 
-templ TribeRoleModal(role db.GetTribeRoleByIdRow, csrf string) {
+templ TribeRoleModal(role db.GetTribeRoleByIdRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -370,7 +367,6 @@ templ TribeRoleModal(role db.GetTribeRoleByIdRow, csrf string) {
 					<form
 						class="flex justify-between gap-x-3"
 						hx-put="/host/tribes/role"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
 					>

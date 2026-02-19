@@ -14,8 +14,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/gorilla/csrf"
 )
 
 func (h *Handler) GetTribeIcon(w http.ResponseWriter, r *http.Request) {
@@ -370,7 +368,7 @@ func (h *Handler) PostStation(w http.ResponseWriter, r *http.Request) {
 		},
 		UserImage: []byte{}, // NTH
 		Vegan:     data.Vegan,
-	}, csrf.Token(r),
+	},
 		data.TribeId,
 		set.Stations,
 		categories,
@@ -786,7 +784,7 @@ func (h *Handler) PostGroup(w http.ResponseWriter, r *http.Request) {
 		},
 		// UserImage: ,
 		Vegan: data.Vegan,
-	}, csrf.Token(r), data.TribeId, set.Groups, true, user.HasPicture).Render(ctx, w); err != nil {
+	}, data.TribeId, set.Groups, true, user.HasPicture).Render(ctx, w); err != nil {
 		slog.Warn("DashGroup", "err", err)
 	}
 }
@@ -821,7 +819,7 @@ func (h *Handler) GetNewStation(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if err := templates.DashNewStation(csrf.Token(r), tribeId, set.Stations, categories, positions).Render(ctx, w); err != nil {
+	if err := templates.DashNewStation(tribeId, set.Stations, categories, positions).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -844,7 +842,7 @@ func (h *Handler) GetNewGroup(w http.ResponseWriter, r *http.Request) {
 
 	set := h.settings.Get()
 
-	if err := templates.DashNewGroup(csrf.Token(r), tribeId, set.Groups).Render(ctx, w); err != nil {
+	if err := templates.DashNewGroup(tribeId, set.Groups).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -902,7 +900,6 @@ func (h *Handler) DashGroups(w http.ResponseWriter, r *http.Request) {
 		tribeId,
 		groups,
 		settings.Groups,
-		csrf.Token(r),
 	).Render(ctx, w); err != nil {
 		slog.Warn("DashGroups", "err", err)
 	}
@@ -1180,7 +1177,6 @@ func (h *Handler) GetCreateStationRoleModalDash(w http.ResponseWriter, r *http.R
 	if err := templates.CreateStationRoleModalDash(
 		users,
 		station,
-		csrf.Token(r),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)
 	}
@@ -1243,7 +1239,6 @@ func (h *Handler) GetStationRoleModalDash(w http.ResponseWriter, r *http.Request
 
 	if err := templates.StationRoleModalDash(
 		stationRole,
-		csrf.Token(r),
 	).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
@@ -1317,7 +1312,6 @@ func (h *Handler) DashStations(w http.ResponseWriter, r *http.Request) {
 		tribeId,
 		stations,
 		set.Stations,
-		csrf.Token(r),
 		categories,
 		positions,
 		userRoles,
@@ -1396,7 +1390,6 @@ func (h *Handler) Dash(w http.ResponseWriter, r *http.Request) {
 					htmxRequest,
 					user,
 					tribes,
-					csrf.Token(r),
 				).Render(ctx, w); err != nil {
 					slog.Warn("templ", "err", err)
 				}

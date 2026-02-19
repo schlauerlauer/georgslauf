@@ -12,8 +12,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/gorilla/csrf"
 )
 
 func (h *Handler) StationPostStationRole(w http.ResponseWriter, r *http.Request) {
@@ -372,7 +370,6 @@ func (h *Handler) GetStationAccounts(w http.ResponseWriter, r *http.Request) {
 
 		if err := templates.StationRoleModalStation(
 			userRole,
-			csrf.Token(r),
 		).Render(ctx, w); err != nil {
 			slog.Warn("templ", "err", err)
 		}
@@ -397,7 +394,6 @@ func (h *Handler) GetStationAccounts(w http.ResponseWriter, r *http.Request) {
 	if err := templates.StationRolesModal(
 		users,
 		station,
-		csrf.Token(r),
 		stationRole,
 		userRoles,
 		set.Stations.EditAccountsStation,
@@ -528,7 +524,6 @@ func (h *Handler) GetStationGroupPointsReload(w http.ResponseWriter, r *http.Req
 	if !set.Stations.AllowScoring {
 		if err := templates.PointsList(
 			[]db.GetPointsToGroupsRow{},
-			csrf.Token(r),
 			station,
 			set.Groups.ShowAbbr,
 			false,
@@ -554,7 +549,6 @@ func (h *Handler) GetStationGroupPointsReload(w http.ResponseWriter, r *http.Req
 
 	if err := templates.PointsList(
 		points,
-		csrf.Token(r),
 		station,
 		set.Groups.ShowAbbr,
 		true,
@@ -608,7 +602,6 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 		if err := templates.StationPointsTab(
 			templates.PointsList(
 				[]db.GetPointsToGroupsRow{},
-				csrf.Token(r),
 				station,
 				set.Groups.ShowAbbr,
 				false,
@@ -631,7 +624,6 @@ func (h *Handler) GetStationGroupPoints(w http.ResponseWriter, r *http.Request) 
 	if err := templates.StationPointsTab(
 		templates.PointsList(
 			points,
-			csrf.Token(r),
 			station,
 			set.Groups.ShowAbbr,
 			true,
@@ -728,7 +720,6 @@ func (h *Handler) GetStationSettings(w http.ResponseWriter, r *http.Request) {
 			UserImage:    station.UserImage,
 		},
 		set.Stations,
-		csrf.Token(r),
 		station.TribeID, // NTH multiple stations
 		categories,
 		positions,

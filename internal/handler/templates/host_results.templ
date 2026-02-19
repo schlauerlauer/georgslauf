@@ -17,7 +17,6 @@ type GroupResult struct {
 templ HostResultsGroups(
 	htmxRequest bool,
 	user *session.UserData,
-	csrf string,
 	results []GroupResult,
 	showAbbr bool,
 ) {
@@ -149,7 +148,6 @@ type StationResult struct {
 templ HostResultsStations(
 	htmxRequest bool,
 	user *session.UserData,
-	csrf string,
 	results []StationResult,
 ) {
 	@base(htmxRequest, user, -1, false) {

@@ -59,7 +59,7 @@ templ groupGrouping(grouping int64) {
 	</div>
 }
 
-templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
+templ DashNewGroup(tribeId int64, set settings.Groups) {
 	<details class="collapse collapse-arrow bg-base-200" open>
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
@@ -70,7 +70,6 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 			<form
 				class="space-y-6"
 				hx-post="/dash/groups"
-				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-swap="outerHTML"
 				hx-target="closest details"
 			>
@@ -129,7 +128,7 @@ templ DashNewGroup(csrf string, tribeId int64, set settings.Groups) {
 	</details>
 }
 
-templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set settings.Groups, self bool, hasPicture bool) {
+templ DashGroup(group db.GetGroupsByTribeRow, tribeId int64, set settings.Groups, self bool, hasPicture bool) {
 	<details class="collapse collapse-arrow bg-base-200">
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
@@ -141,7 +140,6 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 			<form
 				class="space-y-6"
 				hx-put="/dash/groups"
-				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-swap="innerHTML"
 				hx-target="previous summary"
 				hx-disinherit="*"
@@ -299,7 +297,7 @@ templ DashGroup(group db.GetGroupsByTribeRow, csrf string, tribeId int64, set se
 	</details>
 }
 
-templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Groups, csrf string) {
+templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Groups) {
 	<div hx-swap-oob="innerHTML:#dash-tabs-tribe">
 		<a role="tab" class="tab tab-active" hx-get="/dash/groups">Gruppen</a>
 		<a role="tab" class="tab" hx-get="/dash/stations">Posten</a>
@@ -321,7 +319,7 @@ templ DashGroups(tribeId int64, groups []db.GetGroupsByTribeRow, set settings.Gr
 		}
 		<div class="space-y-3">
 			for _, group := range groups {
-				@DashGroup(group, csrf, tribeId, set, false, false)
+				@DashGroup(group, tribeId, set, false, false)
 			}
 			if set.AllowCreate {
 				<button

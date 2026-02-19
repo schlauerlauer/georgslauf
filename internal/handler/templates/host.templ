@@ -5,13 +5,12 @@ import (
 	"strconv"
 )
 
-templ TribeIcon(tribeId int64, csrf string) {
+templ TribeIcon(tribeId int64) {
 	<form
 		hx-put={ "/host/tribes/icon/" + strconv.FormatInt(tribeId, 10) }
 		hx-trigger="change"
 		hx-encoding="multipart/form-data"
 		hx-swap="outerHTML"
-		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 	>
 		<label class="avatar cursor-pointer">
 			<div class="h-12 w-12">

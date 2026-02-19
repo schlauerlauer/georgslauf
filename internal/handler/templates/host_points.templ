@@ -9,7 +9,6 @@ import (
 templ HostPointsToGroup(
 	station db.GetStationInfoRow,
 	showAbbr bool,
-	csrf string,
 	points []db.GetPointsToGroupsRow,
 ) {
 	<div class="mb-6 stats shadow bg-base-200">
@@ -75,7 +74,6 @@ templ HostPointsToGroup(
 							// TODO move hx attributes to parent
 							<form
 								hx-put="/host/points/group"
-								hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 								hx-swap="none"
 								hx-trigger="input changed delay:250ms"
 								hx-include="#station-select"
@@ -98,7 +96,6 @@ templ HostPointsToGroup(
 
 templ HostPointsToStation(
 	group db.GetGroupInfoRow,
-	csrf string,
 	points []db.GetPointsToStationsRow,
 	useCategories bool,
 ) {
@@ -153,7 +150,6 @@ templ HostPointsToStation(
 							// TODO move hx attributes to parent
 							<form
 								hx-put="/host/points/station"
-								hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 								hx-swap="none"
 								hx-trigger="input changed delay:250ms"
 								hx-include="#group-select"
@@ -177,7 +173,6 @@ templ HostPointsToStation(
 templ HostPoints(
 	htmxRequest bool,
 	user *session.UserData,
-	csrf string,
 	stations []db.GetStationsHostRow,
 	groups []db.GetGroupsHostRow,
 ) {

@@ -11,14 +11,14 @@ import (
 
 type ConfigData struct {
 	Server struct {
-		Host string `yaml:"host" binding:"required"`
-		Port int64  `yaml:"port" binding:"required"`
+		Host      string `yaml:"host" binding:"required"`
+		Port      int64  `yaml:"port" binding:"required"`
+		PublicUrl string `yaml:"publicUrl" binding:"required"`
 	} `yaml:"server"`
 	UploadDir  string            `yaml:"uploadDir"`
 	Database   db.DatabaseConfig `yaml:"database"`
 	OAuth      auth.OAuthConfig  `yaml:"oauth"`
 	SessionKey []byte            `yaml:"sessionKey"`
-	CsrfKey    []byte            `yaml:"csrfAuthKey"`
 }
 
 func NewConfig(path string) (*ConfigData, error) {

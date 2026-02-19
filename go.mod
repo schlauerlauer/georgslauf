@@ -4,7 +4,6 @@ go 1.25.5
 
 require (
 	github.com/a-h/templ v0.3.977
-	github.com/gorilla/csrf v1.7.3
 	github.com/gorilla/sessions v1.4.0
 	github.com/lmittmann/tint v1.1.3
 	github.com/mattn/go-sqlite3 v1.14.34

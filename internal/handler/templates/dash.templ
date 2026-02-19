@@ -73,7 +73,7 @@ templ Dash(htmxRequest bool, user *session.UserData, tribeId int64, hasIcon bool
 	}
 }
 
-templ TribeRoleSelect(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow, csrf string) {
+templ TribeRoleSelect(htmxRequest bool, user *session.UserData, tribes []db.GetTribesRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-lg">
 			<h1 class="text-xl">Stamm auswählen</h1>
@@ -119,7 +119,6 @@ templ TribeRoleSelect(htmxRequest bool, user *session.UserData, tribes []db.GetT
 											hx-post="/dash/join"
 											hx-swap="main"
 											hx-swap="innerHTML"
-											hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 										>
 											<input autocomplete="off" type="hidden" name="tribe" value={ strconv.FormatInt(tribe.ID, 10) }/>
 											<button class="btn btn-primary">Beitreten</button>

@@ -46,7 +46,7 @@ templ PutStation(updatedAt time.Time, stationId int64, stationName string, first
 	</div>
 }
 
-templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
+templ DashNewStation(tribeId int64, set settings.Stations, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
 	<details class="collapse collapse-arrow bg-base-200" open>
 		<summary class="collapse-title text-xl font-medium">
 			<div class="flex justify-between place-items-center">
@@ -57,7 +57,6 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 			<form
 				class="space-y-4"
 				hx-post="/dash/stations"
-				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-swap="outerHTML"
 				hx-target="closest details"
 			>
@@ -160,7 +159,6 @@ templ DashNewStation(csrf string, tribeId int64, set settings.Stations, categori
 
 templ DashStation(
 	station db.GetStationsByTribeRow,
-	csrf string,
 	tribeId int64,
 	set settings.Stations,
 	categories []db.GetStationCategoriesRow,
@@ -245,7 +243,6 @@ templ DashStation(
 			<form
 				class="space-y-4"
 				hx-put="/dash/stations"
-				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-swap="innerHTML"
 				hx-target="previous summary"
 				hx-disinherit="*"
@@ -420,7 +417,6 @@ templ DashStations(
 	tribeId int64,
 	stations []db.GetStationsByTribeRow,
 	set settings.Stations,
-	csrf string,
 	categories []db.GetStationCategoriesRow,
 	positions []db.StationPosition,
 	userRoles []db.GetStationRolesDashRow,
@@ -446,7 +442,7 @@ templ DashStations(
 		}
 		<div class="space-y-3">
 			for _, station := range stations {
-				@DashStation(station, csrf, tribeId, set, categories, false, false, positions, false, userRoles)
+				@DashStation(station, tribeId, set, categories, false, false, positions, false, userRoles)
 			}
 			if set.AllowCreate {
 				<button
@@ -479,7 +475,7 @@ templ DashStations(
 
 // NTH almost duplicate of StationRoleModal
 // TODO add notice if role is from different tribe
-templ StationRoleModalDash(role db.GetStationRoleByIdRow, csrf string) {
+templ StationRoleModalDash(role db.GetStationRoleByIdRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -540,7 +536,6 @@ templ StationRoleModalDash(role db.GetStationRoleByIdRow, csrf string) {
 					<form
 						class="flex justify-between gap-x-3"
 						hx-put="/dash/stations/role"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
 						hx-include="#tribe-id"
@@ -561,7 +556,6 @@ templ StationRoleModalDash(role db.GetStationRoleByIdRow, csrf string) {
 						hx-delete={ "/dash/stations/role/" + strconv.FormatInt(role.ID, 10) }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						hx-include="#tribe-id"
 					>
 						Entfernen
@@ -576,7 +570,7 @@ templ StationRoleModalDash(role db.GetStationRoleByIdRow, csrf string) {
 }
 
 // NTH almost duplicate of CreateStationRoleModal
-templ CreateStationRoleModalDash(accounts []db.GetUsersByTribeRoleRow, station db.GetStationNameRow, csrf string) {
+templ CreateStationRoleModalDash(accounts []db.GetUsersByTribeRoleRow, station db.GetStationNameRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -586,7 +580,6 @@ templ CreateStationRoleModalDash(accounts []db.GetUsersByTribeRoleRow, station d
 			<form
 				class="mt-6 space-y-6"
 				hx-post="/dash/stations/roles"
-				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-target="#modal-container"
 				hx-swap="innerHTML"
 				hx-include="#tribe-id"

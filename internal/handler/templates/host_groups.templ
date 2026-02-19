@@ -58,7 +58,7 @@ templ HostGroupEntry(group db.GetGroupsDetailsRow) {
 	</tr>
 }
 
-templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, self bool, hasPicture bool, tribes []db.GetTribesNameRow) {
+templ HostGroupModal(group db.GetGroupRow, set settings.Groups, self bool, hasPicture bool, tribes []db.GetTribesNameRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -70,7 +70,6 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 				<form
 					class="space-y-6"
 					hx-put="/host/groups"
-					hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 					hx-swap="outerHTML"
 					hx-target={ "#group-" + strconv.FormatInt(group.ID, 10) }
 				>
@@ -243,7 +242,7 @@ templ HostGroupModal(group db.GetGroupRow, set settings.Groups, csrf string, sel
 	</dialog>
 }
 
-templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, csrf string, summary db.GetGroupOverviewRow) {
+templ HostGroups(htmxRequest bool, user *session.UserData, groups []db.GetGroupsDetailsRow, summary db.GetGroupOverviewRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div

@@ -16,7 +16,6 @@ type HostStatsAverage struct {
 templ HostStats(
 	htmxRequest bool,
 	user *session.UserData,
-	csrf string,
 	averages map[int64]HostStatsAverage,
 ) {
 	@base(htmxRequest, user, -1, false) {

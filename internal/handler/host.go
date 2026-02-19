@@ -16,8 +16,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/gorilla/csrf"
 )
 
 func (h *Handler) HostStats(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +69,6 @@ func (h *Handler) HostStats(w http.ResponseWriter, r *http.Request) {
 	if err := templates.HostStats(
 		htmxRequest,
 		user,
-		csrf.Token(r),
 		averages,
 	).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
@@ -138,7 +135,7 @@ func (h *Handler) PutTribeIcon(w http.ResponseWriter, r *http.Request) {
 		slog.Error("UpdateTribeIcon", "err", err)
 	}
 
-	if err := templates.TribeIcon(id, csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.TribeIcon(id).Render(ctx, w); err != nil {
 		slog.Error("TribeIcon", "err", err)
 	}
 }
@@ -212,7 +209,7 @@ func (h *Handler) PutSettingsStations(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetStationCategoryNew(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	if err := templates.HostStationCategoryNew(csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.HostStationCategoryNew().Render(ctx, w); err != nil {
 		slog.Warn("HostStationCategory", "err", err)
 	}
 }
@@ -262,7 +259,6 @@ func (h *Handler) GetCreateStationRoleModal(w http.ResponseWriter, r *http.Reque
 	if err := templates.CreateStationRoleModal(
 		groupedAccounts,
 		station,
-		csrf.Token(r),
 	).Render(ctx, w); err != nil {
 		slog.Error("templ", "err", err)
 	}
@@ -357,7 +353,7 @@ func (h *Handler) PostStationCategory(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	} else {
-		if err := templates.HostStationCategory(csrf.Token(r), db.GetStationCategoriesRow{
+		if err := templates.HostStationCategory(db.GetStationCategoriesRow{
 			ID:   id,
 			Name: data.Name,
 			Max:  data.Max,
@@ -400,7 +396,7 @@ func (h *Handler) PutStationCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := templates.HostStationCategory(csrf.Token(r), db.GetStationCategoriesRow{
+	if err := templates.HostStationCategory(db.GetStationCategoriesRow{
 		ID:   id,
 		Name: data.Name,
 		Max:  data.Max,
@@ -519,7 +515,7 @@ func (h *Handler) GetStationRoleModal(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if err := templates.StationRoleModal(stationRole, csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.StationRoleModal(stationRole).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -539,7 +535,7 @@ func (h *Handler) GetTribeRoleModal(w http.ResponseWriter, r *http.Request) {
 		return // TODO
 	}
 
-	if err := templates.TribeRoleModal(tribeRole, csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.TribeRoleModal(tribeRole).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
 	}
 }
@@ -773,7 +769,7 @@ func (h *Handler) GetSettings(w http.ResponseWriter, r *http.Request) {
 
 	setMd := h.md.Get()
 
-	templates.HostSettings(htmxRequest, user, &set, schedule, categories, csrf.Token(r), setMd, positions).Render(ctx, w)
+	templates.HostSettings(htmxRequest, user, &set, schedule, categories, setMd, positions).Render(ctx, w)
 }
 
 func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {
@@ -833,7 +829,7 @@ func (h *Handler) PostTribeIcon(w http.ResponseWriter, r *http.Request) {
 
 	slog.Info("icon created")
 
-	if err := templates.TribeIcon(id, csrf.Token(r)).Render(ctx, w); err != nil {
+	if err := templates.TribeIcon(id).Render(ctx, w); err != nil {
 		slog.Error("TribeIcon", "err", err)
 	}
 }
@@ -864,7 +860,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := templates.HostUsers(htmxRequest, user, csrf.Token(r), users, requests).Render(ctx, w); err != nil {
+	if err := templates.HostUsers(htmxRequest, user, users, requests).Render(ctx, w); err != nil {
 		slog.Warn("HostUsers", "err", err)
 	}
 }
@@ -1040,7 +1036,6 @@ func (h *Handler) HostGetPointsDetails(w http.ResponseWriter, r *http.Request) {
 		if err := templates.HostPointsToGroup(
 			station,
 			set.Groups.ShowAbbr,
-			csrf.Token(r),
 			points,
 		).Render(ctx, w); err != nil {
 			slog.Warn("templ", "err", err)
@@ -1072,7 +1067,6 @@ func (h *Handler) HostGetPointsDetails(w http.ResponseWriter, r *http.Request) {
 
 		if err := templates.HostPointsToStation(
 			group,
-			csrf.Token(r),
 			points,
 			set.Stations.ShowAbbr,
 		).Render(ctx, w); err != nil {
@@ -1218,7 +1212,6 @@ func (h *Handler) HostGetResultsGroups(w http.ResponseWriter, r *http.Request) {
 	if err := templates.HostResultsGroups(
 		htmxRequest,
 		user,
-		csrf.Token(r),
 		resultsCalc,
 		set.Groups.ShowAbbr,
 	).Render(ctx, w); err != nil {
@@ -1325,7 +1318,6 @@ func (h *Handler) HostGetResultsStations(w http.ResponseWriter, r *http.Request)
 	if err := templates.HostResultsStations(
 		htmxRequest,
 		user,
-		csrf.Token(r),
 		resultsCalc,
 	).Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
@@ -1362,7 +1354,6 @@ func (h *Handler) HostGetPoints(w http.ResponseWriter, r *http.Request) {
 	if err := templates.HostPoints(
 		htmxRequest,
 		user,
-		csrf.Token(r),
 		stations,
 		groups,
 	).Render(ctx, w); err != nil {
@@ -1414,7 +1405,6 @@ func (h *Handler) GetStations(w http.ResponseWriter, r *http.Request) {
 		htmxRequest,
 		user,
 		stations,
-		csrf.Token(r),
 		summary,
 		set.Stations.EnableCategories,
 		roles,
@@ -1722,7 +1712,6 @@ func (h *Handler) GetStation(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	if err := templates.HostStationModal(
 		station,
-		csrf.Token(r),
 		set.Stations.EnableCategories,
 		self,
 		user.HasPicture,
@@ -1774,7 +1763,6 @@ func (h *Handler) GetGroup(w http.ResponseWriter, r *http.Request) {
 	if err := templates.HostGroupModal(
 		group,
 		set.Groups,
-		csrf.Token(r),
 		self,
 		user.HasPicture,
 		tribes,
@@ -1893,7 +1881,7 @@ func (h *Handler) GetGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := templates.HostGroups(htmxRequest, user, groups, csrf.Token(r), summary).Render(ctx, w); err != nil {
+	if err := templates.HostGroups(htmxRequest, user, groups, summary).Render(ctx, w); err != nil {
 		slog.Warn("HostGroups", "err", err)
 	}
 }
@@ -1960,7 +1948,6 @@ func (h *Handler) GetTribes(w http.ResponseWriter, r *http.Request) {
 		htmxRequest,
 		user,
 		tribes,
-		csrf.Token(r),
 		tribeRoles,
 		accounts,
 		groups,

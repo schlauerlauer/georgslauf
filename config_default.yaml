@@ -1,15 +1,14 @@
 server:
-  host: "10.88.0.1"
+  host: "127.0.0.1"
   port: 14348
+  publicUrl: "https://mydomain"
 uploadDir: "./uploads"
 database:
   path: "data.db"
 oauth:
-  baseUrl: "https://..."
-  endpoint: "https://..."
+  baseUrl: "https://mydomain"
+  endpoint: "https://auth.mydomain"
   clientID: "..."
   clientSecret: "..."
   hash: [...]
-security:
-  csrfAuthKey: [...]
 sessionKey: [...]

@@ -111,7 +111,7 @@ templ HostStationEntry(station db.GetStationsDetailsRow, enableCategories bool, 
 	</tr>
 }
 
-templ HostStationModal(station db.GetStationRow, csrf string, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow, tribes []db.GetTribesNameRow, positions []db.StationPosition) {
+templ HostStationModal(station db.GetStationRow, enableCategories bool, self bool, hasPicture bool, categories []db.GetStationCategoriesRow, tribes []db.GetTribesNameRow, positions []db.StationPosition) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -123,7 +123,6 @@ templ HostStationModal(station db.GetStationRow, csrf string, enableCategories b
 				<form
 					class="space-y-4"
 					hx-put="/host/stations"
-					hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 					hx-swap="outerHTML"
 					hx-target={ "#station-" + strconv.FormatInt(station.ID, 10) }
 				>
@@ -298,7 +297,6 @@ templ HostStations(
 	htmxRequest bool,
 	user *session.UserData,
 	stations []db.GetStationsDetailsRow,
-	csrf string,
 	summary db.GetStationOverviewRow,
 	enableCategories bool,
 	roles map[int64][]db.GetStationRolesRow,
@@ -392,7 +390,7 @@ templ HostStations(
 	}
 }
 
-templ CreateStationRoleModal(accounts map[string][]db.GetUsersOrderedRow, station db.GetStationNameRow, csrf string) {
+templ CreateStationRoleModal(accounts map[string][]db.GetUsersOrderedRow, station db.GetStationNameRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -402,7 +400,6 @@ templ CreateStationRoleModal(accounts map[string][]db.GetUsersOrderedRow, statio
 			<form
 				class="mt-6 space-y-6"
 				hx-post="/host/stations/roles"
-				hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 				hx-target="#modal-container"
 				hx-swap="innerHTML"
 			>
@@ -448,7 +445,7 @@ templ CreateStationRoleModal(accounts map[string][]db.GetUsersOrderedRow, statio
 	</dialog>
 }
 
-templ StationRoleModal(role db.GetStationRoleByIdRow, csrf string) {
+templ StationRoleModal(role db.GetStationRoleByIdRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -509,7 +506,6 @@ templ StationRoleModal(role db.GetStationRoleByIdRow, csrf string) {
 					<form
 						class="flex justify-between gap-x-3"
 						hx-put="/host/stations/role"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
 					>
@@ -529,7 +525,6 @@ templ StationRoleModal(role db.GetStationRoleByIdRow, csrf string) {
 						hx-delete={ "/host/stations/role/" + strconv.FormatInt(role.ID, 10) }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 					>
 						Entfernen
 					</button>

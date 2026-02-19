@@ -9,14 +9,14 @@ import (
 	"strings"
 )
 
-templ StationSettings(station db.GetStationsByTribeRow, set settings.Stations, csrf string, tribeId int64, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
+templ StationSettings(station db.GetStationsByTribeRow, set settings.Stations, tribeId int64, categories []db.GetStationCategoriesRow, positions []db.StationPosition) {
 	<div hx-swap-oob="innerHTML:#dash-tabs-station">
 		// TODO add settings isEnabled
 		<a role="tab" class="tab" hx-get="/stations/">Bewertungen</a>
 		<a role="tab" class="tab tab-active" hx-get="/stations/settings">Posten</a>
 	</div>
 	// FIXME stations own view
-	@DashStation(station, csrf, tribeId, set, categories, false, false, positions, true, []db.GetStationRolesDashRow{})
+	@DashStation(station, tribeId, set, categories, false, false, positions, true, []db.GetStationRolesDashRow{})
 }
 
 templ StationPointsTab(children templ.Component) {
@@ -29,7 +29,7 @@ templ StationPointsTab(children templ.Component) {
 }
 
 // NTH almost duplicate
-templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStationNameRow, csrf string, stationRole acl.ACL, userRoles []db.GetStationRolesInStationRow, enableRoleEdit bool) {
+templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStationNameRow, stationRole acl.ACL, userRoles []db.GetStationRolesInStationRow, enableRoleEdit bool) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -149,7 +149,6 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 						<form
 							class="mt-6 space-y-6"
 							hx-post="/stations/roles"
-							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 							hx-target="#modal-container"
 							hx-swap="innerHTML"
 							hx-include="#tribe-id"
@@ -195,7 +194,7 @@ templ StationRolesModal(accounts []db.GetUsersByTribeRoleRow, station db.GetStat
 	</dialog>
 }
 
-templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetStationInfoRow, showAbbr bool, scoringEnabled bool, stationRole acl.ACL, onlyMissing bool) {
+templ PointsList(points []db.GetPointsToGroupsRow, station db.GetStationInfoRow, showAbbr bool, scoringEnabled bool, stationRole acl.ACL, onlyMissing bool) {
 	<div id="points-list">
 		<div class="mb-6">
 			<div class="stats shadow bg-base-200">
@@ -306,7 +305,6 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 										// TODO move hx attributes to parent
 										<form
 											hx-put="/stations/points"
-											hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 											hx-swap="none"
 											hx-trigger="input changed delay:250ms"
 											_="on keydown[key is 'Enter'] halt the event"
@@ -333,7 +331,7 @@ templ PointsList(points []db.GetPointsToGroupsRow, csrf string, station db.GetSt
 
 // NTH almost duplicate of StationRoleModal
 // TODO add notice if role is from different tribe
-templ StationRoleModalStation(role db.GetStationRoleByIdRow, csrf string) {
+templ StationRoleModalStation(role db.GetStationRoleByIdRow) {
 	<dialog class="modal" _="on load me.showModal()">
 		<div class="modal-box">
 			<form method="dialog">
@@ -394,7 +392,6 @@ templ StationRoleModalStation(role db.GetStationRoleByIdRow, csrf string) {
 					<form
 						class="flex justify-between gap-x-3"
 						hx-put="/stations/roles"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
 						hx-include="#tribe-id"
@@ -415,7 +412,6 @@ templ StationRoleModalStation(role db.GetStationRoleByIdRow, csrf string) {
 						hx-delete={ "/stations/roles/" + strconv.FormatInt(role.ID, 10) }
 						hx-target="#modal-container"
 						hx-swap="innerHTML"
-						hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						hx-include="#tribe-id"
 					>
 						Entfernen

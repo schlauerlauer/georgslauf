@@ -8,10 +8,9 @@ import (
 	"strconv"
 )
 
-templ HostStationCategory(csrf string, category db.GetStationCategoriesRow) {
+templ HostStationCategory(category db.GetStationCategoriesRow) {
 	<form
 		class="flex gap-x-3 items-end"
-		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 		hx-put={ "/host/stations/categories/" + strconv.FormatInt(category.ID, 10) }
 		hx-swap="outerHTML"
 		hx-target="this"
@@ -54,10 +53,9 @@ templ HostStationCategory(csrf string, category db.GetStationCategoriesRow) {
 	</form>
 }
 
-templ HostStationCategoryNew(csrf string) {
+templ HostStationCategoryNew() {
 	<form
 		class="flex gap-x-3 items-end"
-		hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 		hx-post="/host/stations/categories"
 		hx-swap="outerHTML"
 		hx-target="this"
@@ -80,7 +78,7 @@ templ HostStationCategoryNew(csrf string) {
 	</form>
 }
 
-templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.GetStationCategoriesRow, csrf string, home md.MdData, positions []db.GetStationPositionsStationRow) {
+templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settings, schedule []db.Schedule, categories []db.GetStationCategoriesRow, home md.MdData, positions []db.GetStationPositionsStationRow) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-6 mx-auto px-3 max-w-screen-xl">
 			<div
@@ -109,7 +107,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							hx-trigger="change"
 							hx-swap="none"
 							class="space-y-3"
-							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						>
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
@@ -214,7 +211,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							hx-trigger="change"
 							hx-swap="none"
 							class="space-y-3"
-							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						>
 							<div class="form-control max-w-xs">
 								<label class="label cursor-pointer">
@@ -345,7 +341,7 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 						<p class="mb-3 font-light">Max. Anzahl 0 = kein Limit</p>
 						<div id="category-list">
 							for _, category := range categories {
-								@HostStationCategory(csrf, category)
+								@HostStationCategory(category)
 							}
 						</div>
 						<button
@@ -392,7 +388,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							hx-swap="innerHTML"
 							hx-target="next article"
 							class="space-y-3"
-							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						>
 							<label class="form-control w-full">
 								<div class="label">
@@ -423,7 +418,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							hx-trigger="change"
 							hx-swap="none"
 							class="space-y-3"
-							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						>
 							<label class="form-control w-full max-w-xs">
 								<div class="label">
@@ -448,7 +442,6 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 							hx-trigger="change"
 							hx-swap="none"
 							class="space-y-3"
-							hx-headers={ "{\"X-CSRF-Token\": \"" + csrf + "\"}" }
 						>
 							<label class="form-control w-full">
 								<div class="label">
