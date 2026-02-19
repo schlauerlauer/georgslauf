@@ -56,8 +56,8 @@ func (h *Handler) GetHome(w http.ResponseWriter, r *http.Request) {
 		schedule,
 		setMd,
 		templates.HostParam{
-			ID:   10,
-			Name: "Sankt Severin", // NTH configurable
+			ID:   4,
+			Name: "Frieden Christi", // NTH configurable
 		},
 	).Render(ctx, w); err != nil {
 		slog.Warn("Home", "err", err)

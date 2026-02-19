@@ -204,7 +204,7 @@ func Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"mt-9 flex justify-center\"><img class=\"w-96\" src=\"/res/icon.png\"></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"mt-9 flex justify-center\"><img class=\"w-96\" src=\"/res/logo.svg\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -36,7 +36,7 @@ func navbar(user *session.UserData, tribeId int64, hasIcon bool) templ.Component
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"navbar bg-base-100\"><div class=\"navbar-start\"><p hx-get=\"/\" hx-swap=\"innerHTML\" hx-target=\"main\" class=\"btn btn-ghost text-xl cursor-pointer\" hx-push-url=\"true\"><img class=\"h-9 w-9\" src=\"/res/favicon-48x48.png\"> <span class=\"hidden sm:block\">Georgslauf</span></p></div><div class=\"navbar-end space-x-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"navbar bg-base-100\"><div class=\"navbar-start\"><p hx-get=\"/\" hx-swap=\"innerHTML\" hx-target=\"main\" class=\"btn btn-ghost text-xl cursor-pointer\" hx-push-url=\"true\"><img class=\"h-9 w-9\" src=\"/res/favicon-96x96.png\"> <span class=\"hidden sm:block\">Georgslauf</span></p></div><div class=\"navbar-end space-x-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
