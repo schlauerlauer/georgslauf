@@ -40,7 +40,7 @@ func NewSqlite(config *DatabaseConfig) (*Repository, error) {
 		return nil, row.Err()
 	}
 
-	if row := sqlDb.QueryRow("PRAGMA foreign_keys = 1;"); row.Err() != nil {
+	if row := sqlDb.QueryRow("PRAGMA foreign_keys = on;"); row.Err() != nil {
 		slog.Error("pragma foreign_keys", "err", row.Err())
 		return nil, row.Err()
 	}
