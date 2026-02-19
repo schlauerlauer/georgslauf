@@ -27,8 +27,8 @@ module.exports = {
 		themes: [
 			catppuccin('latte'),
 			catppuccin('frappe'),
-			catppuccin('macchiato'),
-			catppuccin('mocha')
+			catppuccin('macchiato', {secondary: 'rosewater'}),
+			catppuccin('mocha', {secondary: 'rosewater'})
 		],
 		darkTheme: "macchiato", // name of one of the included themes for dark mode
 		base: true, // applies background color and foreground color for root element by default
