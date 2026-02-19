@@ -7,6 +7,7 @@
 	"author": "Janek Lauer",
 	"license": "AGPL-3.0",
 	"devDependencies": {
+		"@catppuccin/daisyui": "^1.2.1",
 		"@iconify/json": "^2.2.440",
 		"@iconify/tailwind": "^1.2.0",
 		"@tailwindcss/forms": "^0.5.11",
