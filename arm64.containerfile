@@ -2,7 +2,7 @@
 # BUILD
 #
 
-FROM --platform=$BUILDOS/$BUILDARCH docker.io/library/golang:1.24.1-bookworm AS build
+FROM --platform=$BUILDOS/$BUILDARCH docker.io/library/golang:1.25.5-bookworm AS build
 RUN apt update && apt install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf ca-certificates
 
 ARG USER=gl

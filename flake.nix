@@ -9,7 +9,7 @@
 			devShells.x86_64-linux.default = pkgs.mkShell {
 				nativeBuildInputs = with pkgs; [
 					just
-					go_1_24 gotools gopls go-outline gopkgs gocode-gomod godef golint
+					go_1_25 gotools gopls go-outline gopkgs gocode-gomod godef golint
 					air sqlc templ atlas nodejs_24 sqlite vscodium
 				];
 			};
