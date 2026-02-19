@@ -21,7 +21,7 @@ var (
 
 type Handler struct {
 	queries       *db.Queries
-	formProcessor *forms.FormProcessor
+	formProcessor forms.FormProcessor
 	session       *session.Session
 	settings      *settings.SettingsService
 	md            *md.MdService

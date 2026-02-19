@@ -31,8 +31,8 @@ func (h *Handler) StationPostStationRole(w http.ResponseWriter, r *http.Request)
 	}
 
 	var data postRole
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		return // TODO
 	}
 
@@ -136,8 +136,8 @@ func (h *Handler) StationPutStationRole(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var data putRole
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		return // TODO
 	}
 
@@ -432,8 +432,8 @@ func (h *Handler) PutStationGroupPoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var formData putStationPointForm
-	if err := h.formProcessor.ProcessForm(&formData, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&formData, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}

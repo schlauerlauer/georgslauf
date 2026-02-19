@@ -158,8 +158,8 @@ func (h *Handler) PutSettingsGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var set settings.Groups
-	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&set, r); err != nil {
+		slog.Error("Process", "err", err)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
@@ -191,8 +191,8 @@ func (h *Handler) PutSettingsStations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var set settings.Stations
-	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&set, r); err != nil {
+		slog.Error("Process", "err", err)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
@@ -290,8 +290,8 @@ func (h *Handler) PostStationRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data postRole
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		return // TODO
 	}
 
@@ -339,8 +339,8 @@ func (h *Handler) PostStationCategory(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var data upsertStationCategory
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -380,8 +380,8 @@ func (h *Handler) PutStationCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data upsertStationCategory
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -479,8 +479,8 @@ func (h *Handler) PutUserRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data putUserRole
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		return // TODO
 	}
 
@@ -559,8 +559,8 @@ func (h *Handler) PutStationRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data putRole
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		return // TODO
 	}
 
@@ -603,8 +603,8 @@ func (h *Handler) PutTribeRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data putRole
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		return // TODO
 	}
 
@@ -648,8 +648,8 @@ func (h *Handler) PutSettingsHome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var set md.Input
-	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&set, r); err != nil {
+		slog.Error("Process", "err", err)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := templates.AlertError("Eingabe nicht richtig: Hilfe").Render(ctx, w); err != nil {
 			slog.Warn("templ", "err", err)
@@ -687,8 +687,8 @@ func (h *Handler) PutSettingsHelp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var set settings.Help
-	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&set, r); err != nil {
+		slog.Error("Process", "err", err)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := templates.AlertError("Eingabe nicht richtig: Hilfe").Render(ctx, w); err != nil {
 			slog.Warn("templ", "err", err)
@@ -722,8 +722,8 @@ func (h *Handler) PutSettingsLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var set settings.Login
-	if err := h.formProcessor.ProcessForm(&set, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&set, r); err != nil {
+		slog.Error("Process", "err", err)
 		w.WriteHeader(http.StatusBadRequest)
 		if err := templates.AlertError("Eingabe nicht richtig: Anmeldung").Render(ctx, w); err != nil {
 			slog.Warn("templ", "err", err)
@@ -933,8 +933,8 @@ func (h *Handler) HostPutPointsToStation(w http.ResponseWriter, r *http.Request)
 	}
 
 	var formData putHostPointForm
-	if err := h.formProcessor.ProcessForm(&formData, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&formData, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -979,8 +979,8 @@ func (h *Handler) HostPutPointsToGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var formData putHostPointForm
-	if err := h.formProcessor.ProcessForm(&formData, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&formData, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -1483,8 +1483,8 @@ func (h *Handler) HostPutStation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data putStation
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
@@ -1606,8 +1606,8 @@ func (h *Handler) HostPutGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data putGroup
-	if err := h.formProcessor.ProcessForm(&data, r); err != nil {
-		slog.Error("ProcessForm", "err", err)
+	if err := h.formProcessor.Process(&data, r); err != nil {
+		slog.Error("Process", "err", err)
 		if err := templates.AlertError("Falsche Eingabe").Render(ctx, w); err != nil {
 			slog.Error("AlertError", "err", err)
 		}
