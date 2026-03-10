@@ -193,7 +193,7 @@ func navbar(user *session.UserData, tribeId int64, hasIcon bool) templ.Component
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div><a class=\"btn\" target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://umap.openstreetmap.fr/en/map/georgslauf2025_1213277#15/48.2418/11.6571\"><span class=\"w-6 h-6 icon-[tabler--map-share]\"></span></a><div class=\"btn\" hx-get=\"/dash/\" hx-target=\"main\" hx-push-url=\"true\"><span class=\"hidden sm:block\">Dashboard</span> <span class=\"sm:hidden h-6 w-6 icon-[mage--dashboard]\"></span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div><a class=\"btn\" target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://v.bayern.de/2XpJy\"><span class=\"w-6 h-6 icon-[tabler--map-share]\"></span></a><div class=\"btn\" hx-get=\"/dash/\" hx-target=\"main\" hx-push-url=\"true\"><span class=\"hidden sm:block\">Dashboard</span> <span class=\"sm:hidden h-6 w-6 icon-[mage--dashboard]\"></span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -208,7 +208,7 @@ func navbar(user *session.UserData, tribeId int64, hasIcon bool) templ.Component
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<a class=\"btn\" target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://umap.openstreetmap.fr/en/map/georgslauf2025_1213277#15/48.2418/11.6571\"><span class=\"w-6 h-6 icon-[tabler--map-share]\"></span></a> <a class=\"btn\" href=\"/login\">Anmelden</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<a class=\"btn\" target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://v.bayern.de/2XpJy\"><span class=\"w-6 h-6 icon-[tabler--map-share]\"></span></a> <a class=\"btn\" href=\"/login\">Anmelden</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
