@@ -9,11 +9,17 @@ import (
 )
 
 type HostParam struct {
-	ID   int64
-	Name string
+	ID   int64 `yaml:"id"`
+	Name string `yaml:"name"`
 }
 
-templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home md.MdData, host HostParam) {
+var host HostParam
+
+func SetHost(cfg HostParam) {
+	host = cfg
+}
+
+templ Home(htmxRequest bool, user *session.UserData, schedule []db.Schedule, home md.MdData) {
 	@base(htmxRequest, user, -1, false) {
 		<div class="mt-9 mx-auto px-3 max-w-screen-lg">
 			<div class="px-3 mb-6 flex justify-between items-center lg:flex-row flex-col">

@@ -26,6 +26,8 @@ import (
 
 //go:generate sqlc generate -f ./sqlc.yaml
 //go:generate templ generate -path internal/handler/templates
+//go:generate tailwindcss --input ./dist/main.scss --output ./resources/main.css --config ./tailwind.config.js
+//go:generate esbuild --bundle --minify --outdir=resources --platform=browser --format=esm ./dist/main.js
 
 //go:embed all:resources
 var embedRes embed.FS
@@ -59,7 +61,11 @@ func main() {
 	)
 
 	settings := settings.New(repository.Queries)
-	templates.SetHelp(settings.Get().Help.Footer) // NTH move somewhere else
+
+	other := settings.Get().Other
+	templates.SetHelp(other.Footer) // NTH move somewhere else
+	templates.SetMap(other.Map)
+	templates.SetHost(cfg.Host)
 
 	handlers, err := handler.NewHandler(repository.Queries, sessionService, settings)
 	if err != nil {
@@ -166,7 +172,7 @@ func main() {
 	hostRouter.HandleFunc("PUT /settings/groups", handlers.PutSettingsGroups)
 	hostRouter.HandleFunc("PUT /settings/stations", handlers.PutSettingsStations)
 	hostRouter.HandleFunc("PUT /settings/login", handlers.PutSettingsLogin)
-	hostRouter.HandleFunc("PUT /settings/help", handlers.PutSettingsHelp)
+	hostRouter.HandleFunc("PUT /settings/other", handlers.PutSettingsOther)
 	hostRouter.HandleFunc("PUT /settings/home", handlers.PutSettingsHome)
 	hostRouter.HandleFunc("PUT /tribes/role", handlers.PutTribeRole)
 	hostRouter.HandleFunc("GET /tribes/role", handlers.GetTribeRoleModal)

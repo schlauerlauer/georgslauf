@@ -668,7 +668,7 @@ func (h *Handler) PutSettingsHome(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) PutSettingsHelp(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) PutSettingsOther(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var user *session.UserData
@@ -682,7 +682,7 @@ func (h *Handler) PutSettingsHelp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var set settings.Help
+	var set settings.Other
 	if err := h.formProcessor.Process(&set, r); err != nil {
 		slog.Error("Process", "err", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -693,7 +693,7 @@ func (h *Handler) PutSettingsHelp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	prev := h.settings.Get()
-	prev.Help = set
+	prev.Other = set
 	h.settings.Set(ctx, prev, user.ID)
 
 	templates.SetHelp(set.Footer)

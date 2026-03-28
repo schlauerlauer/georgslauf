@@ -7,6 +7,14 @@ import (
 	"strings"
 )
 
+var (
+	mapLink templ.SafeURL
+)
+
+func SetMap(link string) {
+	mapLink = templ.URL(link)
+}
+
 templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 	<div class="navbar bg-base-100">
 		<div class="navbar-start">
@@ -71,14 +79,16 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 						</div>
 					}
 				</div>
+				if mapLink != "" {
 				<a
 					class="btn"
 					target="_blank"
 					rel="noopener noreferrer"
-					href="https://v.bayern.de/2XpJy"
+					href={mapLink}
 				>
 					<span class="w-6 h-6 icon-[tabler--map-share]"></span>
 				</a>
+				}
 				<div
 					class="btn"
 					hx-get="/dash/"
@@ -102,14 +112,16 @@ templ navbar(user *session.UserData, tribeId int64, hasIcon bool) {
 				// TODO
 				// <div class="btn" hx-get="/logout">Logout</div>
 			} else {
+				if mapLink != "" {
 				<a
 					class="btn"
 					target="_blank"
 					rel="noopener noreferrer"
-					href="https://v.bayern.de/2XpJy"
+					href={mapLink}
 				>
 					<span class="w-6 h-6 icon-[tabler--map-share]"></span>
 				</a>
+				}
 				<a
 					class="btn"
 					href="/login"

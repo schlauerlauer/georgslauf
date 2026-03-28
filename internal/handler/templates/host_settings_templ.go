@@ -444,20 +444,33 @@ func HostSettings(htmxRequest bool, user *session.UserData, set *settings.Settin
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</textarea></label></form></div></details> <details class=\"collapse bg-base-200\" open><summary class=\"collapse-title text-xl font-medium\">Hilfe</summary><div class=\"collapse-content\"><form hx-put=\"/host/settings/help\" hx-trigger=\"change\" hx-swap=\"none\" class=\"space-y-3\"><label class=\"form-control w-full\"><div class=\"label\"><span class=\"label-text\">Hilfe Link im Footer</span></div><input autocomplete=\"off\" maxlength=\"128\" name=\"footer\" type=\"text\" placeholder=\"https://...\" class=\"input input-bordered w-full\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</textarea></label></form></div></details> <details class=\"collapse bg-base-200\" open><summary class=\"collapse-title text-xl font-medium\">Andere</summary><div class=\"collapse-content\"><form hx-put=\"/host/settings/other\" hx-trigger=\"change\" hx-swap=\"none\" class=\"space-y-3\"><label class=\"form-control w-full\"><div class=\"label\"><span class=\"label-text\">Link zur Karte in der Navbar</span></div><input autocomplete=\"off\" maxlength=\"128\" name=\"map\" type=\"text\" placeholder=\"https://...\" class=\"input input-bordered w-full\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var19 string
-			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(set.Help.Footer)
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(set.Other.Map)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `host_settings.templ`, Line: 450, Col: 161}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `host_settings.templ`, Line: 450, Col: 156}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\"></label></form></div></details></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\"></label> <label class=\"form-control w-full\"><div class=\"label\"><span class=\"label-text\">Hilfe Link im Footer</span></div><input autocomplete=\"off\" maxlength=\"128\" name=\"footer\" type=\"text\" placeholder=\"https://...\" class=\"input input-bordered w-full\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var20 string
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(set.Other.Footer)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `host_settings.templ`, Line: 456, Col: 162}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "\"></label></form></div></details></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -61,7 +61,6 @@
             };
           };
 
-
           # # Container Image `nix build .#image`
           # image = pkgs.dockerTools.buildImage {
           #   name = "docker.io/schlauerlauer/alertmanager-webhook-signal";

@@ -3,6 +3,7 @@ package config
 import (
 	"georgslauf/auth"
 	"georgslauf/internal/db"
+	"georgslauf/internal/handler/templates"
 	"log/slog"
 	"os"
 
@@ -15,10 +16,11 @@ type ConfigData struct {
 		Port      int64  `yaml:"port" binding:"required"`
 		PublicUrl string `yaml:"publicUrl" binding:"required"`
 	} `yaml:"server"`
-	UploadDir  string            `yaml:"uploadDir"`
-	Database   db.DatabaseConfig `yaml:"database"`
-	OAuth      auth.OAuthConfig  `yaml:"oauth"`
-	SessionKey []byte            `yaml:"sessionKey"`
+	UploadDir  string              `yaml:"uploadDir"`
+	Database   db.DatabaseConfig   `yaml:"database"`
+	OAuth      auth.OAuthConfig    `yaml:"oauth"`
+	SessionKey []byte              `yaml:"sessionKey"`
+	Host       templates.HostParam `yaml:"host"`
 }
 
 func NewConfig(path string) (*ConfigData, error) {

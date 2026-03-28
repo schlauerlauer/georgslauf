@@ -435,19 +435,25 @@ templ HostSettings(htmxRequest bool, user *session.UserData, set *settings.Setti
 					</div>
 				</details>
 				<details class="collapse bg-base-200" open>
-					<summary class="collapse-title text-xl font-medium">Hilfe</summary>
+					<summary class="collapse-title text-xl font-medium">Andere</summary>
 					<div class="collapse-content">
 						<form
-							hx-put="/host/settings/help"
+							hx-put="/host/settings/other"
 							hx-trigger="change"
 							hx-swap="none"
 							class="space-y-3"
 						>
 							<label class="form-control w-full">
 								<div class="label">
+									<span class="label-text">Link zur Karte in der Navbar</span>
+								</div>
+								<input autocomplete="off" maxlength="128" name="map" type="text" placeholder="https://..." class="input input-bordered w-full" value={ set.Other.Map }/>
+							</label>
+							<label class="form-control w-full">
+								<div class="label">
 									<span class="label-text">Hilfe Link im Footer</span>
 								</div>
-								<input autocomplete="off" maxlength="128" name="footer" type="text" placeholder="https://..." class="input input-bordered w-full" value={ set.Help.Footer }/>
+								<input autocomplete="off" maxlength="128" name="footer" type="text" placeholder="https://..." class="input input-bordered w-full" value={ set.Other.Footer }/>
 							</label>
 						</form>
 					</div>

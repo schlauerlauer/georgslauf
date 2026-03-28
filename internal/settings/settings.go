@@ -21,7 +21,7 @@ type Settings struct {
 	Login    Login    `json:"l"`
 	Groups   Groups   `json:"g"`
 	Stations Stations `json:"s"`
-	Help     Help     `json:"h"`
+	Other    Other    `json:"h"`
 	Home     md.Input `json:"hp"`
 }
 
@@ -50,7 +50,8 @@ type Stations struct {
 	EditAccountsStation bool `json:"es" schema:"station-accounts-self"`
 }
 
-type Help struct {
+type Other struct {
+	Map    string `json:"m" schema:"map" validate:"http_url,max=128"`
 	Footer string `json:"f" schema:"footer" validate:"http_url,max=128"`
 }
 
