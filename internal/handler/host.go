@@ -697,6 +697,7 @@ func (h *Handler) PutSettingsOther(w http.ResponseWriter, r *http.Request) {
 	h.settings.Set(ctx, prev, user.ID)
 
 	templates.SetHelp(set.Footer)
+	templates.SetMap(set.Map)
 
 	if err := templates.AlertSuccess("Gespeichert").Render(ctx, w); err != nil {
 		slog.Warn("templ", "err", err)
