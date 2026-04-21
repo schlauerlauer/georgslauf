@@ -51,7 +51,7 @@ type Stations struct {
 }
 
 type Other struct {
-	Map    string `json:"m" schema:"map" validate:"http_url,max=128"`
+	Map    string `json:"m" schema:"map" validate:"http_url,max=256"`
 	Footer string `json:"f" schema:"footer" validate:"http_url,max=128"`
 }
 
